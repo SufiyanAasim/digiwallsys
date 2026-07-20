@@ -1,0 +1,21 @@
+name: Question
+description: Ask a scoped setup or usage question.
+title: "question: "
+labels: [question]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+    validations:
+      required: true
+  - type: textarea
+    id: attempted
+    attributes:
+      label: What have you tried?
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
