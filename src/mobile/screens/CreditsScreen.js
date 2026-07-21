@@ -14,7 +14,7 @@ export default function CreditsScreen() {
         <View style={styles.headerCard}>
           <Image source={require('../assets/digiwallsys-icon.png')} style={styles.logo} />
           <Text style={styles.title}>digiwallsys</Text>
-          <Text style={styles.tagline}>Full-Stack Digital Wallet & Accounting Platform</Text>
+          <Text style={styles.tagline}>Digital Wallet & Financial Accounting System</Text>
           <View style={styles.badgeRow}>
             <View style={styles.badge}><Text style={styles.badgeText}>v1.5.5</Text></View>
             <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Armada"</Text></View>
