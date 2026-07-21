@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "digiwallsys",
+    "slug": "digiwallsys",
+    "scheme": "digiwallsys",
+    "version": "1.0.0",
+    "plugins": [
+      "./plugins/withAndroidMonorepoRoot"
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/digiwallsys-icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/digiwallsys-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#251826"
+    },
+    "ios": {
+      "bundleIdentifier": "com.sufiyanaasim.digiwallsys",
+      "buildNumber": "1",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Use Face ID to unlock your digiwallsys session.",
+        "NSCameraUsageDescription": "Scan digiwallsys payment QR codes."
+      }
+    },
+    "android": {
+      "package": "com.sufiyanaasim.digiwallsys",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/digiwallsys-icon.png",
+        "backgroundColor": "#251826"
+      },
+      "edgeToEdgeEnabled": true,
+      "permissions": ["CAMERA", "USE_BIOMETRIC"]
+    },
+    "web": {
+      "favicon": "./assets/digiwallsys-icon.png",
+      "bundler": "metro"
+    }
+  }
+}

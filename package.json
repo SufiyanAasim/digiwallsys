@@ -1,0 +1,28 @@
+{
+  "name": "digiwallsys",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A full-stack digital wallet demo with an Expo mobile client and Express API.",
+  "license": "MIT",
+  "workspaces": [
+    "src/backend",
+    "src/mobile"
+  ],
+  "scripts": {
+    "start:api": "npm run start --workspace @digiwallsys/api",
+    "start:mobile": "npm run start --workspace @digiwallsys/mobile",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspace @digiwallsys/mobile",
+    "build:web": "npm run build:web --workspace @digiwallsys/mobile",
+    "build:android:apk": "npm run build:android:apk --workspace @digiwallsys/mobile",
+    "build:android:aab": "npm run build:android:aab --workspace @digiwallsys/mobile",
+    "build:ios:ipa": "npm run build:ios:ipa --workspace @digiwallsys/mobile",
+    "check:name": "node scripts/check-name.js",
+    "check:docs": "node scripts/check-doc-links.js && node scripts/check-api-docs.js",
+    "verify": "npm run check:name && npm run check:docs && npm run lint && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

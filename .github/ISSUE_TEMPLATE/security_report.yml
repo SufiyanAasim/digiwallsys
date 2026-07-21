@@ -1,0 +1,21 @@
+name: Security guidance
+description: Use only for non-sensitive security hardening suggestions.
+title: "security: "
+labels: [security]
+body:
+  - type: markdown
+    attributes:
+      value: If this could expose users or data, stop and use private vulnerability reporting from the Security tab.
+  - type: checkboxes
+    id: safe
+    attributes:
+      label: Public disclosure check
+      options:
+        - label: This report contains no exploit, secret, personal data, or unpatched vulnerability.
+          required: true
+  - type: textarea
+    id: improvement
+    attributes:
+      label: Hardening suggestion
+    validations:
+      required: true
