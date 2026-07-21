@@ -26,7 +26,7 @@ test('health endpoint identifies digiwallsys', async () => {
   assert.deepEqual(await response.json(), {
     name: 'digiwallsys',
     status: 'ok',
-    version: '1.0.0',
+    version: '1.5.5',
   });
 });
 
