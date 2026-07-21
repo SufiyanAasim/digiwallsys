@@ -15,7 +15,7 @@ export default function AppFooter({ navigation }) {
       <Text style={styles.separator}>·</Text>
       <Text style={styles.versionText}>v1.5.5 "Armada"</Text>
       <Text style={styles.separator}>·</Text>
-      <Text style={styles.taglineText}>digiwallsys full-stack digital wallet</Text>
+      <Text style={styles.taglineText}>digiwallsys digital wallet</Text>
     </View>
   );
 }

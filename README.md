@@ -4,7 +4,7 @@
 
 # digiwallsys
 
-**A secure full-stack digital wallet with verified funding, immutable ledger accounting, QR payments, automation, alerts, and audited operations**
+**A secure digiwallsys digital wallet platform with verified funding, immutable ledger accounting, QR payments, automation, alerts, and audited operations**
 
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
 [![Version](https://img.shields.io/badge/version-v1.5.5-713b49?style=flat)](docs/releases/v1.5.5.md)
