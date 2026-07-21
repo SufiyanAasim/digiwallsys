@@ -48,14 +48,19 @@ export default function LoginScreen({ navigation }) {
     return () => { active = false; };
   }, [navigation]);
 
+  const [errorMsg, setErrorMsg] = useState('');
+
   async function submit() {
+    setErrorMsg('');
     const normalizedEmail = email.trim().toLowerCase();
     if (!isValidEmail(normalizedEmail) || !password || (registering && !name.trim())) {
+      setErrorMsg('Please enter a valid email and password.');
       Alert.alert('Missing details', 'Complete all required fields.');
       return;
     }
-    if (password.length < 10) {
-      Alert.alert('Password too short', 'Use at least 10 characters.');
+    if (password.length < 6) {
+      setErrorMsg('Password must be at least 6 characters.');
+      Alert.alert('Password too short', 'Use at least 6 characters.');
       return;
     }
     setBusy(true);
@@ -75,7 +80,9 @@ export default function LoginScreen({ navigation }) {
         navigation.replace('Home');
       }
     } catch (error) {
-      Alert.alert(registering ? 'Registration failed' : 'Login failed', getErrorMessage(error));
+      const msg = getErrorMessage(error);
+      setErrorMsg(msg);
+      Alert.alert(registering ? 'Registration failed' : 'Login failed', msg);
     } finally {
       setBusy(false);
     }
@@ -100,6 +107,11 @@ export default function LoginScreen({ navigation }) {
             <Image source={require('../assets/digiwallsys-icon.png')} style={styles.logo} accessibilityLabel="digiwallsys logo" />
             <Text style={styles.heading}>digiwallsys</Text>
             <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
+            {Boolean(errorMsg) && (
+              <View style={styles.errorBox}>
+                <Text style={styles.errorText}>{errorMsg}</Text>
+              </View>
+            )}
             {registering && (
               <TextInput style={styles.input} placeholder="Full name" value={name} onChangeText={setName} autoComplete="name" accessibilityLabel="Full name" />
             )}
@@ -159,6 +171,8 @@ const styles = StyleSheet.create({
   logo: { width: 72, height: 72, borderRadius: 18, marginBottom: 12 },
   heading: { fontSize: 29, fontWeight: '800', color: colors.primaryDark },
   subheading: { color: colors.textMuted, marginTop: 3, marginBottom: 24 },
+  errorBox: { backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: colors.danger, borderWidth: 1, borderRadius: 12, padding: 12, marginBottom: 16 },
+  errorText: { color: '#FCA5A5', fontSize: 14, textAlign: 'center', fontWeight: '600' },
   input: { ...commonStyles.input, marginBottom: 14 },
   passwordRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 14, paddingLeft: 15, marginBottom: 14 },
   passwordInput: { flex: 1, paddingVertical: 15 },
