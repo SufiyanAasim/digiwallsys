@@ -29,7 +29,7 @@
     "expo-device": "~7.1.4",
     "expo-file-system": "~18.1.11",
     "expo-local-authentication": "~16.0.5",
-    "expo-notifications": "~0.31.4",
+    "expo-notifications": "~57.0.6",
     "expo-secure-store": "~14.2.3",
     "expo-sharing": "~13.1.5",
     "expo-status-bar": "~2.2.3",
