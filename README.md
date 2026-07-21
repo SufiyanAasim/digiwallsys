@@ -7,11 +7,11 @@
 **A secure full-stack digital wallet with verified funding, immutable ledger accounting, QR payments, automation, alerts, and audited operations**
 
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
-[![Version](https://img.shields.io/badge/version-v1.0.0-713b49?style=flat)](docs/releases/v1.0.0.md)
-[![Release](https://img.shields.io/badge/name-Anchor-c6533c?style=flat)](docs/releases/v1.0.0.md)
-[![Status](https://img.shields.io/badge/status-pre--release-f59e0b?style=flat)](docs/releases/v1.0.0.md)
+[![Version](https://img.shields.io/badge/version-v1.5.5-713b49?style=flat)](docs/releases/v1.5.5.md)
+[![Release](https://img.shields.io/badge/name-Armada-c6533c?style=flat)](docs/releases/v1.5.5.md)
+[![Status](https://img.shields.io/badge/status-release-22c55e?style=flat)](docs/releases/v1.5.5.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS-64748b?style=flat)]()
+[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-64748b?style=flat)]()
 [![Build](https://img.shields.io/badge/build-passing-16a34a?style=flat)](.github/workflows/build.yml)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-e9a23b?style=flat)](CONTRIBUTING.md)
 
@@ -19,7 +19,7 @@ Register securely, fund through a verified provider, send or request money,
 scan QR payments, schedule transfers, receive alerts, and reconcile every wallet
 against a balanced double-entry ledger.
 
-[**Anchor release**](docs/releases/v1.0.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
+[**Armada release**](docs/releases/v1.5.5.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
 
 </div>
 

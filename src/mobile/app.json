@@ -3,7 +3,7 @@
     "name": "digiwallsys",
     "slug": "digiwallsys",
     "scheme": "digiwallsys",
-    "version": "1.0.0",
+    "version": "1.5.5",
     "plugins": [
       "./plugins/withAndroidMonorepoRoot"
     ],
