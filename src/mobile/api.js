@@ -2,7 +2,7 @@ import axios from 'axios';
 import { clearSession, getAccessToken, getRefreshToken, saveSession } from './session';
 
 export const API_BASE_URL = (
-  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000'
+  process.env.EXPO_PUBLIC_API_URL || 'https://digiwallsys-api.onrender.com'
 ).replace(/\/$/, '');
 
 const api = axios.create({ baseURL: API_BASE_URL, timeout: 15000 });
