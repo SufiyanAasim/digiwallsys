@@ -2,6 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getBalance, getCurrentUser, getTransactions } from '../api';
+import AppFooter from '../components/AppFooter';
 import { colors } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
@@ -82,6 +83,7 @@ export default function HomeScreen({ navigation }) {
             <Text style={item.direction === 'debit' ? styles.debit : styles.credit}>{item.direction === 'debit' ? '-' : '+'}{formatMoney(item.amount, item.currency)}</Text>
           </View>
         )}
+        ListFooterComponent={<AppFooter navigation={navigation} />}
       />
     </SafeAreaView>
   );

@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import AppFooter from '../components/AppFooter';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
 import { colors, commonStyles } from '../theme';
@@ -156,6 +157,7 @@ export default function LoginScreen({ navigation }) {
                 <Text style={styles.linkText}>Use biometric login</Text>
               </TouchableOpacity>
             )}
+            <AppFooter navigation={navigation} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
