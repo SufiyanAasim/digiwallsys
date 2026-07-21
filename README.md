@@ -147,22 +147,22 @@ the same PostgreSQL transaction. Full details are in
 
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
-| [v1.0.0](docs/releases/v1.0.0.md) | **Anchor** | Pre-release | Secure wallet foundation and PostgreSQL acceptance gates |
-| [v1.0.5](docs/releases/v1.0.5.md) | **Drift** | Planned | Refresh sessions, verification, recovery, and biometric access |
-| [v1.1.0](docs/releases/v1.1.0.md) | **Current** | Planned | Provider-verified funding and webhook reliability |
-| [v1.1.5](docs/releases/v1.1.5.md) | **Swell** | Planned | Idempotency, rate limits, concurrency, and load visibility |
-| [v1.2.0](docs/releases/v1.2.0.md) | **Passage** | Planned | Immutable double-entry ledger |
-| [v1.2.5](docs/releases/v1.2.5.md) | **Gale** | Planned | Fraud controls and stress optimization |
-| [v1.3.0](docs/releases/v1.3.0.md) | **Harbor** | Planned | Audited administrator operations |
-| [v1.3.5](docs/releases/v1.3.5.md) | **Beacon** | Planned | Search, exports, receipts, notifications, and alerts |
-| [v1.4.0](docs/releases/v1.4.0.md) | **Voyage** | Planned | QR, biometrics, and broader-market foundations |
-| [v1.4.5](docs/releases/v1.4.5.md) | **Trade** | Planned | Payment requests and scheduled transfers |
-| [v1.5.0](docs/releases/v1.5.0.md) | **Meridian** | Planned | Reconciliation and currency precision |
-| [v1.5.5](docs/releases/v1.5.5.md) | **Armada** | Planned | Full ecosystem and wide-release readiness |
+| [v1.5.5](docs/releases/v1.5.5.md) | **Armada** | Release | Full-scale ecosystem, ready for wide release |
+| [v1.5.0](docs/releases/v1.5.0.md) | **Meridian** | Completed | Reconciliation and currency precision |
+| [v1.4.5](docs/releases/v1.4.5.md) | **Trade** | Completed | Payment requests and scheduled transfers |
+| [v1.4.0](docs/releases/v1.4.0.md) | **Voyage** | Completed | QR, biometrics, and broader-market foundations |
+| [v1.3.5](docs/releases/v1.3.5.md) | **Beacon** | Completed | Search, exports, receipts, notifications, and alerts |
+| [v1.3.0](docs/releases/v1.3.0.md) | **Harbor** | Completed | Audited administrator operations |
+| [v1.2.5](docs/releases/v1.2.5.md) | **Gale** | Completed | Fraud controls and stress optimization |
+| [v1.2.0](docs/releases/v1.2.0.md) | **Passage** | Completed | Immutable double-entry ledger |
+| [v1.1.5](docs/releases/v1.1.5.md) | **Swell** | Completed | Idempotency, rate limits, concurrency, and load visibility |
+| [v1.1.0](docs/releases/v1.1.0.md) | **Current** | Completed | Provider-verified funding and webhook reliability |
+| [v1.0.5](docs/releases/v1.0.5.md) | **Drift** | Completed | Refresh sessions, verification, recovery, and biometric access |
+| [v1.0.0](docs/releases/v1.0.0.md) | **Anchor** | Base Release | Secure wallet foundation and PostgreSQL acceptance gates |
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
-prerelease identifiers. `v1.0.0` is marked as a GitHub pre-release while its tag
-remains exactly `v1.0.0` and its GitHub release name remains exactly `Anchor`.
+prerelease identifiers. `v1.5.5` is marked as the official production release while its tag
+remains exactly `v1.5.5` and its GitHub release name remains exactly `Armada`.
 
 ---
 
