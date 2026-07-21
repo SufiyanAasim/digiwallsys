@@ -1,0 +1,28 @@
+{
+  "name": "@digiwallsys/api",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "migrate": "node scripts/migrate.js",
+    "funding:sandbox": "node scripts/simulate-funding-webhook.js",
+    "admin:promote": "node scripts/promote-admin.js",
+    "lint": "node scripts/check-syntax.js",
+    "test": "node --test ../../tests/backend/*.test.js"
+  },
+  "keywords": ["digiwallsys", "wallet", "express", "postgresql"],
+  "author": "",
+  "license": "MIT",
+  "type": "commonjs",
+  "description": "Authenticated REST API for digiwallsys",
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.16.0"
+  }
+}

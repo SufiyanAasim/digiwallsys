@@ -1,0 +1,40 @@
+services:
+  database:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: digiwallsys
+      POSTGRES_USER: digiwallsys
+      POSTGRES_PASSWORD: digiwallsys
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U digiwallsys -d digiwallsys"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+    volumes:
+      - digiwallsys-data:/var/lib/postgresql/data
+      - ./config/database.sql:/docker-entrypoint-initdb.d/001-schema.sql:ro
+      - ./config/migrations:/docker-entrypoint-initdb.d/migrations:ro
+
+  api:
+    build: .
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PORT: 5000
+      JWT_SECRET: local-development-secret-change-before-deployment
+      ACCESS_TOKEN_MINUTES: 15
+      REFRESH_TOKEN_DAYS: 30
+      DATABASE_URL: postgresql://digiwallsys:digiwallsys@database:5432/digiwallsys
+      DATABASE_SSL: "false"
+      CORS_ORIGIN: http://localhost:8081,http://localhost:19006
+      FUNDING_PROVIDER: sandbox
+      FUNDING_WEBHOOK_SECRET: local-funding-webhook-secret-change-me
+      ENABLE_PUSH_WORKER: "false"
+    ports:
+      - "5000:5000"
+
+volumes:
+  digiwallsys-data:

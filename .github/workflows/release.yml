@@ -1,0 +1,63 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Exact planned version including v, for example v1.0.0
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - name: Resolve exact release name and status
+        id: release
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          case "$VERSION" in
+            v1.0.0) NAME="Anchor"; PRERELEASE="true" ;;
+            v1.0.5) NAME="Drift"; PRERELEASE="false" ;;
+            v1.1.0) NAME="Current"; PRERELEASE="false" ;;
+            v1.1.5) NAME="Swell"; PRERELEASE="false" ;;
+            v1.2.0) NAME="Passage"; PRERELEASE="false" ;;
+            v1.2.5) NAME="Gale"; PRERELEASE="false" ;;
+            v1.3.0) NAME="Harbor"; PRERELEASE="false" ;;
+            v1.3.5) NAME="Beacon"; PRERELEASE="false" ;;
+            v1.4.0) NAME="Voyage"; PRERELEASE="false" ;;
+            v1.4.5) NAME="Trade"; PRERELEASE="false" ;;
+            v1.5.0) NAME="Meridian"; PRERELEASE="false" ;;
+            v1.5.5) NAME="Armada"; PRERELEASE="false" ;;
+            *) echo "Unsupported release version: $VERSION" >&2; exit 1 ;;
+          esac
+          test -f "docs/releases/${VERSION}.md"
+          echo "name=$NAME" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+      - name: Create exact GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+          RELEASE_NAME: ${{ steps.release.outputs.name }}
+          PRERELEASE: ${{ steps.release.outputs.prerelease }}
+        run: |
+          ARGS=(
+            gh release create "$VERSION"
+            --title "$RELEASE_NAME"
+            --notes-file "docs/releases/${VERSION}.md"
+            --target "$GITHUB_SHA"
+          )
+          if [[ "$PRERELEASE" == "true" ]]; then
+            ARGS+=(--prerelease)
+          fi
+          "${ARGS[@]}"

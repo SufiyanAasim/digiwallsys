@@ -1,0 +1,17 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+dist-ios/
+dist-web/
+coverage/
+.expo/
+*.log
+.DS_Store
+Thumbs.db
+src/mobile/.git/
+src/mobile/android/
+src/mobile/ios/
+src/mobile/.eas/
+artifacts/
