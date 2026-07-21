@@ -45,7 +45,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@eslint/js": "^9.28.0",
+    "@eslint/js": "^10.0.1",
     "eas-cli": "^21.0.2",
     "eslint": "^9.28.0",
     "eslint-plugin-react": "^7.37.5",
