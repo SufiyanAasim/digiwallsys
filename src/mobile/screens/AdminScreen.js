@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getAdminOverview, getAuditLogs, getFraudEvents, reviewFraudEvent, runReconciliation } from '../api';
 import { colors, commonStyles } from '../theme';
 import { formatMoney, getErrorMessage, titleize } from '../utils';
@@ -41,7 +41,7 @@ export default function AdminScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Admin operations</Text>
         {!!error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><TouchableOpacity style={styles.retry} onPress={load}><Text style={styles.review}>Try again</Text></TouchableOpacity></View>}
@@ -55,7 +55,7 @@ export default function AdminScreen() {
         {!loading && !error && audits.length === 0 && <Text style={styles.meta}>No audit entries yet.</Text>}
         {audits.slice(0, 30).map((audit) => <View key={audit.auditid} style={styles.card}><Text style={styles.cardTitle}>{titleize(audit.action.replaceAll('.', '_'))}</Text><Text style={styles.meta}>{titleize(audit.resource_type)} · {audit.actor_email || 'system'} · {new Date(audit.created_at).toLocaleString()}</Text></View>)}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

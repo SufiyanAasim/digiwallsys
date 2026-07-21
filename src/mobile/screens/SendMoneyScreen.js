@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { getUsers, sendMoney } from '../api';
 import { colors, commonStyles } from '../theme';
@@ -38,7 +38,7 @@ export default function SendMoneyScreen({ navigation, route }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Send money</Text>
         <Text style={styles.label}>Recipient</Text>
@@ -51,7 +51,7 @@ export default function SendMoneyScreen({ navigation, route }) {
         <TouchableOpacity style={[styles.primary, busy && styles.disabled]} disabled={busy} onPress={submit} accessibilityRole="button"><Text style={styles.primaryText}>{busy ? 'Sending…' : 'Confirm payment'}</Text></TouchableOpacity>
         <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}><Text>Cancel</Text></TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

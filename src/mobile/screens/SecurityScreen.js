@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, SafeAreaView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, StyleSheet, Switch, Text, View } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { isBiometricEnabled, setBiometricEnabled } from '../session';
 import { colors } from '../theme';
@@ -33,7 +33,7 @@ export default function SecurityScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.title}>Security</Text>
       <View style={styles.row}>
         <View style={styles.copy}>
@@ -42,7 +42,7 @@ export default function SecurityScreen() {
         </View>
         <Switch value={enabled} onValueChange={toggle} disabled={busy} trackColor={{ true: colors.accent }} />
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 

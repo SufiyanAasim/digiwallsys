@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Linking, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import { colors } from '../theme';
 
@@ -9,8 +9,8 @@ export default function CreditsScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.screen}>
+      <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.headerCard}>
           <Image source={require('../assets/digiwallsys-icon.png')} style={styles.logo} />
           <Text style={styles.title}>digiwallsys</Text>
@@ -27,7 +27,7 @@ export default function CreditsScreen() {
           <View style={styles.card}>
             <Text style={styles.nameText}>Mohammad Sufiyan Aasim</Text>
             <Text style={styles.roleText}>System Architecture · Financial Core · Mobile & Web Release</Text>
-            <TouchableOpacity style={styles.githubButton} onPress={openGitHub}>
+            <TouchableOpacity style={styles.githubButton} onPress={openGitHub} accessibilityRole="button">
               <Icon name="logo-github" size={20} color="#FFFFFF" />
               <Text style={styles.githubButtonText}>@SufiyanAasim/digiwallsys</Text>
             </TouchableOpacity>
@@ -76,12 +76,12 @@ export default function CreditsScreen() {
           <Text style={styles.footerText}>MIT License © 2026 Mohammad Sufiyan Aasim</Text>
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.background },
+  screen: { flex: 1, backgroundColor: colors.background },
   container: { padding: 20, paddingBottom: 40 },
   headerCard: { backgroundColor: colors.surface, borderRadius: 20, padding: 24, alignItems: 'center', borderColor: colors.border, borderWidth: 1, marginBottom: 20 },
   logo: { width: 80, height: 80, borderRadius: 20, marginBottom: 12 },

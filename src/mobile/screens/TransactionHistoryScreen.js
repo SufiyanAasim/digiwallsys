@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { getReceipt, getTransactions, transactionExportUrl } from '../api';
@@ -44,7 +44,7 @@ export default function TransactionHistoryScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={styles.header}><Text style={styles.title}>Transactions</Text></View>
       <View style={styles.searchRow}>
         <TextInput style={styles.search} placeholder="Search name, note, or reference" value={query} onChangeText={setQuery} onSubmitEditing={load} />
@@ -65,7 +65,7 @@ export default function TransactionHistoryScreen() {
           </TouchableOpacity>
         ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
