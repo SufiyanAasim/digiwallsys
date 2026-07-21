@@ -8,6 +8,7 @@
     "migrate": "node scripts/migrate.js",
     "funding:sandbox": "node scripts/simulate-funding-webhook.js",
     "admin:promote": "node scripts/promote-admin.js",
+    "admin:seed": "node scripts/create-admin-account.js",
     "lint": "node scripts/check-syntax.js",
     "test": "node --test ../../tests/backend/*.test.js"
   },
