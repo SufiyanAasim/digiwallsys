@@ -1,4 +1,4 @@
-import React from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -30,6 +30,7 @@ export default function App() {
           headerTitleStyle: { fontWeight: '700', color: colors.text },
           headerShadowVisible: false,
           contentStyle: { backgroundColor: colors.background },
+          ...(Platform.OS === 'web' ? { detachInactiveScreens: false, animation: 'none' } : {}),
         }}
       >
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
