@@ -17,7 +17,7 @@
     "build:ios:ipa": "node scripts/run-package-bin.js eas-cli build --platform ios --profile production"
   },
   "dependencies": {
-    "@expo/metro-runtime": "~5.0.5",
+    "@expo/metro-runtime": "~57.0.6",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-native-picker/picker": "2.11.1",
