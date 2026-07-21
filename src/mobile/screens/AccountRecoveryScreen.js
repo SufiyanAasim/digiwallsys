@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { forgotPassword, resendVerification, resetPassword, verifyEmail } from '../api';
 import { colors, commonStyles } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
@@ -40,7 +40,7 @@ export default function AccountRecoveryScreen({ navigation }) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Account security</Text>
         <Text style={styles.help}>Use your account email to request a token, then paste that token below.</Text>
@@ -53,7 +53,7 @@ export default function AccountRecoveryScreen({ navigation }) {
         <TouchableOpacity style={[styles.primary, !!busy && styles.disabled]} disabled={!!busy} onPress={() => run('reset')}><Text style={styles.primaryText}>{busy === 'reset' ? 'Resetting…' : 'Reset password'}</Text></TouchableOpacity>
         <TouchableOpacity style={styles.link} onPress={() => navigation.goBack()}><Text>Back</Text></TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 

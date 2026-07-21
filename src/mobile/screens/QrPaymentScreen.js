@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
 import { acceptPaymentRequest, createPaymentRequest, getPaymentRequest } from '../api';
@@ -52,12 +52,12 @@ export default function QrPaymentScreen({ navigation }) {
   }
 
   if (mode === 'scan') {
-    if (!permission?.granted) return <SafeAreaView style={styles.center}><Text style={styles.permissionText}>{permission?.canAskAgain === false ? 'Camera access is disabled. Enable it in your device settings to scan payment codes.' : 'Camera permission is required to scan payment codes.'}</Text>{permission?.canAskAgain !== false && <TouchableOpacity style={styles.primary} onPress={requestPermission}><Text style={styles.white}>Allow camera</Text></TouchableOpacity>}<TouchableOpacity style={styles.back} onPress={() => setMode('menu')}><Text>Back</Text></TouchableOpacity></SafeAreaView>;
-    return <SafeAreaView style={styles.container}><CameraView style={styles.camera} barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={scan} /><TouchableOpacity style={styles.back} onPress={() => setMode('menu')}><Text>Cancel scan</Text></TouchableOpacity></SafeAreaView>;
+    if (!permission?.granted) return <View style={styles.center}><Text style={styles.permissionText}>{permission?.canAskAgain === false ? 'Camera access is disabled. Enable it in your device settings to scan payment codes.' : 'Camera permission is required to scan payment codes.'}</Text>{permission?.canAskAgain !== false && <TouchableOpacity style={styles.primary} onPress={requestPermission}><Text style={styles.white}>Allow camera</Text></TouchableOpacity>}<TouchableOpacity style={styles.back} onPress={() => setMode('menu')}><Text>Back</Text></TouchableOpacity></View>;
+    return <View style={styles.container}><CameraView style={styles.camera} barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={scan} /><TouchableOpacity style={styles.back} onPress={() => setMode('menu')}><Text>Cancel scan</Text></TouchableOpacity></View>;
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>QR payments</Text>
         {payload ? <View style={styles.qr}><QRCode value={payload} size={220} /><Text style={styles.meta}>Scan to pay {formatMoney(amount)}</Text><TouchableOpacity style={styles.linkButton} onPress={() => { setPayload(''); setAmount(''); setNote(''); }}><Text style={styles.secondaryText}>Create another request</Text></TouchableOpacity></View> : <>
@@ -68,7 +68,7 @@ export default function QrPaymentScreen({ navigation }) {
         <TouchableOpacity style={styles.secondary} onPress={() => { setScanned(false); setMode('scan'); }}><Text style={styles.secondaryText}>Scan payment QR</Text></TouchableOpacity>
         <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}><Text>Back</Text></TouchableOpacity>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
