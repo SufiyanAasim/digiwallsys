@@ -26,7 +26,7 @@
     "axios": "^1.15.3",
     "expo": "~53.0.27",
     "expo-camera": "~16.1.11",
-    "expo-device": "~7.1.4",
+    "expo-device": "~57.0.1",
     "expo-file-system": "~18.1.11",
     "expo-local-authentication": "~16.0.5",
     "expo-notifications": "~0.31.4",
