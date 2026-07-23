@@ -42,6 +42,11 @@ const name = String(process.argv[4] || 'System Administrator').trim();
       );
       await ensureWalletAccount(client, walletResult.rows[0]);
       await client.query(
+        `INSERT INTO wallet_members(walletid, userid, role) VALUES ($1, $2, 'owner')
+         ON CONFLICT (walletid, userid) DO NOTHING`,
+        [walletResult.rows[0].walletid, userId]
+      );
+      await client.query(
         'INSERT INTO notification_preferences(userid) VALUES ($1) ON CONFLICT DO NOTHING',
         [userId]
       );

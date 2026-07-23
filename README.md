@@ -1,15 +1,15 @@
 <div align="center">
 
-<img src="assets/logo.svg" alt="digiwallsys logo" width="110" />
+<img src="assets/logo-glass.png" alt="digiwallsys logo" width="110" />
 
 # digiwallsys
 
 **A secure digiwallsys digital wallet platform with verified funding, immutable ledger accounting, QR payments, automation, alerts, and audited operations**
 
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
-[![Version](https://img.shields.io/badge/version-v1.7.5-713b49?style=flat)](docs/releases/v1.7.5.md)
-[![Release](https://img.shields.io/badge/name-Estuary-c6533c?style=flat)](docs/releases/v1.7.5.md)
-[![Status](https://img.shields.io/badge/status-code--complete-e9a23b?style=flat)](docs/releases/v1.7.5.md)
+[![Version](https://img.shields.io/badge/version-v1.8.0-713b49?style=flat)](docs/releases/v1.8.0.md)
+[![Release](https://img.shields.io/badge/name-Estuary-c6533c?style=flat)](docs/releases/v1.8.0.md)
+[![Status](https://img.shields.io/badge/status-code--complete-e9a23b?style=flat)](docs/releases/v1.8.0.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-64748b?style=flat)]()
 [![Build](https://img.shields.io/badge/build-passing-16a34a?style=flat)](.github/workflows/build.yml)
@@ -19,7 +19,7 @@ Register securely, fund through a verified provider, send or request money,
 scan QR payments, schedule transfers, receive alerts, and reconcile every wallet
 against a balanced double-entry ledger.
 
-[**Estuary release**](docs/releases/v1.7.5.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
+[**Estuary release**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
 
 </div>
 
@@ -147,8 +147,8 @@ the same PostgreSQL transaction. Full details are in
 
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
-| [v1.8.0](docs/releases/v1.8.0.md) | **Convoy** | Planned | Multi-currency wallets and shared/family wallets |
-| [v1.7.5](docs/releases/v1.7.5.md) | **Estuary** | Code-complete | Savings goals, budgets, calendar, tagging, statements, alerts |
+| [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Code-complete | Multi-currency wallets and shared/family wallets |
+| [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Code-complete | Savings goals, budgets, calendar, tagging, statements, alerts |
 | [v1.7.0](docs/releases/v1.7.0.md) | **Compass** | Completed | Real-data analytics, spend breakdown, spending lock |
 | [v1.6.5](docs/releases/v1.6.5.md) | **Marina** | Completed | Web dashboard sidebar shell |
 | [v1.6.0](docs/releases/v1.6.0.md) | **Lantern** | Completed | Mobile "Ember Glass" design system and brand identity |
@@ -167,9 +167,9 @@ the same PostgreSQL transaction. Full details are in
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
 prerelease identifiers. `v1.7.0` (`Compass`) is the latest release actually deployed
-to production. `v1.7.5` (`Estuary`) is code-complete but not yet deployed or
-migrated — see [its release notes](docs/releases/v1.7.5.md). `v1.8.0` (`Convoy`) is
-planned and not yet scoped.
+to production. `v1.7.5` (`Convoy`) and `v1.8.0` (`Estuary`) are both code-complete
+but not yet deployed or migrated — see their release notes:
+[Convoy](docs/releases/v1.7.5.md) · [Estuary](docs/releases/v1.8.0.md).
 
 ---
 

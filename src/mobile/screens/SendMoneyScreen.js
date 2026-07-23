@@ -3,19 +3,23 @@ import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { getBudgetCategories, getUsers, sendMoney } from '../api';
+import { getBudgetCategories, getSharedWallets, getUsers, getWallets, sendMoney } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
-import { getErrorMessage, parsePositiveAmount } from '../utils';
+import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function SendMoneyScreen({ navigation, route }) {
   const [users, setUsers] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [wallets, setWallets] = useState([]);
+  const [sharedWallets, setSharedWallets] = useState([]);
   const [receiverId, setReceiverId] = useState(route.params?.receiverId || '');
   const [amount, setAmount] = useState(route.params?.amount ? String(route.params.amount) : '');
   const [description, setDescription] = useState(route.params?.description || '');
   const [category, setCategory] = useState('');
+  const [currency, setCurrency] = useState('USD');
+  const [fromOwnerId, setFromOwnerId] = useState('');
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [busy, setBusy] = useState(false);
   const { colors, commonStyles } = useAppTheme();
@@ -26,7 +30,16 @@ export default function SendMoneyScreen({ navigation, route }) {
       Alert.alert('Recipients unavailable', getErrorMessage(error));
     }).finally(() => setLoadingUsers(false));
     getBudgetCategories().then((response) => setCategories(response.data)).catch(() => setCategories([]));
+    getWallets().then((response) => setWallets(response.data)).catch(() => setWallets([]));
+    getSharedWallets().then((response) => setSharedWallets(response.data)).catch(() => setSharedWallets([]));
   }, []);
+
+  useEffect(() => {
+    if (fromOwnerId) {
+      const shared = sharedWallets.find((w) => String(w.owner_userid) === String(fromOwnerId));
+      if (shared) setCurrency(shared.currency);
+    }
+  }, [fromOwnerId, sharedWallets]);
 
   async function submit() {
     const parsedAmount = parsePositiveAmount(amount);
@@ -36,7 +49,10 @@ export default function SendMoneyScreen({ navigation, route }) {
     }
     setBusy(true);
     try {
-      const response = await sendMoney(Number(receiverId), parsedAmount, description.trim(), category);
+      const response = await sendMoney(Number(receiverId), parsedAmount, description.trim(), category, {
+        currency,
+        fromOwnerId: fromOwnerId || undefined,
+      });
       Alert.alert('Payment sent', `Reference: ${response.data.transaction.reference}`);
       navigation.navigate('Home');
     } catch (error) {
@@ -51,6 +67,28 @@ export default function SendMoneyScreen({ navigation, route }) {
       <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Send money</Text>
+
+        {sharedWallets.length > 0 && (
+          <>
+            <Text style={styles.label}>Spend from</Text>
+            <Picker selectedValue={fromOwnerId} onValueChange={setFromOwnerId} style={styles.picker} enabled={!busy}>
+              <Picker.Item label="My own wallet" value="" />
+              {sharedWallets.map((w) => (
+                <Picker.Item key={`${w.owner_userid}-${w.currency}`} label={`${w.owner_name}'s wallet (${formatMoney(w.balance, w.currency)})`} value={w.owner_userid} />
+              ))}
+            </Picker>
+          </>
+        )}
+
+        {!fromOwnerId && wallets.length > 1 && (
+          <>
+            <Text style={styles.label}>Currency</Text>
+            <Picker selectedValue={currency} onValueChange={setCurrency} style={styles.picker} enabled={!busy}>
+              {wallets.map((w) => <Picker.Item key={w.walletid} label={`${w.currency} (${formatMoney(w.balance, w.currency)})`} value={w.currency} />)}
+            </Picker>
+          </>
+        )}
+
         <Text style={styles.label}>Recipient</Text>
         <Picker selectedValue={receiverId} onValueChange={setReceiverId} style={styles.picker} enabled={!loadingUsers && !busy} accessibilityLabel="Recipient">
           <Picker.Item label={loadingUsers ? 'Loading recipients…' : 'Select recipient'} value="" />

@@ -19,7 +19,7 @@ export default function AppFooter({ navigation }) {
         <Text style={styles.linkText}>Credits</Text>
       </TouchableOpacity>
       <Text style={styles.separator}>·</Text>
-      <Text style={styles.versionText}>v1.7.5 "Estuary"</Text>
+      <Text style={styles.versionText}>v1.8.0 "Estuary"</Text>
       <Text style={styles.separator}>·</Text>
       <Text style={styles.taglineText}>digiwallsys digital wallet</Text>
     </View>

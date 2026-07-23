@@ -20,7 +20,8 @@ name is not a codename and must not be extended with a subtitle.
 | `v1.6.0` | Lantern | Mobile "Ember Glass" design system and brand identity. |
 | `v1.6.5` | Marina | Web dashboard sidebar shell and navigation architecture. |
 | `v1.7.0` | Compass | Real-data analytics: spend breakdown and spending lock. |
-| `v1.7.5` | Delta | Converging further financial features (scope pending). |
+| `v1.7.5` | Convoy | Savings goals, budgets, calendar, tagging, statements, alerts. |
+| `v1.8.0` | Estuary | Multi-currency wallets and shared/family wallets. |
 
 ## Exact naming rules
 

@@ -4,10 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../ThemeContext';
 
 // Monogram mark: a lowercase "i" sits behind, a lowercase "d" overlaps it in front —
-// short for digiwallsys. Frosted/translucent glyphs plus a top sheen sell the same
-// glass material as the rest of the Ember Glass design system, in either theme.
+// short for digiwallsys. The glyphs invert tone per theme (light glass in dark mode,
+// dark glass in light mode) so the mark always reads against its own gradient badge.
 export default function Logo({ size = 40, radius }) {
   const { colors } = useAppTheme();
+  const isDark = colors.mode === 'dark';
   const cornerRadius = radius ?? size * 0.28;
   const glyphSize = size * 0.62;
 
@@ -19,7 +20,7 @@ export default function Logo({ size = 40, radius }) {
       style={[styles.badge, { width: size, height: size, borderRadius: cornerRadius }]}
     >
       <LinearGradient
-        colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
+        colors={isDark ? ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)'] : ['rgba(255,255,255,0.55)', 'rgba(255,255,255,0)']}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 0.7 }}
         style={StyleSheet.absoluteFill}
@@ -27,7 +28,7 @@ export default function Logo({ size = 40, radius }) {
       <Text
         style={[
           styles.glyph,
-          styles.glyphBack,
+          isDark ? styles.glyphBackDark : styles.glyphBackLight,
           { fontSize: glyphSize, lineHeight: glyphSize, left: size * 0.50, top: size * 0.15 },
         ]}
       >
@@ -36,7 +37,7 @@ export default function Logo({ size = 40, radius }) {
       <Text
         style={[
           styles.glyph,
-          styles.glyphFront,
+          isDark ? styles.glyphFrontDark : styles.glyphFrontLight,
           { fontSize: glyphSize, lineHeight: glyphSize, left: size * 0.12, top: size * 0.13 },
         ]}
       >
@@ -50,10 +51,19 @@ export default function Logo({ size = 40, radius }) {
 const styles = StyleSheet.create({
   badge: { alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   glyph: { position: 'absolute', fontWeight: '800', includeFontPadding: false },
-  glyphBack: { color: 'rgba(255,255,255,0.32)' },
-  glyphFront: {
+  // Dark mode: light/frosted-white glass glyphs on the gradient.
+  glyphBackDark: { color: 'rgba(255,255,255,0.32)' },
+  glyphFrontDark: {
     color: 'rgba(255,255,255,0.92)',
     textShadowColor: 'rgba(26,10,14,0.35)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
+  },
+  // Light mode: dark/smoked-glass glyphs on the same gradient.
+  glyphBackLight: { color: 'rgba(26,10,14,0.22)' },
+  glyphFrontLight: {
+    color: 'rgba(26,10,14,0.85)',
+    textShadowColor: 'rgba(255,255,255,0.45)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3,
   },

@@ -1,5 +1,6 @@
 const pool = require('../db');
 const { writeAudit } = require('../services/auditService');
+const { listCurrentRates, setRate } = require('../services/fxService');
 const { reconcileWallets } = require('../services/ledgerService');
 
 async function overview(_req, res, next) {
@@ -113,4 +114,33 @@ async function reconcile(req, res, next) {
   }
 }
 
-module.exports = { overview, auditLogs, fraudEvents, reviewFraudEvent, reconcile };
+async function fxRates(_req, res, next) {
+  try {
+    return res.json(await listCurrentRates());
+  } catch (error) {
+    return next(error);
+  }
+}
+
+async function setFxRate(req, res, next) {
+  try {
+    const baseCurrency = String(req.body.baseCurrency || '').toUpperCase();
+    const quoteCurrency = String(req.body.quoteCurrency || '').toUpperCase();
+    const rate = Number(req.body.rate);
+    const saved = await setRate(baseCurrency, quoteCurrency, rate, req.user.userId);
+    await writeAudit(pool, {
+      actorUserId: req.user.userId,
+      action: 'fx_rate.set',
+      resourceType: 'fx_rate',
+      resourceId: saved.rateid,
+      metadata: { baseCurrency, quoteCurrency, rate },
+      ipAddress: req.ip,
+    });
+    return res.status(201).json(saved);
+  } catch (error) {
+    if (error.status) return res.status(error.status).json({ error: error.message });
+    return next(error);
+  }
+}
+
+module.exports = { overview, auditLogs, fraudEvents, reviewFraudEvent, reconcile, fxRates, setFxRate };

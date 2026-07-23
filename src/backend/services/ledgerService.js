@@ -21,6 +21,22 @@ async function getClearingAccount(client, currency = 'USD') {
   return result.rows[0].accountid;
 }
 
+// One suspense account per currency absorbs both legs of a currency conversion,
+// each posted as its own same-currency balanced journal (see fxService/walletController)
+// rather than a single cross-currency journal, which postJournal's raw-amount
+// balance check cannot represent.
+async function getFxSuspenseAccount(client, currency) {
+  const code = `fx-suspense:${currency}`;
+  const result = await client.query(
+    `INSERT INTO ledger_accounts(code, account_type, currency)
+     VALUES ($1, 'fx_suspense', $2)
+     ON CONFLICT (code) DO UPDATE SET code = EXCLUDED.code
+     RETURNING accountid`,
+    [code, currency]
+  );
+  return result.rows[0].accountid;
+}
+
 async function postJournal(client, {
   journalType,
   description,
@@ -71,4 +87,4 @@ async function reconcileWallets(client) {
   return result.rows;
 }
 
-module.exports = { ensureWalletAccount, getClearingAccount, postJournal, reconcileWallets };
+module.exports = { ensureWalletAccount, getClearingAccount, getFxSuspenseAccount, postJournal, reconcileWallets };

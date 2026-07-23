@@ -4,9 +4,11 @@ const requireRole = require('../middleware/requireRole');
 const {
   auditLogs,
   fraudEvents,
+  fxRates,
   overview,
   reconcile,
   reviewFraudEvent,
+  setFxRate,
 } = require('../controllers/adminController');
 
 const router = express.Router();
@@ -16,5 +18,7 @@ router.get('/audit-logs', auditLogs);
 router.get('/fraud-events', fraudEvents);
 router.post('/fraud-events/:eventId/review', reviewFraudEvent);
 router.post('/reconciliation', reconcile);
+router.get('/fx-rates', fxRates);
+router.post('/fx-rates', setFxRate);
 
 module.exports = router;

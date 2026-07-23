@@ -23,6 +23,8 @@ const actions = [
   ['QR Payment', 'QR payments', 'qr-code-outline'],
   ['Savings', 'Savings goals', 'trending-up-outline'],
   ['Budgets', 'Budget categories', 'pie-chart-outline'],
+  ['Wallets', 'Wallets', 'wallet-outline'],
+  ['Family', 'Family wallet', 'people-outline'],
   ['Transactions', 'Transactions', 'time-outline'],
   ['Notifications', 'Notifications', 'notifications-outline'],
   ['Security', 'Security', 'shield-checkmark-outline'],

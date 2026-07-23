@@ -61,6 +61,8 @@ async function sendMoney(req, res, next) {
   const amount = parseAmount(req.body.amount);
   const description = String(req.body.description || '').trim().slice(0, 255);
   const category = req.body.category ? String(req.body.category).trim().slice(0, 40) : null;
+  const currency = String(req.body.currency || 'USD').toUpperCase();
+  const senderOwnerId = req.body.fromOwnerId ? Number(req.body.fromOwnerId) : null;
   if (!Number.isInteger(receiverId) || receiverId === senderId) {
     await req.idempotency.release();
     return res.status(400).json({ error: 'Choose a valid recipient' });
@@ -73,6 +75,10 @@ async function sendMoney(req, res, next) {
     await req.idempotency.release();
     return res.status(400).json({ error: 'Category contains unsupported characters' });
   }
+  if (senderOwnerId !== null && (!Number.isInteger(senderOwnerId) || senderOwnerId === senderId)) {
+    await req.idempotency.release();
+    return res.status(400).json({ error: 'Invalid shared wallet owner' });
+  }
 
   const client = await pool.connect();
   try {
@@ -82,6 +88,9 @@ async function sendMoney(req, res, next) {
       receiverId,
       amount,
       description,
+      senderCurrency: currency,
+      receiverCurrency: currency,
+      senderOwnerId,
       idempotencyKey: req.idempotency.key,
       ipAddress: req.ip,
     });

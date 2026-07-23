@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
 const budgetCategoryRoutes = require('./routes/budgetCategories');
+const familyRoutes = require('./routes/family');
 const fundingRoutes = require('./routes/funding');
 const notificationRoutes = require('./routes/notifications');
 const paymentRequestRoutes = require('./routes/paymentRequests');
@@ -41,7 +42,7 @@ app.get('/', (_req, res) => {
 });
 
 app.get('/api/health', (_req, res) => {
-  res.json({ name: 'digiwallsys', status: 'ok', version: '1.7.5' });
+  res.json({ name: 'digiwallsys', status: 'ok', version: '1.8.0' });
 });
 
 app.get('/api/ready', async (_req, res) => {
@@ -64,6 +65,7 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/savings-goals', savingsGoalRoutes);
 app.use('/api/budget-categories', budgetCategoryRoutes);
 app.use('/api/security', securityRoutes);
+app.use('/api/family', familyRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.use((_req, res) => {

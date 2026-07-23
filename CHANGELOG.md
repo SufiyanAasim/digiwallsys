@@ -46,6 +46,44 @@ All notable changes to this project are documented here. The format follows
 
 - Added architecture, API, deployment, development, release, and support docs.
 
+## [1.8.0] — Estuary
+
+### Added
+
+- Multi-currency wallets: a user may now hold one wallet per currency instead of
+  exactly one wallet total, and convert between their own wallets via a
+  self-service `/api/wallet/convert` endpoint.
+- Append-only `fx_rates` history and an admin endpoint/UI to set exchange rates.
+- Shared/family wallets via `wallet_members`: an owner can add another user as
+  an authorized spender on their wallet, with an optional monthly spending limit.
+- New mobile/web screens: Wallets (multi-currency + conversion) and Family wallet
+  (member management), plus a "spend from" picker on Send money.
+
+### Changed
+
+- `transferService.executeTransfer`'s wallet-resolution query now accepts an
+  explicit currency and an optional delegated wallet owner; every existing
+  caller (direct sends, payment-request acceptance, the schedule worker) keeps
+  its exact prior behavior by omitting the new parameters.
+- Currency conversion is posted as two independently-balanced same-currency
+  journals against a system FX suspense account, rather than a single
+  cross-currency journal, so the existing ledger balance check is left untouched.
+
+## [1.7.5] — Convoy
+
+### Added
+
+- Savings goals with manual contribute/withdraw and optional round-up on direct
+  transfers, earmarked against the existing single wallet balance.
+- Budget categories with live spend-per-category tracking against a monthly limit.
+- Payment calendar view over existing scheduled transfers.
+- Transaction category tagging, selectable when sending money or after the fact.
+- PDF statement export (`pdfkit`) alongside the existing CSV export.
+- User-facing security alerts surfaced from the existing admin-only fraud engine.
+- Real light/dark theme toggle (previously an unused `ThemeContext`), including a
+  themed `Switch` so toggles no longer render with browser-default colors.
+- Frosted-glass "d/i" monogram app icon and adaptive-icon assets.
+
 ## [1.7.0] — Compass
 
 ### Added

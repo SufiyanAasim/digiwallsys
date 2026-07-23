@@ -18,6 +18,8 @@ const NAV_ITEMS = [
   { route: 'QR Payment', label: 'QR payments', icon: 'qr-code-outline' },
   { route: 'Savings', label: 'Savings goals', icon: 'trending-up-outline' },
   { route: 'Budgets', label: 'Budget categories', icon: 'pie-chart-outline' },
+  { route: 'Wallets', label: 'Wallets', icon: 'wallet-outline' },
+  { route: 'Family', label: 'Family wallet', icon: 'people-outline' },
   { route: 'Transactions', label: 'Transactions', icon: 'time-outline' },
   { route: 'Notifications', label: 'Notifications', icon: 'notifications-outline' },
   { route: 'Security', label: 'Security', icon: 'shield-checkmark-outline' },
@@ -76,7 +78,7 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
           <Icon name="log-out-outline" size={18} color={colors.primary} />
           <Text style={styles.logoutLabel}>Log out</Text>
         </TouchableOpacity>
-        <Text style={styles.version}>v1.7.5 "Estuary"</Text>
+        <Text style={styles.version}>v1.8.0 "Estuary"</Text>
       </View>
     </View>
   );

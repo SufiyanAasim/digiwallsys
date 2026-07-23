@@ -10,6 +10,7 @@ import AdminScreen from './screens/AdminScreen';
 import AnalyticsScreen from './screens/AnalyticsScreen';
 import BudgetsScreen from './screens/BudgetsScreen';
 import CreditsScreen from './screens/CreditsScreen';
+import FamilyScreen from './screens/FamilyScreen';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import LogoutScreen from './screens/LogoutScreen';
@@ -21,6 +22,7 @@ import SavingsScreen from './screens/SavingsScreen';
 import SecurityScreen from './screens/SecurityScreen';
 import SendMoneyScreen from './screens/SendMoneyScreen';
 import TransactionHistoryScreen from './screens/TransactionHistoryScreen';
+import WalletsScreen from './screens/WalletsScreen';
 import { getCurrentUser } from './api';
 import { useAppTheme, ThemeProvider } from './ThemeContext';
 
@@ -98,6 +100,8 @@ function AppShell() {
               <Stack.Screen name="QR Payment" component={QrPaymentScreen} />
               <Stack.Screen name="Savings" component={SavingsScreen} />
               <Stack.Screen name="Budgets" component={BudgetsScreen} />
+              <Stack.Screen name="Wallets" component={WalletsScreen} />
+              <Stack.Screen name="Family" component={FamilyScreen} />
               <Stack.Screen name="Notifications" component={NotificationsScreen} />
               <Stack.Screen name="Security" component={SecurityScreen} />
               <Stack.Screen name="Admin" component={AdminScreen} />

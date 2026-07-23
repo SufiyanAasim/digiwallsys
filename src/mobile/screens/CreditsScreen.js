@@ -24,7 +24,7 @@ export default function CreditsScreen() {
           <View style={styles.titleWrap}><Wordmark size={28} /></View>
           <Text style={styles.tagline}>Digital Wallet & Financial Accounting System</Text>
           <View style={styles.badgeRow}>
-            <View style={styles.badge}><Text style={styles.badgeText}>v1.7.5</Text></View>
+            <View style={styles.badge}><Text style={styles.badgeText}>v1.8.0</Text></View>
             <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Estuary"</Text></View>
             <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Code-complete</Text></View>
           </View>

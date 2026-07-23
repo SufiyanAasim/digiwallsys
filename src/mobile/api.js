@@ -60,13 +60,17 @@ export async function logoutUser() {
 }
 
 export const getCurrentUser = () => api.get('/api/users/me');
-export const getBalance = () => api.get('/api/wallet/balance');
+export const getBalance = (currency) => api.get('/api/wallet/balance', { params: currency ? { currency } : undefined });
+export const getWallets = () => api.get('/api/wallet');
+export const addCurrencyWallet = (currency) => api.post('/api/wallet/currencies', { currency });
+export const convertCurrency = (fromCurrency, toCurrency, amount) => api.post('/api/wallet/convert', { fromCurrency, toCurrency, amount });
+export const getConversions = () => api.get('/api/wallet/conversions');
 export const getUsers = () => api.get('/api/users');
 export const getTransactions = (params = {}) => api.get('/api/transactions/history', { params });
 export const getReceipt = (reference) => api.get(`/api/transactions/receipt/${reference}`);
-export const sendMoney = (receiverId, amount, description, category) => api.post(
+export const sendMoney = (receiverId, amount, description, category, options = {}) => api.post(
   '/api/transactions/send',
-  { receiverId, amount, description, category: category || undefined },
+  { receiverId, amount, description, category: category || undefined, currency: options.currency, fromOwnerId: options.fromOwnerId },
   { headers: { 'Idempotency-Key': idempotencyKey('transfer') } }
 );
 export const updateTransactionCategory = (reference, category) => api.patch(
@@ -114,6 +118,14 @@ export const getAuditLogs = () => api.get('/api/admin/audit-logs');
 export const getFraudEvents = (status = 'all') => api.get('/api/admin/fraud-events', { params: { status } });
 export const reviewFraudEvent = (eventId, status) => api.post(`/api/admin/fraud-events/${eventId}/review`, { status });
 export const runReconciliation = () => api.post('/api/admin/reconciliation');
+export const getFxRates = () => api.get('/api/admin/fx-rates');
+export const setFxRate = (baseCurrency, quoteCurrency, rate) => api.post('/api/admin/fx-rates', { baseCurrency, quoteCurrency, rate });
+
+export const getFamilyMembers = (currency = 'USD') => api.get('/api/family/members', { params: { currency } });
+export const addFamilyMember = (email, spendingLimit, currency = 'USD') => api.post('/api/family/members', { email, spendingLimit, currency });
+export const updateFamilyMember = (userId, spendingLimit, currency = 'USD') => api.put(`/api/family/members/${userId}`, { spendingLimit, currency });
+export const removeFamilyMember = (userId, currency = 'USD') => api.delete(`/api/family/members/${userId}`, { params: { currency } });
+export const getSharedWallets = () => api.get('/api/family/shared-wallets');
 
 export function transactionExportUrl() {
   return `${API_BASE_URL}/api/transactions/export`;

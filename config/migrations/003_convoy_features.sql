@@ -1,4 +1,4 @@
--- v1.7.5 "Estuary": savings goals, budget categories, transaction tagging,
+-- v1.7.5 "Convoy": savings goals, budget categories, transaction tagging,
 -- and user-facing fraud alerts. Purely additive — no existing column, table,
 -- or constraint is altered, and the core ledger/transfer tables are untouched.
 

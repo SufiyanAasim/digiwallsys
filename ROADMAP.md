@@ -146,7 +146,7 @@ each release builds on the previous one without changing its exact tag or name.
 - [x] Break spending down by channel using existing payment-request data.
 - [x] Surface the existing spending-alert preference as a monthly spending lock.
 
-## v1.7.5 — Estuary
+## v1.7.5 — Convoy
 
 **Context:** Converging multiple requested financial features into one release.
 
@@ -156,15 +156,19 @@ each release builds on the previous one without changing its exact tag or name.
 - [x] Add transaction category tagging.
 - [x] Add a PDF statement export alongside the existing CSV export.
 - [x] Surface fraud-engine findings to the affected user, not just admins.
-- [ ] Deploy to production and run `config/migrations/003_estuary_features.sql`.
+- [ ] Deploy to production and run `config/migrations/003_convoy_features.sql`.
 
-## v1.8.0 — Convoy
+## v1.8.0 — Estuary
 
-**Context:** Multi-currency and shared/family wallets, split out from Estuary because
+**Context:** Multi-currency and shared/family wallets, split out from Convoy because
 both touch core ledger and authorization logic directly.
 
-- [ ] Add multi-currency wallets and FX conversion.
-- [ ] Add shared/family wallets with per-member spending limits.
+- [x] Add multi-currency wallets and self-service FX conversion.
+- [x] Add shared/family wallets with per-member spending limits.
+- [ ] Run `config/migrations/004_estuary_features.sql` against a real database and
+      exercise the PostgreSQL integration suite (`TEST_DATABASE_URL` is not
+      configured in the environment this was built in).
+- [ ] Deploy to production.
 
 No release may be marked complete until its tests, documentation, migration,
 security, and operational acceptance criteria pass.
