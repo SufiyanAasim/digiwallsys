@@ -1,6 +1,6 @@
 {
   "name": "digiwallsys",
-  "version": "1.7.0",
+  "version": "1.7.5",
   "private": true,
   "description": "A full-stack digital wallet demo with an Expo mobile client and Express API.",
   "license": "MIT",

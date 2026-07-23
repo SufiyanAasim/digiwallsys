@@ -64,10 +64,14 @@ export const getBalance = () => api.get('/api/wallet/balance');
 export const getUsers = () => api.get('/api/users');
 export const getTransactions = (params = {}) => api.get('/api/transactions/history', { params });
 export const getReceipt = (reference) => api.get(`/api/transactions/receipt/${reference}`);
-export const sendMoney = (receiverId, amount, description) => api.post(
+export const sendMoney = (receiverId, amount, description, category) => api.post(
   '/api/transactions/send',
-  { receiverId, amount, description },
+  { receiverId, amount, description, category: category || undefined },
   { headers: { 'Idempotency-Key': idempotencyKey('transfer') } }
+);
+export const updateTransactionCategory = (reference, category) => api.patch(
+  `/api/transactions/${reference}/category`,
+  { category: category || null }
 );
 
 export const createFundingIntent = (amount) => api.post(
@@ -114,3 +118,22 @@ export const runReconciliation = () => api.post('/api/admin/reconciliation');
 export function transactionExportUrl() {
   return `${API_BASE_URL}/api/transactions/export`;
 }
+export function transactionStatementUrl() {
+  return `${API_BASE_URL}/api/transactions/statement`;
+}
+
+export const getSavingsGoals = () => api.get('/api/savings-goals');
+export const createSavingsGoal = (name, targetAmount, roundUpEnabled) => api.post(
+  '/api/savings-goals',
+  { name, targetAmount, roundUpEnabled }
+);
+export const contributeToSavingsGoal = (goalId, amount) => api.post(`/api/savings-goals/${goalId}/contribute`, { amount });
+export const withdrawFromSavingsGoal = (goalId, amount) => api.post(`/api/savings-goals/${goalId}/withdraw`, { amount });
+export const archiveSavingsGoal = (goalId) => api.post(`/api/savings-goals/${goalId}/archive`);
+
+export const getBudgetCategories = () => api.get('/api/budget-categories');
+export const createBudgetCategory = (name, monthlyLimit) => api.post('/api/budget-categories', { name, monthlyLimit });
+export const updateBudgetCategory = (categoryId, monthlyLimit) => api.put(`/api/budget-categories/${categoryId}`, { monthlyLimit });
+export const deleteBudgetCategory = (categoryId) => api.delete(`/api/budget-categories/${categoryId}`);
+
+export const getSecurityAlerts = () => api.get('/api/security/alerts');

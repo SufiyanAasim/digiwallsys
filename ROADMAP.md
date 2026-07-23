@@ -121,5 +121,50 @@ each release builds on the previous one without changing its exact tag or name.
 - [ ] Validate all provider, ledger, fraud, reporting, and admin workflows end to end.
 - [ ] Complete production rollout, rollback, monitoring, and support runbooks.
 
+## v1.6.0 — Lantern
+
+**Context:** A visual identity of its own instead of a generic dark theme.
+
+- [x] Redesign the mobile client around a single "Ember Glass" design system.
+- [x] Add a reusable confirmation toast, starting with post-login sign-in.
+- [x] Replace the wallet-icon artwork with an original monogram and wordmark.
+- [x] Fix the React Navigation v7 header-theme crash causing a white screen.
+
+## v1.6.5 — Marina
+
+**Context:** A web layout that looks like a dashboard, not a phone screen in a tab.
+
+- [x] Add a persistent glass sidebar for the web build.
+- [x] Track the active route without remounting the navigator on layout change.
+- [x] Keep native mobile navigation and layout unaffected.
+
+## v1.7.0 — Compass
+
+**Context:** Make existing transaction data legible at a glance.
+
+- [x] Add an Analytics screen: money in/out, balance, and net change this month.
+- [x] Break spending down by channel using existing payment-request data.
+- [x] Surface the existing spending-alert preference as a monthly spending lock.
+
+## v1.7.5 — Estuary
+
+**Context:** Converging multiple requested financial features into one release.
+
+- [x] Add savings goals with manual contribute/withdraw and optional round-up.
+- [x] Add budget categories with live spend-per-category tracking.
+- [x] Add a payment calendar view over existing scheduled transfers.
+- [x] Add transaction category tagging.
+- [x] Add a PDF statement export alongside the existing CSV export.
+- [x] Surface fraud-engine findings to the affected user, not just admins.
+- [ ] Deploy to production and run `config/migrations/003_estuary_features.sql`.
+
+## v1.8.0 — Convoy
+
+**Context:** Multi-currency and shared/family wallets, split out from Estuary because
+both touch core ledger and authorization logic directly.
+
+- [ ] Add multi-currency wallets and FX conversion.
+- [ ] Add shared/family wallets with per-member spending limits.
+
 No release may be marked complete until its tests, documentation, migration,
 security, and operational acceptance criteria pass.

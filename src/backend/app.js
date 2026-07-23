@@ -4,10 +4,13 @@ const rateLimit = require('express-rate-limit');
 
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
+const budgetCategoryRoutes = require('./routes/budgetCategories');
 const fundingRoutes = require('./routes/funding');
 const notificationRoutes = require('./routes/notifications');
 const paymentRequestRoutes = require('./routes/paymentRequests');
+const savingsGoalRoutes = require('./routes/savingsGoals');
 const scheduleRoutes = require('./routes/schedules');
+const securityRoutes = require('./routes/security');
 const transactionRoutes = require('./routes/transaction');
 const userRoutes = require('./routes/users');
 const walletRoutes = require('./routes/wallet');
@@ -38,7 +41,7 @@ app.get('/', (_req, res) => {
 });
 
 app.get('/api/health', (_req, res) => {
-  res.json({ name: 'digiwallsys', status: 'ok', version: '1.5.5' });
+  res.json({ name: 'digiwallsys', status: 'ok', version: '1.7.5' });
 });
 
 app.get('/api/ready', async (_req, res) => {
@@ -58,6 +61,9 @@ app.use('/api/users', userRoutes);
 app.use('/api/payment-requests', paymentRequestRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/notifications', notificationRoutes);
+app.use('/api/savings-goals', savingsGoalRoutes);
+app.use('/api/budget-categories', budgetCategoryRoutes);
+app.use('/api/security', securityRoutes);
 app.use('/api/admin', adminRoutes);
 
 app.use((_req, res) => {

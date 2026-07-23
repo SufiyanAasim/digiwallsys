@@ -1,6 +1,6 @@
 {
   "name": "@digiwallsys/api",
-  "version": "1.5.5",
+  "version": "1.7.5",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -12,7 +12,12 @@
     "lint": "node scripts/check-syntax.js",
     "test": "node --test ../../tests/backend/*.test.js"
   },
-  "keywords": ["digiwallsys", "wallet", "express", "postgresql"],
+  "keywords": [
+    "digiwallsys",
+    "wallet",
+    "express",
+    "postgresql"
+  ],
   "author": "",
   "license": "MIT",
   "type": "commonjs",
@@ -24,6 +29,7 @@
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
+    "pdfkit": "^0.19.1",
     "pg": "^8.16.0"
   }
 }

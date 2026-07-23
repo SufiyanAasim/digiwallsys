@@ -1,6 +1,32 @@
+const PDFDocument = require('pdfkit');
 const pool = require('../db');
 const parseAmount = require('../utils/amount');
 const { executeTransfer } = require('../services/transferService');
+
+const VALID_CATEGORY = /^[\w\s&/'-]{1,40}$/;
+
+// Best-effort tagging/round-up after a transfer commits. Neither step touches the
+// wallet balance or ledger — a failure here must never surface as a failed transfer.
+async function afterDirectTransfer({ senderId, transactionId, amount, category }) {
+  try {
+    if (category) {
+      await pool.query('UPDATE transactions SET category = $1 WHERE transactionid = $2', [category, transactionId]);
+    }
+    const roundUp = Math.ceil(amount) - amount;
+    if (roundUp > 0) {
+      await pool.query(
+        `UPDATE savings_goals SET
+           current_amount = LEAST(current_amount + $1, target_amount),
+           status = CASE WHEN current_amount + $1 >= target_amount THEN 'completed' ELSE status END,
+           updated_at = CURRENT_TIMESTAMP
+         WHERE userid = $2 AND round_up_enabled AND status = 'active'`,
+        [roundUp, senderId]
+      );
+    }
+  } catch (error) {
+    console.error('Post-transfer tagging/round-up failed (non-fatal):', error.message);
+  }
+}
 
 function validateHistoryQuery(query) {
   if (query.direction && !['debit', 'credit'].includes(query.direction)) {
@@ -34,6 +60,7 @@ async function sendMoney(req, res, next) {
   const receiverId = Number(req.body.receiverId);
   const amount = parseAmount(req.body.amount);
   const description = String(req.body.description || '').trim().slice(0, 255);
+  const category = req.body.category ? String(req.body.category).trim().slice(0, 40) : null;
   if (!Number.isInteger(receiverId) || receiverId === senderId) {
     await req.idempotency.release();
     return res.status(400).json({ error: 'Choose a valid recipient' });
@@ -41,6 +68,10 @@ async function sendMoney(req, res, next) {
   if (amount === null) {
     await req.idempotency.release();
     return res.status(400).json({ error: 'Amount must be positive with at most two decimals' });
+  }
+  if (category && !VALID_CATEGORY.test(category)) {
+    await req.idempotency.release();
+    return res.status(400).json({ error: 'Category contains unsupported characters' });
   }
 
   const client = await pool.connect();
@@ -61,6 +92,13 @@ async function sendMoney(req, res, next) {
       return res.status(403).json(body);
     }
     await client.query('COMMIT');
+    await afterDirectTransfer({
+      senderId,
+      transactionId: result.transaction.transactionid,
+      amount,
+      category,
+    });
+    if (category) result.transaction.category = category;
     const body = { message: 'Transaction successful', transaction: result.transaction };
     await req.idempotency.complete(200, body);
     return res.json(body);
@@ -107,7 +145,7 @@ function historyQuery(userId, query, singleReference = null) {
       : Math.min(Math.max(Number(query.limit) || 25, 1), 100);
   values.push(limit);
   const sql = `
-    SELECT t.transactionid, t.reference, t.amount, t.description, t.timestamp,
+    SELECT t.transactionid, t.reference, t.amount, t.description, t.timestamp, t.category,
            mine.currency,
            CASE WHEN t.senderwalletid = mine.walletid THEN 'debit' ELSE 'credit' END AS direction,
            CASE WHEN t.senderwalletid = mine.walletid THEN receiver.name ELSE sender.name END AS counterparty,
@@ -155,6 +193,27 @@ async function getReceipt(req, res, next) {
   }
 }
 
+async function updateCategory(req, res, next) {
+  const category = req.body.category ? String(req.body.category).trim().slice(0, 40) : null;
+  if (category && !VALID_CATEGORY.test(category)) {
+    return res.status(400).json({ error: 'Category contains unsupported characters' });
+  }
+  try {
+    const result = await pool.query(
+      `UPDATE transactions t SET category = $1
+       FROM wallet w
+       WHERE t.reference = $2::uuid AND t.senderwalletid = w.walletid AND w.userid = $3
+       RETURNING t.reference, t.category`,
+      [category, req.params.reference, req.user.userId]
+    );
+    if (!result.rowCount) return res.status(404).json({ error: 'Transaction not found, or you are not the sender' });
+    return res.json(result.rows[0]);
+  } catch (error) {
+    if (error.code === '22P02') return res.status(400).json({ error: 'Invalid transaction reference' });
+    return next(error);
+  }
+}
+
 function csvCell(value) {
   let text = String(value ?? '');
   if (/^[=+\-@]/.test(text)) text = `'${text}`;
@@ -187,4 +246,85 @@ async function exportHistory(req, res, next) {
   }
 }
 
-module.exports = { sendMoney, getHistory, getReceipt, exportHistory, validateHistoryQuery };
+async function exportStatement(req, res, next) {
+  const validationError = validateHistoryQuery(req.query);
+  if (validationError) return res.status(400).json({ error: validationError });
+  try {
+    const { sql, values } = historyQuery(req.user.userId, { ...req.query, exportAll: true });
+    const result = await pool.query(sql, values);
+    const userResult = await pool.query('SELECT name FROM users WHERE userid = $1', [req.user.userId]);
+    const accountName = userResult.rows[0]?.name || 'digiwallsys account';
+
+    res.set('content-type', 'application/pdf');
+    res.set('content-disposition', 'attachment; filename="digiwallsys-statement.pdf"');
+
+    const doc = new PDFDocument({ size: 'A4', margin: 48 });
+    doc.pipe(res);
+
+    doc.fontSize(20).text('digiwallsys — Account statement', { align: 'left' });
+    doc.moveDown(0.3);
+    doc.fontSize(11).fillColor('#555').text(`Account holder: ${accountName}`);
+    doc.text(`Generated: ${new Date().toLocaleString()}`);
+    if (req.query.from || req.query.to) {
+      doc.text(`Period: ${req.query.from ? new Date(req.query.from).toLocaleDateString() : 'inception'} – ${req.query.to ? new Date(req.query.to).toLocaleDateString() : 'now'}`);
+    }
+    doc.moveDown();
+    doc.fillColor('#000');
+
+    const columns = [
+      { label: 'Date', width: 80 },
+      { label: 'Counterparty', width: 130 },
+      { label: 'Description', width: 150 },
+      { label: 'Direction', width: 60 },
+      { label: 'Amount', width: 75 },
+    ];
+    const startX = doc.x;
+    let y = doc.y;
+    doc.fontSize(9).font('Helvetica-Bold');
+    let x = startX;
+    for (const column of columns) { doc.text(column.label, x, y, { width: column.width }); x += column.width; }
+    y += 16;
+    doc.moveTo(startX, y - 3).lineTo(x, y - 3).strokeColor('#ccc').stroke();
+    doc.font('Helvetica');
+
+    let totalIn = 0;
+    let totalOut = 0;
+    for (const row of result.rows) {
+      if (y > 760) { doc.addPage(); y = doc.y; }
+      x = startX;
+      const cells = [
+        new Date(row.timestamp).toLocaleDateString(),
+        row.counterparty,
+        row.description || '—',
+        row.direction === 'debit' ? 'Sent' : 'Received',
+        `${row.direction === 'debit' ? '-' : '+'}${row.currency} ${Number(row.amount).toFixed(2)}`,
+      ];
+      if (row.direction === 'debit') totalOut += Number(row.amount); else totalIn += Number(row.amount);
+      for (let i = 0; i < columns.length; i += 1) {
+        doc.fontSize(9).text(cells[i], x, y, { width: columns[i].width });
+        x += columns[i].width;
+      }
+      y += 16;
+    }
+
+    doc.moveDown(2);
+    doc.fontSize(10).font('Helvetica-Bold');
+    doc.text(`Total received: +${totalIn.toFixed(2)}`);
+    doc.text(`Total sent: -${totalOut.toFixed(2)}`);
+    doc.text(`Net: ${(totalIn - totalOut).toFixed(2)}`);
+
+    doc.end();
+  } catch (error) {
+    return next(error);
+  }
+}
+
+module.exports = {
+  sendMoney,
+  getHistory,
+  getReceipt,
+  exportHistory,
+  exportStatement,
+  updateCategory,
+  validateHistoryQuery,
+};

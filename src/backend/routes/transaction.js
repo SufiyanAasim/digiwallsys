@@ -3,9 +3,11 @@ const authenticate = require('../middleware/authenticate');
 const idempotency = require('../middleware/idempotency');
 const {
   exportHistory,
+  exportStatement,
   getHistory,
   getReceipt,
   sendMoney,
+  updateCategory,
 } = require('../controllers/transactionController');
 
 const router = express.Router();
@@ -13,6 +15,8 @@ router.use(authenticate);
 router.post('/send', idempotency('transaction.send'), sendMoney);
 router.get('/history', getHistory);
 router.get('/export', exportHistory);
+router.get('/statement', exportStatement);
 router.get('/receipt/:reference', getReceipt);
+router.patch('/:reference/category', updateCategory);
 
 module.exports = router;
