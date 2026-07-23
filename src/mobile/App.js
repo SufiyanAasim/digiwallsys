@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import AccountRecoveryScreen from './screens/AccountRecoveryScreen';
 import AddMoneyScreen from './screens/AddMoneyScreen';
@@ -17,9 +18,13 @@ import SendMoneyScreen from './screens/SendMoneyScreen';
 import TransactionHistoryScreen from './screens/TransactionHistoryScreen';
 import { colors, navigationTheme } from './theme';
 
-const Stack = createNativeStackNavigator();
+const NativeStack = createNativeStackNavigator();
+const JSStack = createStackNavigator();
 
 export default function App() {
+  const isWeb = Platform.OS === 'web';
+  const Stack = isWeb ? JSStack : NativeStack;
+
   return (
     <NavigationContainer theme={navigationTheme}>
       <Stack.Navigator
@@ -29,8 +34,9 @@ export default function App() {
           headerTintColor: colors.text,
           headerTitleStyle: { fontWeight: '700', color: colors.text },
           headerShadowVisible: false,
-          contentStyle: { backgroundColor: colors.background },
-          ...(Platform.OS === 'web' ? { detachInactiveScreens: false, animation: 'none' } : {}),
+          ...(isWeb
+            ? { cardStyle: { backgroundColor: colors.background }, animationEnabled: false }
+            : { contentStyle: { backgroundColor: colors.background } }),
         }}
       >
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
