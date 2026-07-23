@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import TouchableOpacity from '../components/TouchableOpacity';
+
+import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { getReceipt, getTransactions, transactionExportUrl } from '../api';

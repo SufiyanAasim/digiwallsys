@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import TouchableOpacity from './TouchableOpacity';
+
+import {  StyleSheet, Text, View  } from 'react-native';
 import { colors } from '../theme';
 
 export default function AppFooter({ navigation }) {

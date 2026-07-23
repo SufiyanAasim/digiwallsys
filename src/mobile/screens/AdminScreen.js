@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import TouchableOpacity from '../components/TouchableOpacity';
+
+import {  Alert, ScrollView, StyleSheet, Text, View  } from 'react-native';
 import { getAdminOverview, getAuditLogs, getFraudEvents, reviewFraudEvent, runReconciliation } from '../api';
 import { colors, commonStyles } from '../theme';
 import { formatMoney, getErrorMessage, titleize } from '../utils';

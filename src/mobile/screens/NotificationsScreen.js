@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import TouchableOpacity from '../components/TouchableOpacity';
+
+import {  Alert, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, View  } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import {
