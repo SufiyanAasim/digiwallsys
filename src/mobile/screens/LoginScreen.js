@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {
@@ -19,7 +19,8 @@ import Logo from '../components/Logo';
 import Wordmark from '../components/Wordmark';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
-import { colors, commonStyles, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
 
 export default function LoginScreen({ navigation }) {
@@ -31,6 +32,8 @@ export default function LoginScreen({ navigation }) {
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [busy, setBusy] = useState(false);
   const [restoring, setRestoring] = useState(true);
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   useEffect(() => {
     let active = true;
@@ -177,30 +180,31 @@ export default function LoginScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.background },
-  flex: { flexGrow: 1 },
-  scroll: { flexGrow: 1, padding: 24, paddingTop: 48 },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 26 },
-  heading: { fontSize: 24, fontWeight: '800', color: colors.text, letterSpacing: -0.3 },
-  subheading: { color: colors.textMuted, marginTop: 3, fontSize: 12.5 },
-  panel: {
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
-    borderRadius: radii.xl,
-    padding: 22,
-  },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.14)', borderColor: 'rgba(255,107,107,0.35)', borderWidth: 1, borderRadius: radii.md, padding: 12, marginBottom: 16 },
-  errorText: { color: '#FFB0B0', fontSize: 14, textAlign: 'center', fontWeight: '600' },
-  input: { ...commonStyles.input, marginBottom: 14 },
-  passwordRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.glassBorder, borderWidth: 1, borderRadius: radii.md, paddingLeft: 16, marginBottom: 14 },
-  passwordInput: { flex: 1, paddingVertical: 15, color: colors.text },
-  iconButton: { minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
-  primary: { marginTop: 4 },
-  secondary: { minHeight: 48, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.pill, padding: 14, alignItems: 'center', marginTop: 10 },
-  secondaryText: { color: colors.text, fontWeight: '700' },
-  link: { alignItems: 'center', marginTop: 18 },
-  linkText: { color: colors.primary, fontWeight: '600' },
-  biometric: { flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center', marginTop: 18 },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    safeArea: { flex: 1, backgroundColor: colors.background },
+    flex: { flexGrow: 1 },
+    scroll: { flexGrow: 1, padding: 24, paddingTop: 48 },
+    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 26 },
+    subheading: { color: colors.textMuted, marginTop: 3, fontSize: 12.5 },
+    panel: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.glassBorder,
+      borderRadius: radii.xl,
+      padding: 22,
+    },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.14)', borderColor: 'rgba(255,107,107,0.35)', borderWidth: 1, borderRadius: radii.md, padding: 12, marginBottom: 16 },
+    errorText: { color: colors.danger, fontSize: 14, textAlign: 'center', fontWeight: '600' },
+    input: { ...commonStyles.input, marginBottom: 14 },
+    passwordRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.glassBorder, borderWidth: 1, borderRadius: radii.md, paddingLeft: 16, marginBottom: 14 },
+    passwordInput: { flex: 1, paddingVertical: 15, color: colors.text },
+    iconButton: { minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
+    primary: { marginTop: 4 },
+    secondary: { minHeight: 48, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.pill, padding: 14, alignItems: 'center', marginTop: 10 },
+    secondaryText: { color: colors.text, fontWeight: '700' },
+    link: { alignItems: 'center', marginTop: 18 },
+    linkText: { color: colors.primary, fontWeight: '600' },
+    biometric: { flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center', marginTop: 18 },
+  });
+}

@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { getSecurityAlerts } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { isBiometricEnabled, setBiometricEnabled } from '../session';
-import { colors, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 import { getErrorMessage } from '../utils';
 
 export default function SecurityScreen() {
@@ -13,6 +14,8 @@ export default function SecurityScreen() {
   const [busy, setBusy] = useState(true);
   const [alerts, setAlerts] = useState([]);
   const [alertsLoading, setAlertsLoading] = useState(true);
+  const { colors, isDark, toggleTheme } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
 
   useEffect(() => { isBiometricEnabled().then(setEnabled).catch((error) => Alert.alert('Security unavailable', getErrorMessage(error))).finally(() => setBusy(false)); }, []);
 
@@ -60,6 +63,14 @@ export default function SecurityScreen() {
           <Switch value={enabled} onValueChange={toggle} disabled={busy} trackColor={{ true: colors.accent }} />
         </View>
 
+        <View style={styles.row}>
+          <View style={styles.copy}>
+            <Text style={styles.heading}>Appearance</Text>
+            <Text style={styles.description}>Switch between the dark and light Ember Glass theme.</Text>
+          </View>
+          <Switch value={isDark} onValueChange={toggleTheme} trackColor={{ true: colors.accent }} />
+        </View>
+
         <Text style={styles.sectionTitle}>Account alerts</Text>
         {alertsLoading && <Text style={styles.meta}>Checking for account alerts…</Text>}
         {!alertsLoading && alerts.length === 0 && (
@@ -81,20 +92,22 @@ export default function SecurityScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 24, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text },
-  row: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.glassBorder, borderWidth: 1, borderRadius: radii.lg, padding: 16 },
-  copy: { flex: 1, paddingRight: 12 },
-  heading: { fontSize: 17, fontWeight: '700', color: colors.text },
-  description: { color: colors.textMuted, marginTop: 4, lineHeight: 20 },
-  sectionTitle: { fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 6 },
-  meta: { color: colors.textMuted, fontSize: 12.5 },
-  alertCard: { backgroundColor: 'rgba(255,194,75,0.08)', borderWidth: 1, borderColor: 'rgba(255,194,75,0.3)', borderRadius: radii.md, padding: 14, gap: 6 },
-  alertHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
-  alertMessage: { color: colors.text, fontWeight: '700', flex: 1, fontSize: 13 },
-  statusBadge: { backgroundColor: colors.surfaceMuted, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 3 },
-  statusBadgeBlocked: { backgroundColor: 'rgba(255,107,107,0.18)' },
-  statusBadgeText: { color: colors.text, fontSize: 10.5, fontWeight: '700', textTransform: 'capitalize' },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    content: { padding: 24, gap: 14 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text },
+    row: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.glassBorder, borderWidth: 1, borderRadius: radii.lg, padding: 16 },
+    copy: { flex: 1, paddingRight: 12 },
+    heading: { fontSize: 17, fontWeight: '700', color: colors.text },
+    description: { color: colors.textMuted, marginTop: 4, lineHeight: 20 },
+    sectionTitle: { fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 6 },
+    meta: { color: colors.textMuted, fontSize: 12.5 },
+    alertCard: { backgroundColor: 'rgba(255,194,75,0.08)', borderWidth: 1, borderColor: 'rgba(255,194,75,0.3)', borderRadius: radii.md, padding: 14, gap: 6 },
+    alertHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 },
+    alertMessage: { color: colors.text, fontWeight: '700', flex: 1, fontSize: 13 },
+    statusBadge: { backgroundColor: colors.surfaceMuted, borderRadius: radii.pill, paddingHorizontal: 9, paddingVertical: 3 },
+    statusBadgeBlocked: { backgroundColor: 'rgba(255,107,107,0.18)' },
+    statusBadgeText: { color: colors.text, fontSize: 10.5, fontWeight: '700', textTransform: 'capitalize' },
+  });
+}

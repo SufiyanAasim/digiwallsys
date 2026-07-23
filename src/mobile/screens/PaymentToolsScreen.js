@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
@@ -16,7 +16,7 @@ import {
 } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 import { formatMoney, getErrorMessage, parsePositiveAmount, titleize } from '../utils';
 
 export default function PaymentToolsScreen() {
@@ -34,6 +34,8 @@ export default function PaymentToolsScreen() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function load() {
     setLoading(true);
@@ -150,16 +152,18 @@ export default function PaymentToolsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
-  title: { fontSize: 24, fontWeight: '800', color: colors.text }, label: { fontWeight: '700', color: colors.text },
-  sectionLabel: { fontSize: 17, fontWeight: '800', color: colors.text, marginTop: 12 },
-  picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,
-  primary: commonStyles.primaryButton, secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 20, padding: 14, alignItems: 'center' },
-  disabled: { backgroundColor: colors.disabled }, white: commonStyles.primaryButtonText, secondaryText: { color: colors.text, fontWeight: '700' },
-  hint: { color: colors.textMuted, fontSize: 12, lineHeight: 17 }, heading: { fontSize: 19, fontWeight: '800', color: colors.text, marginTop: 16 },
-  card: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 14, padding: 14 }, cardTitle: { fontWeight: '700', color: colors.text },
-  meta: { color: colors.textMuted, marginTop: 4, lineHeight: 18 }, row: { flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 10 },
-  action: { color: colors.primary, fontWeight: '700' }, danger: { color: colors.danger, fontWeight: '700', marginTop: 8 }, rowDanger: { color: colors.danger, fontWeight: '700' },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
+    title: { fontSize: 24, fontWeight: '800', color: colors.text }, label: { fontWeight: '700', color: colors.text },
+    sectionLabel: { fontSize: 17, fontWeight: '800', color: colors.text, marginTop: 12 },
+    picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,
+    secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 20, padding: 14, alignItems: 'center' },
+    disabled: { backgroundColor: colors.disabled }, secondaryText: { color: colors.text, fontWeight: '700' },
+    hint: { color: colors.textMuted, fontSize: 12, lineHeight: 17 }, heading: { fontSize: 19, fontWeight: '800', color: colors.text, marginTop: 16 },
+    card: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 14, padding: 14 }, cardTitle: { fontWeight: '700', color: colors.text },
+    meta: { color: colors.textMuted, marginTop: 4, lineHeight: 18 }, row: { flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 10 },
+    action: { color: colors.primary, fontWeight: '700' }, danger: { color: colors.danger, fontWeight: '700', marginTop: 8 }, rowDanger: { color: colors.danger, fontWeight: '700' },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
+  });
+}

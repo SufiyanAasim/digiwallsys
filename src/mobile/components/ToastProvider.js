@@ -1,7 +1,8 @@
-import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { Animated, Platform, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
-import { colors, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 
 const ToastContext = createContext({ showToast: () => {} });
 
@@ -9,6 +10,8 @@ const ICONS = { success: 'checkmark', info: 'information-circle', error: 'alert-
 const DURATION = 3200;
 
 export function ToastProvider({ children }) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
   const [toast, setToast] = useState(null);
   const anim = useRef(new Animated.Value(0)).current;
   const hideTimer = useRef(null);
@@ -40,7 +43,7 @@ export function ToastProvider({ children }) {
             ]}
           >
             <View style={styles.iconWrap}>
-              <Icon name={ICONS[toast.type] || ICONS.success} size={14} color="#1A0A0E" />
+              <Icon name={ICONS[toast.type] || ICONS.success} size={14} color={colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E'} />
             </View>
             <View style={styles.textWrap}>
               <Text style={styles.title} numberOfLines={1}>{toast.title}</Text>
@@ -57,38 +60,40 @@ export function useToast() {
   return useContext(ToastContext);
 }
 
-const styles = StyleSheet.create({
-  root: { flex: 1 },
-  toast: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 56 : 28,
-    left: 16,
-    right: 16,
-    backgroundColor: 'rgba(20,14,17,0.92)',
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    borderRadius: radii.lg,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    shadowColor: colors.primary,
-    shadowOpacity: 0.4,
-    shadowRadius: 18,
-    shadowOffset: { width: 0, height: 8 },
-    elevation: 10,
-    zIndex: 999,
-  },
-  iconWrap: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: colors.accent,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textWrap: { flex: 1 },
-  title: { color: colors.text, fontWeight: '800', fontSize: 13.5 },
-  message: { color: colors.textMuted, fontSize: 11.5, marginTop: 1 },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    root: { flex: 1 },
+    toast: {
+      position: 'absolute',
+      top: Platform.OS === 'ios' ? 56 : 28,
+      left: 16,
+      right: 16,
+      backgroundColor: colors.mode === 'light' ? 'rgba(255,255,255,0.96)' : 'rgba(20,14,17,0.92)',
+      borderWidth: 1,
+      borderColor: colors.borderStrong,
+      borderRadius: radii.lg,
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 12,
+      shadowColor: colors.primary,
+      shadowOpacity: 0.4,
+      shadowRadius: 18,
+      shadowOffset: { width: 0, height: 8 },
+      elevation: 10,
+      zIndex: 999,
+    },
+    iconWrap: {
+      width: 26,
+      height: 26,
+      borderRadius: 13,
+      backgroundColor: colors.accent,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    textWrap: { flex: 1 },
+    title: { color: colors.text, fontWeight: '800', fontSize: 13.5 },
+    message: { color: colors.textMuted, fontSize: 11.5, marginTop: 1 },
+  });
+}

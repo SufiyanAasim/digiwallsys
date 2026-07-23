@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
-import { colors } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 
 export default function DonutChart({ segments, size = 168, strokeWidth = 20, centerValue, centerLabel }) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const total = segments.reduce((sum, segment) => sum + Math.max(segment.value, 0), 0);
@@ -49,6 +51,8 @@ export default function DonutChart({ segments, size = 168, strokeWidth = 20, cen
 }
 
 export function ChartLegend({ segments }) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
   return (
     <View style={styles.legend}>
       {segments.map((segment) => (
@@ -62,13 +66,15 @@ export function ChartLegend({ segments }) {
   );
 }
 
-const styles = StyleSheet.create({
-  centerWrap: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
-  centerValue: { color: colors.text, fontWeight: '800', fontSize: 18, letterSpacing: -0.3 },
-  centerLabel: { color: colors.textMuted, fontSize: 10.5, marginTop: 2, textAlign: 'center' },
-  legend: { gap: 8 },
-  legendRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  legendDot: { width: 9, height: 9, borderRadius: 5 },
-  legendLabel: { color: colors.textMuted, fontSize: 12.5, flex: 1 },
-  legendValue: { color: colors.text, fontWeight: '700', fontSize: 12.5 },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    centerWrap: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
+    centerValue: { color: colors.text, fontWeight: '800', fontSize: 18, letterSpacing: -0.3 },
+    centerLabel: { color: colors.textMuted, fontSize: 10.5, marginTop: 2, textAlign: 'center' },
+    legend: { gap: 8 },
+    legendRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    legendDot: { width: 9, height: 9, borderRadius: 5 },
+    legendLabel: { color: colors.textMuted, fontSize: 12.5, flex: 1 },
+    legendValue: { color: colors.text, fontWeight: '700', fontSize: 12.5 },
+  });
+}

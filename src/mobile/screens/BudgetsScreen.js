@@ -1,11 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
 import { createBudgetCategory, deleteBudgetCategory, getBudgetCategories } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function BudgetsScreen() {
@@ -15,6 +16,8 @@ export default function BudgetsScreen() {
   const [busy, setBusy] = useState('');
   const [name, setName] = useState('');
   const [limit, setLimit] = useState('');
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -99,26 +102,28 @@ export default function BudgetsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 20, paddingBottom: 40, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text },
-  subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
-  meta: { color: colors.textMuted },
-  formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18, gap: 12 },
-  cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
-  input: commonStyles.input,
-  card: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16, gap: 10 },
-  cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  categoryName: { color: colors.text, fontWeight: '800', fontSize: 15 },
-  overBadge: { backgroundColor: 'rgba(255,107,107,0.18)', borderColor: 'rgba(255,107,107,0.4)', borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 },
-  overBadgeText: { color: colors.danger, fontWeight: '700', fontSize: 11 },
-  goalMeta: { color: colors.textMuted, fontSize: 12.5 },
-  track: { height: 8, borderRadius: 4, backgroundColor: colors.surfaceMuted, overflow: 'hidden' },
-  fill: { height: '100%', backgroundColor: colors.accent, borderRadius: 4 },
-  fillOver: { backgroundColor: colors.danger },
-  deleteLink: { alignSelf: 'flex-start' },
-  deleteLinkText: { color: colors.textFaint, fontSize: 11.5, textDecorationLine: 'underline' },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
-  errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    content: { padding: 20, paddingBottom: 40, gap: 14 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text },
+    subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
+    meta: { color: colors.textMuted },
+    formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18, gap: 12 },
+    cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
+    input: commonStyles.input,
+    card: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16, gap: 10 },
+    cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    categoryName: { color: colors.text, fontWeight: '800', fontSize: 15 },
+    overBadge: { backgroundColor: 'rgba(255,107,107,0.18)', borderColor: 'rgba(255,107,107,0.4)', borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 },
+    overBadgeText: { color: colors.danger, fontWeight: '700', fontSize: 11 },
+    goalMeta: { color: colors.textMuted, fontSize: 12.5 },
+    track: { height: 8, borderRadius: 4, backgroundColor: colors.surfaceMuted, overflow: 'hidden' },
+    fill: { height: '100%', backgroundColor: colors.accent, borderRadius: 4 },
+    fillOver: { backgroundColor: colors.danger },
+    deleteLink: { alignSelf: 'flex-start' },
+    deleteLinkText: { color: colors.textFaint, fontSize: 11.5, textDecorationLine: 'underline' },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
+    errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
+  });
+}

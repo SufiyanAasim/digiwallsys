@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
@@ -7,7 +7,8 @@ import * as Sharing from 'expo-sharing';
 import { getBudgetCategories, getReceipt, getTransactions, transactionExportUrl, transactionStatementUrl, updateTransactionCategory } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { getAccessToken } from '../session';
-import { colors, commonStyles, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 export default function TransactionHistoryScreen() {
@@ -17,6 +18,8 @@ export default function TransactionHistoryScreen() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function load() {
     setLoading(true);
@@ -108,18 +111,20 @@ export default function TransactionHistoryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background }, header: { padding: 20, paddingBottom: 12 },
-  title: { fontSize: 25, fontWeight: '800', color: colors.text }, searchRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8 },
-  search: { ...commonStyles.input, flex: 1 }, searchButton: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.primary, borderRadius: 12, paddingHorizontal: 14 },
-  white: { color: '#1A0A0E', fontWeight: '700' },
-  exportRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8, marginTop: 4 },
-  export: { flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center' }, exportText: { color: colors.primary, fontWeight: '700', fontSize: 12.5 },
-  content: { padding: 20 }, card: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderColor: colors.border },
-  cardDetails: { flex: 1, marginRight: 12, gap: 4 },
-  cardTitle: { fontWeight: '700', color: colors.text }, meta: { color: colors.textMuted, fontSize: 12, marginTop: 4 }, debit: { color: colors.danger, fontWeight: '800' }, credit: { color: colors.success, fontWeight: '800' },
-  categoryTag: { alignSelf: 'flex-start', backgroundColor: colors.primarySoft, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 },
-  categoryTagText: { color: colors.primary, fontSize: 10.5, fontWeight: '700' },
-  hint: { color: colors.textFaint, fontSize: 11, marginTop: 8 },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' }, retryText: { color: colors.primary, fontWeight: '700' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background }, header: { padding: 20, paddingBottom: 12 },
+    title: { fontSize: 25, fontWeight: '800', color: colors.text }, searchRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8 },
+    search: { ...commonStyles.input, flex: 1 }, searchButton: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.primary, borderRadius: 12, paddingHorizontal: 14 },
+    white: { color: colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E', fontWeight: '700' },
+    exportRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8, marginTop: 4 },
+    export: { flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center' }, exportText: { color: colors.primary, fontWeight: '700', fontSize: 12.5 },
+    content: { padding: 20 }, card: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderColor: colors.border },
+    cardDetails: { flex: 1, marginRight: 12, gap: 4 },
+    cardTitle: { fontWeight: '700', color: colors.text }, meta: { color: colors.textMuted, fontSize: 12, marginTop: 4 }, debit: { color: colors.danger, fontWeight: '800' }, credit: { color: colors.success, fontWeight: '800' },
+    categoryTag: { alignSelf: 'flex-start', backgroundColor: colors.primarySoft, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 },
+    categoryTagText: { color: colors.primary, fontSize: 10.5, fontWeight: '700' },
+    hint: { color: colors.textFaint, fontSize: 11, marginTop: 8 },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' }, retryText: { color: colors.primary, fontWeight: '700' },
+  });
+}

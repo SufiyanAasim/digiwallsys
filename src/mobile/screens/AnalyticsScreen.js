@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
@@ -6,7 +6,8 @@ import { getBalance, getCurrentUser, getNotificationPreferences, getPaymentReque
 import AmbientBackground from '../components/AmbientBackground';
 import { ChartLegend } from '../components/DonutChart';
 import DonutChart from '../components/DonutChart';
-import { colors, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 const MAX_PAGES = 4;
@@ -33,6 +34,8 @@ export default function AnalyticsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [summary, setSummary] = useState(null);
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -184,29 +187,29 @@ export default function AnalyticsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 20, paddingBottom: 40, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text },
-  subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
-  meta: { color: colors.textMuted },
-  chartCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18 },
-  cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15, marginBottom: 14 },
-  chartRow: { flexDirection: 'row', alignItems: 'center', gap: 20, flexWrap: 'wrap' },
-  netCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16 },
-  netValue: { fontSize: 24, fontWeight: '800', marginTop: 8, letterSpacing: -0.3 },
-  lockCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18 },
-  lockHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  lockTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
-  overBadge: { backgroundColor: 'rgba(255,107,107,0.18)', borderColor: 'rgba(255,107,107,0.4)', borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 },
-  overBadgeText: { color: colors.danger, fontWeight: '700', fontSize: 11 },
-  lockMeta: { color: colors.textMuted, marginTop: 8, fontSize: 12.5 },
-  track: { height: 10, borderRadius: 5, backgroundColor: colors.surfaceMuted, marginTop: 12, overflow: 'hidden' },
-  fill: { height: '100%', backgroundColor: colors.accent, borderRadius: 5 },
-  fillOver: { backgroundColor: colors.danger },
-  lockLink: { marginTop: 12 },
-  lockLinkText: { color: colors.primary, fontWeight: '700', fontSize: 13 },
-  footnote: { color: colors.textFaint, fontSize: 11, lineHeight: 16, marginTop: 12 },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
-  errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    content: { padding: 20, paddingBottom: 40, gap: 14 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text },
+    subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
+    meta: { color: colors.textMuted },
+    chartCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18 },
+    cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15, marginBottom: 14 },
+    chartRow: { flexDirection: 'row', alignItems: 'center', gap: 20, flexWrap: 'wrap' },
+    lockCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18 },
+    lockHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    lockTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
+    overBadge: { backgroundColor: 'rgba(255,107,107,0.18)', borderColor: 'rgba(255,107,107,0.4)', borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 10, paddingVertical: 3 },
+    overBadgeText: { color: colors.danger, fontWeight: '700', fontSize: 11 },
+    lockMeta: { color: colors.textMuted, marginTop: 8, fontSize: 12.5 },
+    track: { height: 10, borderRadius: 5, backgroundColor: colors.surfaceMuted, marginTop: 12, overflow: 'hidden' },
+    fill: { height: '100%', backgroundColor: colors.accent, borderRadius: 5 },
+    fillOver: { backgroundColor: colors.danger },
+    lockLink: { marginTop: 12 },
+    lockLinkText: { color: colors.primary, fontWeight: '700', fontSize: 13 },
+    footnote: { color: colors.textFaint, fontSize: 11, lineHeight: 16, marginTop: 12 },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
+    errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
+  });
+}

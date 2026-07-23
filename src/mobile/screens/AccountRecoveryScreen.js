@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { forgotPassword, resendVerification, resetPassword, verifyEmail } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 import { getErrorMessage, isValidEmail } from '../utils';
 
 export default function AccountRecoveryScreen({ navigation }) {
@@ -13,6 +13,8 @@ export default function AccountRecoveryScreen({ navigation }) {
   const [token, setToken] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState('');
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function run(action) {
     if (['forgot', 'resend'].includes(action) && !isValidEmail(email)) {
@@ -62,13 +64,15 @@ export default function AccountRecoveryScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 24, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text },
-  help: { color: colors.textMuted, lineHeight: 20, marginBottom: 6 },
-  input: commonStyles.input,
-  secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: 22, padding: 14, alignItems: 'center' },
-  secondaryText: { color: colors.text, fontWeight: '600' },
-  link: { alignItems: 'center', padding: 12 }, linkText: { color: colors.primary, fontWeight: '600' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    content: { padding: 24, gap: 14 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text },
+    help: { color: colors.textMuted, lineHeight: 20, marginBottom: 6 },
+    input: commonStyles.input,
+    secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: 22, padding: 14, alignItems: 'center' },
+    secondaryText: { color: colors.text, fontWeight: '600' },
+    link: { alignItems: 'center', padding: 12 }, linkText: { color: colors.primary, fontWeight: '600' },
+  });
+}

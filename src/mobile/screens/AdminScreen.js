@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, View  } from 'react-native';
 import { getAdminOverview, getAuditLogs, getFraudEvents, reviewFraudEvent, runReconciliation } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 import { formatMoney, getErrorMessage, titleize } from '../utils';
 
 export default function AdminScreen() {
@@ -15,6 +15,8 @@ export default function AdminScreen() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
 
   async function load() {
     setLoading(true);
@@ -64,10 +66,12 @@ export default function AdminScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
-  title: { fontSize: 24, fontWeight: '800', color: colors.text }, grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, metric: { flexBasis: '47%', flexGrow: 1, backgroundColor: colors.surfaceMuted, borderRadius: 12, padding: 12 },
-  metricValue: { fontSize: 18, fontWeight: '800', color: colors.text }, meta: { color: colors.textMuted, fontSize: 12, marginTop: 4 }, primary: commonStyles.primaryButton, disabled: { backgroundColor: colors.disabled },
-  white: commonStyles.primaryButtonText, heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 14 }, card: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, cardTitle: { fontWeight: '700', color: colors.text }, reviewRow: { flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 8 }, review: { color: colors.primary, fontWeight: '700' },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
+    title: { fontSize: 24, fontWeight: '800', color: colors.text }, grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, metric: { flexBasis: '47%', flexGrow: 1, backgroundColor: colors.surfaceMuted, borderRadius: 12, padding: 12 },
+    metricValue: { fontSize: 18, fontWeight: '800', color: colors.text }, meta: { color: colors.textMuted, fontSize: 12, marginTop: 4 },
+    heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 14 }, card: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, cardTitle: { fontWeight: '700', color: colors.text }, reviewRow: { flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 8 }, review: { color: colors.primary, fontWeight: '700' },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
+  });
+}

@@ -1,12 +1,13 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 
 // Monogram mark: a lowercase "i" sits behind, a lowercase "d" overlaps it in front —
 // short for digiwallsys. Frosted/translucent glyphs plus a top sheen sell the same
-// glass material as the rest of the Ember Glass design system.
+// glass material as the rest of the Ember Glass design system, in either theme.
 export default function Logo({ size = 40, radius }) {
+  const { colors } = useAppTheme();
   const cornerRadius = radius ?? size * 0.28;
   const glyphSize = size * 0.62;
 

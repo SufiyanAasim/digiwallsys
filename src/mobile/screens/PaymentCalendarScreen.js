@@ -4,7 +4,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
 import { getSchedules } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
-import { colors, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 import { formatMoney, getErrorMessage, titleize } from '../utils';
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -26,6 +27,8 @@ export default function PaymentCalendarScreen({ navigation }) {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -103,24 +106,26 @@ export default function PaymentCalendarScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 20, paddingBottom: 40, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text },
-  subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
-  meta: { color: colors.textMuted },
-  calendarCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16 },
-  weekRow: { flexDirection: 'row' },
-  weekLabel: { flex: 1, textAlign: 'center', color: colors.textFaint, fontSize: 11, fontWeight: '700' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 },
-  cell: { width: `${100 / 7}%`, aspectRatio: 1, alignItems: 'center', justifyContent: 'center', gap: 4 },
-  cellLabel: { color: colors.textMuted, fontSize: 12.5 },
-  cellLabelToday: { color: colors.text, fontWeight: '800' },
-  dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.primary },
-  heading: { fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 6 },
-  scheduleCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.md, padding: 14 },
-  scheduleDetails: { gap: 3 },
-  scheduleTitle: { color: colors.text, fontWeight: '700' },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
-  errorText: { color: colors.danger },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    content: { padding: 20, paddingBottom: 40, gap: 14 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text },
+    subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
+    meta: { color: colors.textMuted },
+    calendarCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16 },
+    weekRow: { flexDirection: 'row' },
+    weekLabel: { flex: 1, textAlign: 'center', color: colors.textFaint, fontSize: 11, fontWeight: '700' },
+    grid: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 8 },
+    cell: { width: `${100 / 7}%`, aspectRatio: 1, alignItems: 'center', justifyContent: 'center', gap: 4 },
+    cellLabel: { color: colors.textMuted, fontSize: 12.5 },
+    cellLabelToday: { color: colors.text, fontWeight: '800' },
+    dot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.primary },
+    heading: { fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 6 },
+    scheduleCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.md, padding: 14 },
+    scheduleDetails: { gap: 3 },
+    scheduleTitle: { color: colors.text, fontWeight: '700' },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
+    errorText: { color: colors.danger },
+  });
+}

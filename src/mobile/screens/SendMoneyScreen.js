@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
@@ -6,7 +6,7 @@ import { Picker } from '@react-native-picker/picker';
 import { getBudgetCategories, getUsers, sendMoney } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 import { getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function SendMoneyScreen({ navigation, route }) {
@@ -18,6 +18,8 @@ export default function SendMoneyScreen({ navigation, route }) {
   const [category, setCategory] = useState('');
   const [loadingUsers, setLoadingUsers] = useState(true);
   const [busy, setBusy] = useState(false);
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   useEffect(() => {
     getUsers().then((response) => setUsers(response.data)).catch((error) => {
@@ -72,9 +74,11 @@ export default function SendMoneyScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background }, content: { padding: 24, gap: 12 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text, marginBottom: 8 }, label: { fontWeight: '700', color: colors.text },
-  picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,
-  back: { alignItems: 'center', padding: 12 }, backText: { color: colors.textMuted, fontWeight: '600' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 24, gap: 12 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text, marginBottom: 8 }, label: { fontWeight: '700', color: colors.text },
+    picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,
+    back: { alignItems: 'center', padding: 12 }, backText: { color: colors.textMuted, fontWeight: '600' },
+  });
+}

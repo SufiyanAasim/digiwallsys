@@ -1,11 +1,12 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
 import { archiveSavingsGoal, contributeToSavingsGoal, createSavingsGoal, getSavingsGoals, withdrawFromSavingsGoal } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function SavingsScreen() {
@@ -17,6 +18,8 @@ export default function SavingsScreen() {
   const [target, setTarget] = useState('');
   const [roundUp, setRoundUp] = useState(false);
   const [amounts, setAmounts] = useState({});
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -131,33 +134,35 @@ export default function SavingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 20, paddingBottom: 40, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text },
-  subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
-  meta: { color: colors.textMuted },
-  formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18, gap: 12 },
-  cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
-  input: commonStyles.input,
-  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
-  switchLabel: { color: colors.textMuted, flex: 1, fontSize: 12.5 },
-  goalCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16, gap: 10 },
-  goalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  goalName: { color: colors.text, fontWeight: '800', fontSize: 15 },
-  roundUpBadge: { backgroundColor: colors.accentSoft, borderColor: colors.accent, borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 },
-  roundUpBadgeText: { color: colors.accent, fontSize: 10.5, fontWeight: '700' },
-  goalMeta: { color: colors.textMuted, fontSize: 12.5 },
-  track: { height: 8, borderRadius: 4, backgroundColor: colors.surfaceMuted, overflow: 'hidden' },
-  fill: { height: '100%', backgroundColor: colors.success, borderRadius: 4 },
-  goalActions: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  goalInput: { flex: 1, minHeight: 42, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm, paddingHorizontal: 12, color: colors.text },
-  smallButton: { minHeight: 42, justifyContent: 'center', paddingHorizontal: 14, backgroundColor: colors.primary, borderRadius: radii.sm },
-  smallButtonText: { color: '#1A0A0E', fontWeight: '800', fontSize: 12.5 },
-  smallButtonMuted: { minHeight: 42, justifyContent: 'center', paddingHorizontal: 14, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm },
-  smallButtonMutedText: { color: colors.text, fontWeight: '700', fontSize: 12.5 },
-  archiveLink: { alignSelf: 'flex-start' },
-  archiveLinkText: { color: colors.textFaint, fontSize: 11.5, textDecorationLine: 'underline' },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
-  errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    content: { padding: 20, paddingBottom: 40, gap: 14 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text },
+    subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
+    meta: { color: colors.textMuted },
+    formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18, gap: 12 },
+    cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
+    input: commonStyles.input,
+    switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+    switchLabel: { color: colors.textMuted, flex: 1, fontSize: 12.5 },
+    goalCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16, gap: 10 },
+    goalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    goalName: { color: colors.text, fontWeight: '800', fontSize: 15 },
+    roundUpBadge: { backgroundColor: colors.accentSoft, borderColor: colors.accent, borderWidth: 1, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 },
+    roundUpBadgeText: { color: colors.accent, fontSize: 10.5, fontWeight: '700' },
+    goalMeta: { color: colors.textMuted, fontSize: 12.5 },
+    track: { height: 8, borderRadius: 4, backgroundColor: colors.surfaceMuted, overflow: 'hidden' },
+    fill: { height: '100%', backgroundColor: colors.success, borderRadius: 4 },
+    goalActions: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+    goalInput: { flex: 1, minHeight: 42, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm, paddingHorizontal: 12, color: colors.text },
+    smallButton: { minHeight: 42, justifyContent: 'center', paddingHorizontal: 14, backgroundColor: colors.primary, borderRadius: radii.sm },
+    smallButtonText: { color: colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E', fontWeight: '800', fontSize: 12.5 },
+    smallButtonMuted: { minHeight: 42, justifyContent: 'center', paddingHorizontal: 14, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm },
+    smallButtonMutedText: { color: colors.text, fontWeight: '700', fontSize: 12.5 },
+    archiveLink: { alignSelf: 'flex-start' },
+    archiveLinkText: { color: colors.textFaint, fontSize: 11.5, textDecorationLine: 'underline' },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 },
+    errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
+  });
+}

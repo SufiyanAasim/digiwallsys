@@ -1,39 +1,49 @@
-import React, { createContext, useContext, useState } from 'react';
-import { colors as darkColors } from './theme';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { buildCommonStyles, buildGlow, buildNavigationTheme, darkColors, lightColors } from './theme';
 
-export const lightColors = {
-  background: '#FFF8F3',
-  surface: '#FFFFFF',
-  surfaceMuted: '#FBEDE5',
-  primary: '#C6533C',
-  primaryDark: '#713B49',
-  accent: '#E9A23B',
-  text: '#2E2027',
-  textMuted: '#76656C',
-  border: '#EADCD6',
-  success: '#287A55',
-  danger: '#B53E45',
-  warning: '#9A641D',
-  disabled: '#C8BBB7',
-};
+const STORAGE_KEY = 'digiwallsys.theme';
 
 const ThemeContext = createContext({
   isDark: true,
   toggleTheme: () => {},
   colors: darkColors,
+  commonStyles: buildCommonStyles(darkColors),
+  navigationTheme: buildNavigationTheme(darkColors),
+  glow: buildGlow(darkColors),
 });
 
 export function ThemeProvider({ children }) {
   const [isDark, setIsDark] = useState(true);
 
-  const toggleTheme = () => setIsDark((prev) => !prev);
-  const currentColors = isDark ? darkColors : lightColors;
+  useEffect(() => {
+    AsyncStorage.getItem(STORAGE_KEY).then((stored) => {
+      if (stored === 'light') setIsDark(false);
+      if (stored === 'dark') setIsDark(true);
+    }).catch(() => {});
+  }, []);
 
-  return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme, colors: currentColors }}>
-      {children}
-    </ThemeContext.Provider>
-  );
+  const toggleTheme = () => {
+    setIsDark((previous) => {
+      const next = !previous;
+      AsyncStorage.setItem(STORAGE_KEY, next ? 'dark' : 'light').catch(() => {});
+      return next;
+    });
+  };
+
+  const value = useMemo(() => {
+    const colors = isDark ? darkColors : lightColors;
+    return {
+      isDark,
+      toggleTheme,
+      colors,
+      commonStyles: buildCommonStyles(colors),
+      navigationTheme: buildNavigationTheme(colors),
+      glow: buildGlow(colors),
+    };
+  }, [isDark]);
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useAppTheme() {

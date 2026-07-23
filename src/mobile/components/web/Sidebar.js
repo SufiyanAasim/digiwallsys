@@ -1,10 +1,11 @@
-import React from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import Logo from '../Logo';
 import TouchableOpacity from '../TouchableOpacity';
 import Wordmark from '../Wordmark';
-import { colors, radii } from '../../theme';
+import { useAppTheme } from '../../ThemeContext';
+import { radii } from '../../theme';
 
 const NAV_ITEMS = [
   { route: 'Home', label: 'Home', icon: 'home-outline' },
@@ -22,6 +23,8 @@ const NAV_ITEMS = [
 ];
 
 export default function Sidebar({ activeRoute, user, onNavigate }) {
+  const { colors, isDark, toggleTheme } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
   const initials = (user?.name || 'DW').trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase();
   const items = user?.role === 'admin' ? [...NAV_ITEMS, { route: 'Admin', label: 'Admin operations', icon: 'settings-outline' }] : NAV_ITEMS;
 
@@ -59,6 +62,11 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
       </ScrollView>
 
       <View style={styles.footer}>
+        <View style={styles.themeRow}>
+          <Icon name={isDark ? 'moon-outline' : 'sunny-outline'} size={16} color={colors.textMuted} />
+          <Text style={styles.themeLabel}>{isDark ? 'Dark' : 'Light'} theme</Text>
+          <Switch value={isDark} onValueChange={toggleTheme} trackColor={{ true: colors.accent }} />
+        </View>
         <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('Credits')} accessibilityRole="button" accessibilityLabel="Credits">
           <Icon name="information-circle-outline" size={18} color={colors.textMuted} />
           <Text style={styles.navLabel}>Credits</Text>
@@ -67,42 +75,45 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
           <Icon name="log-out-outline" size={18} color={colors.primary} />
           <Text style={styles.logoutLabel}>Log out</Text>
         </TouchableOpacity>
-        <Text style={styles.version}>v1.5.5 "Armada"</Text>
+        <Text style={styles.version}>v1.7.5 "Estuary"</Text>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  sidebar: {
-    width: 248,
-    minWidth: 248,
-    height: '100%',
-    backgroundColor: colors.backgroundElevated,
-    borderRightWidth: 1,
-    borderRightColor: colors.glassBorder,
-    paddingVertical: 22,
-    paddingHorizontal: 16,
-  },
-  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 6, marginBottom: 22 },
-  brandText: { color: colors.text, fontWeight: '800', fontSize: 16, letterSpacing: -0.2 },
-  profileCard: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder,
-    borderRadius: radii.md, padding: 12, marginBottom: 18,
-  },
-  avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
-  avatarText: { color: colors.primary, fontWeight: '800', fontSize: 12 },
-  profileText: { flex: 1 },
-  profileName: { color: colors.text, fontWeight: '700', fontSize: 13 },
-  profileRole: { color: colors.textMuted, fontSize: 11, marginTop: 1 },
-  nav: { flex: 1 },
-  navItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 10, borderRadius: radii.sm, marginBottom: 2 },
-  navItemActive: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border },
-  navLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 13.5 },
-  navLabelActive: { color: colors.text },
-  footer: { borderTopWidth: 1, borderTopColor: colors.glassBorder, paddingTop: 12, marginTop: 8 },
-  logoutItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 10, borderRadius: radii.sm },
-  logoutLabel: { color: colors.primary, fontWeight: '700', fontSize: 13.5 },
-  version: { color: colors.textFaint, fontSize: 10.5, fontFamily: 'monospace', marginTop: 8, paddingHorizontal: 10 },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    sidebar: {
+      width: 248,
+      minWidth: 248,
+      height: '100%',
+      backgroundColor: colors.backgroundElevated,
+      borderRightWidth: 1,
+      borderRightColor: colors.glassBorder,
+      paddingVertical: 22,
+      paddingHorizontal: 16,
+    },
+    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 6, marginBottom: 22 },
+    profileCard: {
+      flexDirection: 'row', alignItems: 'center', gap: 10,
+      backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder,
+      borderRadius: radii.md, padding: 12, marginBottom: 18,
+    },
+    avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
+    avatarText: { color: colors.primary, fontWeight: '800', fontSize: 12 },
+    profileText: { flex: 1 },
+    profileName: { color: colors.text, fontWeight: '700', fontSize: 13 },
+    profileRole: { color: colors.textMuted, fontSize: 11, marginTop: 1 },
+    nav: { flex: 1 },
+    navItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 10, borderRadius: radii.sm, marginBottom: 2 },
+    navItemActive: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border },
+    navLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 13.5 },
+    navLabelActive: { color: colors.text },
+    footer: { borderTopWidth: 1, borderTopColor: colors.glassBorder, paddingTop: 12, marginTop: 8 },
+    themeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 10, paddingVertical: 8, marginBottom: 4 },
+    themeLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 12.5, flex: 1 },
+    logoutItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 10, borderRadius: radii.sm },
+    logoutLabel: { color: colors.primary, fontWeight: '700', fontSize: 13.5 },
+    version: { color: colors.textFaint, fontSize: 10.5, fontFamily: 'monospace', marginTop: 8, paddingHorizontal: 10 },
+  });
+}

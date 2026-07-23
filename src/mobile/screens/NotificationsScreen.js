@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, View  } from 'react-native';
@@ -13,7 +13,7 @@ import {
 } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 import { getErrorMessage, parsePositiveAmount } from '../utils';
 
 const preferenceLabels = { moneyMovement: 'Money movement', securityEvents: 'Security events', pushEnabled: 'Push notifications' };
@@ -24,6 +24,8 @@ export default function NotificationsScreen() {
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function load() {
     setLoading(true);
@@ -100,12 +102,14 @@ export default function NotificationsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
-  title: { fontSize: 25, fontWeight: '800', color: colors.text }, row: { minHeight: 52, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, rowLabel: { color: colors.text },
-  input: commonStyles.input, buttonRow: { gap: 8 }, primary: commonStyles.primaryButton,
-  secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, padding: 13, borderRadius: 20, alignItems: 'center' }, disabled: { backgroundColor: colors.disabled }, white: commonStyles.primaryButtonText, secondaryText: { color: colors.text, fontWeight: '700' },
-  heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 14 }, card: { borderRadius: 14, padding: 14, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 }, unread: { backgroundColor: colors.surfaceMuted, borderLeftColor: colors.primary, borderLeftWidth: 4 }, cardTitle: { fontWeight: '800', color: colors.text },
-  meta: { color: colors.textMuted, marginTop: 4 }, date: { color: colors.textMuted, fontSize: 11, marginTop: 6 },
-  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
+    title: { fontSize: 25, fontWeight: '800', color: colors.text }, row: { minHeight: 52, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, rowLabel: { color: colors.text },
+    input: commonStyles.input, buttonRow: { gap: 8 },
+    secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, padding: 13, borderRadius: 20, alignItems: 'center' }, secondaryText: { color: colors.text, fontWeight: '700' },
+    heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 14 }, card: { borderRadius: 14, padding: 14, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 }, unread: { backgroundColor: colors.surfaceMuted, borderLeftColor: colors.primary, borderLeftWidth: 4 }, cardTitle: { fontWeight: '800', color: colors.text },
+    meta: { color: colors.textMuted, marginTop: 4 }, date: { color: colors.textMuted, fontSize: 11, marginTop: 6 },
+    errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
+  });
+}

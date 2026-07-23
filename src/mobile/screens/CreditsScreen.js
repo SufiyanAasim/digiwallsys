@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Linking, ScrollView, StyleSheet, Text, View  } from 'react-native';
@@ -6,9 +6,11 @@ import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import Logo from '../components/Logo';
 import Wordmark from '../components/Wordmark';
-import { colors } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 
 export default function CreditsScreen() {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
   const openGitHub = () => {
     Linking.openURL('https://github.com/SufiyanAasim/digiwallsys');
   };
@@ -22,9 +24,9 @@ export default function CreditsScreen() {
           <View style={styles.titleWrap}><Wordmark size={28} /></View>
           <Text style={styles.tagline}>Digital Wallet & Financial Accounting System</Text>
           <View style={styles.badgeRow}>
-            <View style={styles.badge}><Text style={styles.badgeText}>v1.5.5</Text></View>
-            <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Armada"</Text></View>
-            <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Production Release</Text></View>
+            <View style={styles.badge}><Text style={styles.badgeText}>v1.7.5</Text></View>
+            <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Estuary"</Text></View>
+            <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Code-complete</Text></View>
           </View>
         </View>
 
@@ -86,28 +88,30 @@ export default function CreditsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background },
-  container: { padding: 20, paddingBottom: 40 },
-  headerCard: { backgroundColor: colors.surface, borderRadius: 20, padding: 24, alignItems: 'center', borderColor: colors.border, borderWidth: 1, marginBottom: 20 },
-  titleWrap: { marginTop: 14, marginBottom: 4 },
-  tagline: { fontSize: 14, color: colors.textMuted, textAlign: 'center', marginBottom: 16 },
-  badgeRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
-  badge: { backgroundColor: colors.surfaceMuted, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
-  badgeAccent: { backgroundColor: colors.accentSoft, borderColor: colors.accent, borderWidth: 1 },
-  badgeSuccess: { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderColor: colors.success, borderWidth: 1 },
-  badgeText: { fontSize: 13, fontWeight: '700', color: colors.text },
-  section: { marginBottom: 20 },
-  sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.text, marginBottom: 10 },
-  card: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderColor: colors.border, borderWidth: 1 },
-  nameText: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 },
-  roleText: { fontSize: 13, color: colors.textMuted, marginBottom: 14 },
-  githubButton: { flexDirection: 'row', gap: 8, alignItems: 'center', backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24, alignSelf: 'flex-start' },
-  githubButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
-  techRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomColor: colors.border, borderBottomWidth: 0.5 },
-  techKey: { fontSize: 13, fontWeight: '600', color: colors.textMuted },
-  techVal: { fontSize: 13, fontWeight: '600', color: colors.text, textAlign: 'right', flex: 1, marginLeft: 10 },
-  bullet: { fontSize: 14, color: colors.text, paddingVertical: 4 },
-  footer: { alignItems: 'center', marginTop: 10 },
-  footerText: { fontSize: 12, color: colors.textMuted },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.background },
+    container: { padding: 20, paddingBottom: 40 },
+    headerCard: { backgroundColor: colors.surface, borderRadius: 20, padding: 24, alignItems: 'center', borderColor: colors.border, borderWidth: 1, marginBottom: 20 },
+    titleWrap: { marginTop: 14, marginBottom: 4 },
+    tagline: { fontSize: 14, color: colors.textMuted, textAlign: 'center', marginBottom: 16 },
+    badgeRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
+    badge: { backgroundColor: colors.surfaceMuted, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
+    badgeAccent: { backgroundColor: colors.accentSoft, borderColor: colors.accent, borderWidth: 1 },
+    badgeSuccess: { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderColor: colors.success, borderWidth: 1 },
+    badgeText: { fontSize: 13, fontWeight: '700', color: colors.text },
+    section: { marginBottom: 20 },
+    sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.text, marginBottom: 10 },
+    card: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderColor: colors.border, borderWidth: 1 },
+    nameText: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 },
+    roleText: { fontSize: 13, color: colors.textMuted, marginBottom: 14 },
+    githubButton: { flexDirection: 'row', gap: 8, alignItems: 'center', backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24, alignSelf: 'flex-start' },
+    githubButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
+    techRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomColor: colors.border, borderBottomWidth: 0.5 },
+    techKey: { fontSize: 13, fontWeight: '600', color: colors.textMuted },
+    techVal: { fontSize: 13, fontWeight: '600', color: colors.text, textAlign: 'right', flex: 1, marginLeft: 10 },
+    bullet: { fontSize: 14, color: colors.text, paddingVertical: 4 },
+    footer: { alignItems: 'center', marginTop: 10 },
+    footerText: { fontSize: 12, color: colors.textMuted },
+  });
+}

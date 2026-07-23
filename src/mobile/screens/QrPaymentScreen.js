@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
@@ -7,7 +7,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { acceptPaymentRequest, createPaymentRequest, getPaymentRequest } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
-import { colors, commonStyles } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function QrPaymentScreen({ navigation }) {
@@ -18,6 +18,8 @@ export default function QrPaymentScreen({ navigation }) {
   const [payload, setPayload] = useState('');
   const [scanned, setScanned] = useState(false);
   const [busy, setBusy] = useState(false);
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function generate() {
     const parsedAmount = parsePositiveAmount(amount);
@@ -77,10 +79,12 @@ export default function QrPaymentScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background }, center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 24, backgroundColor: colors.background }, content: { flex: 1, padding: 24, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.text }, input: commonStyles.input,
-  primary: commonStyles.primaryButton, disabled: { backgroundColor: colors.disabled }, secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 22, padding: 15, alignItems: 'center' },
-  white: commonStyles.primaryButtonText, secondaryText: { color: colors.text, fontWeight: '700' }, qr: { alignItems: 'center', gap: 12, marginVertical: 20 }, meta: { color: colors.textMuted }, permissionText: { color: colors.text, textAlign: 'center', lineHeight: 21 }, linkButton: { minHeight: 48, justifyContent: 'center' },
-  camera: { flex: 1 }, back: { alignItems: 'center', padding: 18 }, backText: { color: colors.textMuted, fontWeight: '600' },
-});
+function buildStyles(colors, commonStyles) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background }, center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 24, backgroundColor: colors.background }, content: { flex: 1, padding: 24, gap: 14 },
+    title: { fontSize: 26, fontWeight: '800', color: colors.text }, input: commonStyles.input,
+    secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 22, padding: 15, alignItems: 'center' },
+    secondaryText: { color: colors.text, fontWeight: '700' }, qr: { alignItems: 'center', gap: 12, marginVertical: 20 }, meta: { color: colors.textMuted }, permissionText: { color: colors.text, textAlign: 'center', lineHeight: 21 }, linkButton: { minHeight: 48, justifyContent: 'center' },
+    camera: { flex: 1 }, back: { alignItems: 'center', padding: 18 }, backText: { color: colors.textMuted, fontWeight: '600' },
+  });
+}

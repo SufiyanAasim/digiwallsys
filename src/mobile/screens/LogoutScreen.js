@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, StyleSheet, Text, View  } from 'react-native';
 import { logoutUser } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { clearSession } from '../session';
-import { colors, radii } from '../theme';
+import { useAppTheme } from '../ThemeContext';
+import { radii } from '../theme';
 
 export default function LogoutScreen({ navigation }) {
   const [busy, setBusy] = useState(false);
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
+
   async function logout() {
     setBusy(true);
     try { await logoutUser(); } catch { /* Clear the local session even if the API is unavailable. */ }
@@ -28,10 +32,12 @@ export default function LogoutScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: 24 }, title: { fontSize: 26, fontWeight: '800', color: colors.text },
-  copy: { color: colors.textMuted, lineHeight: 21, marginVertical: 18 },
-  primary: { minHeight: 50, justifyContent: 'center', backgroundColor: colors.danger, borderRadius: radii.pill, padding: 15, alignItems: 'center' },
-  disabled: { opacity: 0.6 },
-  primaryText: { color: '#1A0A0E', fontWeight: '800' }, back: { padding: 16, alignItems: 'center' }, backText: { color: colors.textMuted, fontWeight: '600' },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background, padding: 24 }, title: { fontSize: 26, fontWeight: '800', color: colors.text },
+    copy: { color: colors.textMuted, lineHeight: 21, marginVertical: 18 },
+    primary: { minHeight: 50, justifyContent: 'center', backgroundColor: colors.danger, borderRadius: radii.pill, padding: 15, alignItems: 'center' },
+    disabled: { opacity: 0.6 },
+    primaryText: { color: '#FFFFFF', fontWeight: '800' }, back: { padding: 16, alignItems: 'center' }, backText: { color: colors.textMuted, fontWeight: '600' },
+  });
+}

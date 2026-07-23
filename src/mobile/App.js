@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -22,7 +22,7 @@ import SecurityScreen from './screens/SecurityScreen';
 import SendMoneyScreen from './screens/SendMoneyScreen';
 import TransactionHistoryScreen from './screens/TransactionHistoryScreen';
 import { getCurrentUser } from './api';
-import { colors, navigationTheme } from './theme';
+import { useAppTheme, ThemeProvider } from './ThemeContext';
 
 import ErrorBoundary from './components/ErrorBoundary';
 import { ToastProvider } from './components/ToastProvider';
@@ -38,6 +38,8 @@ function AppShell() {
   const Stack = isWeb ? JSStack : NativeStack;
   const [activeRoute, setActiveRoute] = useState('Login');
   const [user, setUser] = useState(null);
+  const { colors, navigationTheme } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
 
   const refreshUser = useCallback(() => {
     getCurrentUser().then((response) => setUser(response.data)).catch(() => setUser(null));
@@ -112,16 +114,20 @@ function AppShell() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <ToastProvider>
-        <AppShell />
-      </ToastProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <AppShell />
+        </ToastProvider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }
 
-const styles = StyleSheet.create({
-  webRoot: { flex: 1, flexDirection: 'row', backgroundColor: colors.background, minHeight: '100%' },
-  webContentArea: { flex: 1, alignItems: 'center', backgroundColor: colors.background },
-  webContentColumn: { flex: 1, width: '100%', maxWidth: 860 },
-  fullWidthColumn: { maxWidth: undefined },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    webRoot: { flex: 1, flexDirection: 'row', backgroundColor: colors.background, minHeight: '100%' },
+    webContentArea: { flex: 1, alignItems: 'center', backgroundColor: colors.background },
+    webContentColumn: { flex: 1, width: '100%', maxWidth: 860 },
+    fullWidthColumn: { maxWidth: undefined },
+  });
+}

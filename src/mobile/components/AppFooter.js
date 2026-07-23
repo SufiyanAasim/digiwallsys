@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import TouchableOpacity from './TouchableOpacity';
 
 import {  Platform, StyleSheet, Text, View  } from 'react-native';
-import { colors } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 
 export default function AppFooter({ navigation }) {
+  const { colors } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors), [colors]);
   // On web the persistent sidebar already surfaces Credits and the version — avoid showing it twice.
   if (Platform.OS === 'web') return null;
   return (
@@ -17,44 +19,46 @@ export default function AppFooter({ navigation }) {
         <Text style={styles.linkText}>Credits</Text>
       </TouchableOpacity>
       <Text style={styles.separator}>·</Text>
-      <Text style={styles.versionText}>v1.5.5 "Armada"</Text>
+      <Text style={styles.versionText}>v1.7.5 "Estuary"</Text>
       <Text style={styles.separator}>·</Text>
       <Text style={styles.taglineText}>digiwallsys digital wallet</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  footerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderTopWidth: 1,
-    borderTopColor: colors.border,
-    marginTop: 20,
-    gap: 6,
-  },
-  linkText: {
-    color: colors.primary,
-    fontWeight: '700',
-    fontSize: 13,
-    textDecorationLine: 'underline',
-  },
-  separator: {
-    color: colors.textMuted,
-    fontSize: 13,
-  },
-  versionText: {
-    color: colors.text,
-    fontSize: 13,
-    fontFamily: 'monospace',
-    fontWeight: '600',
-  },
-  taglineText: {
-    color: colors.textMuted,
-    fontSize: 13,
-  },
-});
+function buildStyles(colors) {
+  return StyleSheet.create({
+    footerContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      paddingVertical: 16,
+      paddingHorizontal: 12,
+      borderTopWidth: 1,
+      borderTopColor: colors.border,
+      marginTop: 20,
+      gap: 6,
+    },
+    linkText: {
+      color: colors.primary,
+      fontWeight: '700',
+      fontSize: 13,
+      textDecorationLine: 'underline',
+    },
+    separator: {
+      color: colors.textMuted,
+      fontSize: 13,
+    },
+    versionText: {
+      color: colors.text,
+      fontSize: 13,
+      fontFamily: 'monospace',
+      fontWeight: '600',
+    },
+    taglineText: {
+      color: colors.textMuted,
+      fontSize: 13,
+    },
+  });
+}

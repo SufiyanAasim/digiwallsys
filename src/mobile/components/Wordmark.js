@@ -2,9 +2,10 @@ import React from 'react';
 import { Platform, StyleSheet, Text } from 'react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors } from '../theme';
+import { useAppTheme } from '../ThemeContext';
 
 export default function Wordmark({ size = 22, style }) {
+  const { colors } = useAppTheme();
   const textStyle = [styles.text, { fontSize: size, lineHeight: size * 1.15 }];
 
   // @react-native-masked-view has no real web implementation, so react-native-web
