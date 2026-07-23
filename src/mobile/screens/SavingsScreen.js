@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
 import { archiveSavingsGoal, contributeToSavingsGoal, createSavingsGoal, getSavingsGoals, withdrawFromSavingsGoal } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
+import ThemedSwitch from '../components/ThemedSwitch';
 import { useAppTheme } from '../ThemeContext';
 import { radii } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
@@ -86,7 +87,7 @@ export default function SavingsScreen() {
           <TextInput style={styles.input} placeholder="Target amount" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={target} onChangeText={setTarget} />
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Round up direct transfers into this goal</Text>
-            <Switch value={roundUp} onValueChange={setRoundUp} trackColor={{ true: colors.accent }} />
+            <ThemedSwitch value={roundUp} onValueChange={setRoundUp} />
           </View>
           <GradientButton label={busy === 'create' ? 'Creating…' : 'Create goal'} disabled={busy === 'create'} onPress={create} />
         </View>

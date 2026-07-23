@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import Logo from '../Logo';
+import ThemedSwitch from '../ThemedSwitch';
 import TouchableOpacity from '../TouchableOpacity';
 import Wordmark from '../Wordmark';
 import { useAppTheme } from '../../ThemeContext';
@@ -65,7 +66,7 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
         <View style={styles.themeRow}>
           <Icon name={isDark ? 'moon-outline' : 'sunny-outline'} size={16} color={colors.textMuted} />
           <Text style={styles.themeLabel}>{isDark ? 'Dark' : 'Light'} theme</Text>
-          <Switch value={isDark} onValueChange={toggleTheme} trackColor={{ true: colors.accent }} />
+          <ThemedSwitch value={isDark} onValueChange={toggleTheme} />
         </View>
         <TouchableOpacity style={styles.navItem} onPress={() => onNavigate('Credits')} accessibilityRole="button" accessibilityLabel="Credits">
           <Icon name="information-circle-outline" size={18} color={colors.textMuted} />

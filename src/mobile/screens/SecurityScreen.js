@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { getSecurityAlerts } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
+import ThemedSwitch from '../components/ThemedSwitch';
 import { isBiometricEnabled, setBiometricEnabled } from '../session';
 import { useAppTheme } from '../ThemeContext';
 import { radii } from '../theme';
@@ -60,7 +61,7 @@ export default function SecurityScreen() {
             <Text style={styles.heading}>Biometric login</Text>
             <Text style={styles.description}>Require device biometrics before using the saved refresh session.</Text>
           </View>
-          <Switch value={enabled} onValueChange={toggle} disabled={busy} trackColor={{ true: colors.accent }} />
+          <ThemedSwitch value={enabled} onValueChange={toggle} disabled={busy} />
         </View>
 
         <View style={styles.row}>
@@ -68,7 +69,7 @@ export default function SecurityScreen() {
             <Text style={styles.heading}>Appearance</Text>
             <Text style={styles.description}>Switch between the dark and light Ember Glass theme.</Text>
           </View>
-          <Switch value={isDark} onValueChange={toggleTheme} trackColor={{ true: colors.accent }} />
+          <ThemedSwitch value={isDark} onValueChange={toggleTheme} />
         </View>
 
         <Text style={styles.sectionTitle}>Account alerts</Text>

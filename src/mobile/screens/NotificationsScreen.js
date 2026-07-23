@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import {  Alert, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, View  } from 'react-native';
+import {  Alert, Platform, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
 import {
@@ -13,6 +13,7 @@ import {
 } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
+import ThemedSwitch from '../components/ThemedSwitch';
 import { useAppTheme } from '../ThemeContext';
 import { getErrorMessage, parsePositiveAmount } from '../utils';
 
@@ -86,7 +87,7 @@ export default function NotificationsScreen() {
         {!!error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><TouchableOpacity style={styles.retry} onPress={load}><Text style={styles.secondaryText}>Try again</Text></TouchableOpacity></View>}
         {loading && <Text style={styles.meta}>Loading notifications…</Text>}
         {['moneyMovement', 'securityEvents', 'pushEnabled'].map((key) => (
-          <View style={styles.row} key={key}><Text style={styles.rowLabel}>{preferenceLabels[key]}</Text><Switch value={preferences[key]} onValueChange={(value) => setPreferences({ ...preferences, [key]: value })} trackColor={{ true: colors.accent }} /></View>
+          <View style={styles.row} key={key}><Text style={styles.rowLabel}>{preferenceLabels[key]}</Text><ThemedSwitch value={preferences[key]} onValueChange={(value) => setPreferences({ ...preferences, [key]: value })} /></View>
         ))}
         <TextInput style={styles.input} placeholder="Spending alert amount" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={String(preferences.spendingAlertAmount)} onChangeText={(value) => setPreferences({ ...preferences, spendingAlertAmount: value })} />
         <View style={styles.buttonRow}><GradientButton label={busy === 'save' ? 'Saving…' : 'Save preferences'} disabled={!!busy} onPress={save} /><TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={enablePush}><Text style={styles.secondaryText}>{busy === 'push' ? 'Registering…' : 'Register push'}</Text></TouchableOpacity></View>
