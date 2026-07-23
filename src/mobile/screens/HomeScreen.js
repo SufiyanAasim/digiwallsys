@@ -1,25 +1,39 @@
 import React, { useCallback, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import {  FlatList, Image, SafeAreaView, StyleSheet, Text, View  } from 'react-native';
+import {  FlatList, SafeAreaView, StyleSheet, Text, View  } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getBalance, getCurrentUser, getTransactions } from '../api';
+import ActionTile from '../components/ActionTile';
+import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
-import { colors } from '../theme';
+import { useToast } from '../components/ToastProvider';
+import Wordmark from '../components/Wordmark';
+import { colors, radii } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 const actions = [
-  ['Add Money', 'Add funds'], ['Send Money', 'Send money'], ['Payment Tools', 'Request & schedule'],
-  ['QR Payment', 'QR payments'], ['Transactions', 'Transactions'], ['Notifications', 'Notifications'],
-  ['Security', 'Security'], ['Logout', 'Log out'],
+  ['Analytics', 'Analytics', 'bar-chart-outline'],
+  ['Add Money', 'Add funds', 'add-circle-outline'],
+  ['Send Money', 'Send money', 'arrow-redo-outline'],
+  ['Payment Tools', 'Request & schedule', 'arrow-undo-outline'],
+  ['Payment Calendar', 'Payment calendar', 'calendar-outline'],
+  ['QR Payment', 'QR payments', 'qr-code-outline'],
+  ['Savings', 'Savings goals', 'trending-up-outline'],
+  ['Budgets', 'Budget categories', 'pie-chart-outline'],
+  ['Transactions', 'Transactions', 'time-outline'],
+  ['Notifications', 'Notifications', 'notifications-outline'],
+  ['Security', 'Security', 'shield-checkmark-outline'],
+  ['Logout', 'Log out', 'log-out-outline'],
 ];
 
-export default function HomeScreen({ navigation }) {
+export default function HomeScreen({ navigation, route }) {
   const [balance, setBalance] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { showToast } = useToast();
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -42,9 +56,19 @@ export default function HomeScreen({ navigation }) {
     load();
   }, [load]));
 
-  const visibleActions = user?.role === 'admin' ? [...actions, ['Admin', 'Admin']] : actions;
+  useFocusEffect(useCallback(() => {
+    if (route.params?.justLoggedIn) {
+      showToast('Signed in successfully', `Welcome back, ${route.params.name || 'there'}`);
+      navigation.setParams({ justLoggedIn: false, name: undefined });
+    }
+  }, [route.params?.justLoggedIn]));
+
+  const visibleActions = user?.role === 'admin' ? [...actions, ['Admin', 'Admin', 'settings-outline']] : actions;
+  const initials = (user?.name || 'DW').trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase();
+
   return (
     <SafeAreaView style={styles.safeArea}>
+      <AmbientBackground />
       <FlatList
         data={transactions}
         keyExtractor={(item) => item.reference}
@@ -54,11 +78,16 @@ export default function HomeScreen({ navigation }) {
         ListHeaderComponent={
           <>
             <View style={styles.header}>
-              <View><Text style={styles.title}>digiwallsys</Text><Text style={styles.welcome}>Hello, {user?.name || 'there'}</Text></View>
-              <Image source={require('../assets/digiwallsys-icon.png')} style={styles.logo} accessibilityLabel="digiwallsys logo" />
+              <View>
+                <Wordmark size={19} />
+                <Text style={styles.welcome}>Hello, {user?.name || 'there'}</Text>
+              </View>
+              <View style={styles.avatar}><Text style={styles.avatarText}>{initials}</Text></View>
             </View>
-            <Text style={styles.balanceLabel}>Available balance</Text>
-            <Text style={styles.balance}>{balance ? formatMoney(balance.balance, balance.currency) : loading ? 'Loading…' : '—'}</Text>
+            <View style={styles.balanceCard}>
+              <Text style={styles.balanceLabel}>Available balance</Text>
+              <Text style={styles.balance}>{balance ? formatMoney(balance.balance, balance.currency) : loading ? 'Loading…' : '—'}</Text>
+            </View>
             {!!error && (
               <View style={styles.errorBox} accessibilityRole="alert">
                 <Text style={styles.errorText}>{error}</Text>
@@ -66,10 +95,8 @@ export default function HomeScreen({ navigation }) {
               </View>
             )}
             <View style={styles.grid}>
-              {visibleActions.map(([route, label]) => (
-                <TouchableOpacity key={route} style={styles.action} onPress={() => navigation.navigate(route)} accessibilityRole="button" accessibilityLabel={label}>
-                  <Text style={styles.actionText}>{label}</Text>
-                </TouchableOpacity>
+              {visibleActions.map(([route, label, icon]) => (
+                <ActionTile key={route} icon={icon} label={label} onPress={() => navigation.navigate(route)} />
               ))}
             </View>
             <Text style={styles.heading}>Recent transactions</Text>
@@ -95,15 +122,24 @@ const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: colors.background },
   container: { padding: 20, paddingBottom: 36 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  logo: { width: 48, height: 48, borderRadius: 13 },
-  title: { fontSize: 27, fontWeight: '800', color: colors.primaryDark }, welcome: { color: colors.textMuted, marginTop: 2 },
-  balanceLabel: { marginTop: 24, color: colors.textMuted }, balance: { fontSize: 34, fontWeight: '800', marginTop: 4, color: colors.text },
-  errorBox: { backgroundColor: '#FCEBEC', borderRadius: 14, padding: 12, marginTop: 14 },
+  title: { fontSize: 22, fontWeight: '800', color: colors.text, letterSpacing: -0.3 },
+  welcome: { color: colors.textMuted, marginTop: 2, fontSize: 12.5 },
+  avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
+  avatarText: { color: colors.primary, fontWeight: '800', fontSize: 14 },
+  balanceCard: {
+    marginTop: 22,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    borderRadius: radii.xl,
+    padding: 22,
+  },
+  balanceLabel: { color: colors.textMuted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.6 },
+  balance: { fontSize: 36, fontWeight: '800', marginTop: 8, color: colors.text, letterSpacing: -0.5 },
+  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: radii.md, padding: 12, marginTop: 14 },
   errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 20 },
-  action: { flexBasis: '30%', flexGrow: 1, minWidth: '28%', minHeight: 58, backgroundColor: colors.surfaceMuted, borderRadius: 14, justifyContent: 'center', alignItems: 'center', padding: 8 },
-  actionText: { color: colors.primaryDark, fontWeight: '700', textAlign: 'center', fontSize: 12 },
-  heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 22, marginBottom: 10 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 22 },
+  heading: { fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 26, marginBottom: 10 },
   empty: { color: colors.textMuted, lineHeight: 21, paddingVertical: 14 },
   transaction: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderColor: colors.border },
   transactionDetails: { flex: 1, marginRight: 12 },

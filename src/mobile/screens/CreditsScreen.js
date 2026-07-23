@@ -1,8 +1,11 @@
 import React from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import {  Image, Linking, ScrollView, StyleSheet, Text, View  } from 'react-native';
+import {  Linking, ScrollView, StyleSheet, Text, View  } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import AmbientBackground from '../components/AmbientBackground';
+import Logo from '../components/Logo';
+import Wordmark from '../components/Wordmark';
 import { colors } from '../theme';
 
 export default function CreditsScreen() {
@@ -12,10 +15,11 @@ export default function CreditsScreen() {
 
   return (
     <View style={styles.screen}>
+      <AmbientBackground />
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.headerCard}>
-          <Image source={require('../assets/digiwallsys-icon.png')} style={styles.logo} />
-          <Text style={styles.title}>digiwallsys</Text>
+          <Logo size={72} />
+          <View style={styles.titleWrap}><Wordmark size={28} /></View>
           <Text style={styles.tagline}>Digital Wallet & Financial Accounting System</Text>
           <View style={styles.badgeRow}>
             <View style={styles.badge}><Text style={styles.badgeText}>v1.5.5</Text></View>
@@ -86,12 +90,11 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background },
   container: { padding: 20, paddingBottom: 40 },
   headerCard: { backgroundColor: colors.surface, borderRadius: 20, padding: 24, alignItems: 'center', borderColor: colors.border, borderWidth: 1, marginBottom: 20 },
-  logo: { width: 80, height: 80, borderRadius: 20, marginBottom: 12 },
-  title: { fontSize: 30, fontWeight: '800', color: colors.text, marginBottom: 4 },
+  titleWrap: { marginTop: 14, marginBottom: 4 },
   tagline: { fontSize: 14, color: colors.textMuted, textAlign: 'center', marginBottom: 16 },
   badgeRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
   badge: { backgroundColor: colors.surfaceMuted, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
-  badgeAccent: { backgroundColor: 'rgba(56, 189, 248, 0.15)', borderColor: colors.accent, borderWidth: 1 },
+  badgeAccent: { backgroundColor: colors.accentSoft, borderColor: colors.accent, borderWidth: 1 },
   badgeSuccess: { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderColor: colors.success, borderWidth: 1 },
   badgeText: { fontSize: 13, fontWeight: '700', color: colors.text },
   section: { marginBottom: 20 },

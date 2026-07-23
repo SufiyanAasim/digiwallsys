@@ -3,8 +3,9 @@ import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, StyleSheet, Text, View  } from 'react-native';
 import { logoutUser } from '../api';
+import AmbientBackground from '../components/AmbientBackground';
 import { clearSession } from '../session';
-import { colors } from '../theme';
+import { colors, radii } from '../theme';
 
 export default function LogoutScreen({ navigation }) {
   const [busy, setBusy] = useState(false);
@@ -16,18 +17,21 @@ export default function LogoutScreen({ navigation }) {
   }
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <Text style={styles.title}>Account</Text>
       <Text style={styles.copy}>Logging out revokes the current refresh token and clears secure local tokens.</Text>
       <TouchableOpacity style={[styles.primary, busy && styles.disabled]} disabled={busy} onPress={() => Alert.alert('Log out?', 'Your saved session will be removed.', [{ text: 'Cancel' }, { text: 'Log out', style: 'destructive', onPress: logout }])}>
         <Text style={styles.primaryText}>{busy ? 'Logging out…' : 'Log out'}</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}><Text>Back</Text></TouchableOpacity>
+      <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}><Text style={styles.backText}>Back</Text></TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background, padding: 24 }, title: { fontSize: 26, fontWeight: '800', color: colors.primaryDark },
-  copy: { color: colors.textMuted, lineHeight: 21, marginVertical: 18 }, primary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.danger, borderRadius: 22, padding: 15, alignItems: 'center' }, disabled: { backgroundColor: colors.disabled },
-  primaryText: { color: '#fff', fontWeight: '700' }, back: { padding: 16, alignItems: 'center' },
+  container: { flex: 1, backgroundColor: colors.background, padding: 24 }, title: { fontSize: 26, fontWeight: '800', color: colors.text },
+  copy: { color: colors.textMuted, lineHeight: 21, marginVertical: 18 },
+  primary: { minHeight: 50, justifyContent: 'center', backgroundColor: colors.danger, borderRadius: radii.pill, padding: 15, alignItems: 'center' },
+  disabled: { opacity: 0.6 },
+  primaryText: { color: '#1A0A0E', fontWeight: '800' }, back: { padding: 16, alignItems: 'center' }, backText: { color: colors.textMuted, fontWeight: '600' },
 });

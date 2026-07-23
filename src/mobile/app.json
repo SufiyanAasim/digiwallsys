@@ -3,7 +3,7 @@
     "name": "digiwallsys",
     "slug": "digiwallsys",
     "scheme": "digiwallsys",
-    "version": "1.5.5",
+    "version": "1.7.0",
     "plugins": [
       "./plugins/withAndroidMonorepoRoot"
     ],
@@ -18,7 +18,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.sufiyanaasim.digiwallsys",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "supportsTablet": true,
       "infoPlist": {
         "NSFaceIDUsageDescription": "Use Face ID to unlock your digiwallsys session.",
@@ -27,7 +27,7 @@
     },
     "android": {
       "package": "com.sufiyanaasim.digiwallsys",
-      "versionCode": 1,
+      "versionCode": 2,
       "adaptiveIcon": {
         "foregroundImage": "./assets/digiwallsys-icon.png",
         "backgroundColor": "#251826"

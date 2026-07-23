@@ -11,6 +11,8 @@ import {
   registerPushDevice,
   updateNotificationPreferences,
 } from '../api';
+import AmbientBackground from '../components/AmbientBackground';
+import GradientButton from '../components/GradientButton';
 import { colors, commonStyles } from '../theme';
 import { getErrorMessage, parsePositiveAmount } from '../utils';
 
@@ -76,6 +78,7 @@ export default function NotificationsScreen() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Notifications</Text>
         {!!error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><TouchableOpacity style={styles.retry} onPress={load}><Text style={styles.secondaryText}>Try again</Text></TouchableOpacity></View>}
@@ -83,8 +86,8 @@ export default function NotificationsScreen() {
         {['moneyMovement', 'securityEvents', 'pushEnabled'].map((key) => (
           <View style={styles.row} key={key}><Text style={styles.rowLabel}>{preferenceLabels[key]}</Text><Switch value={preferences[key]} onValueChange={(value) => setPreferences({ ...preferences, [key]: value })} trackColor={{ true: colors.accent }} /></View>
         ))}
-        <TextInput style={styles.input} placeholder="Spending alert amount" keyboardType="decimal-pad" value={String(preferences.spendingAlertAmount)} onChangeText={(value) => setPreferences({ ...preferences, spendingAlertAmount: value })} />
-        <View style={styles.buttonRow}><TouchableOpacity style={[styles.primary, !!busy && styles.disabled]} disabled={!!busy} onPress={save}><Text style={styles.white}>{busy === 'save' ? 'Saving…' : 'Save preferences'}</Text></TouchableOpacity><TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={enablePush}><Text style={styles.secondaryText}>{busy === 'push' ? 'Registering…' : 'Register push'}</Text></TouchableOpacity></View>
+        <TextInput style={styles.input} placeholder="Spending alert amount" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={String(preferences.spendingAlertAmount)} onChangeText={(value) => setPreferences({ ...preferences, spendingAlertAmount: value })} />
+        <View style={styles.buttonRow}><GradientButton label={busy === 'save' ? 'Saving…' : 'Save preferences'} disabled={!!busy} onPress={save} /><TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={enablePush}><Text style={styles.secondaryText}>{busy === 'push' ? 'Registering…' : 'Register push'}</Text></TouchableOpacity></View>
         <Text style={styles.heading}>Inbox</Text>
         {!loading && !error && items.length === 0 && <Text style={styles.meta}>You have no notifications yet.</Text>}
         {items.map((item) => (
@@ -99,10 +102,10 @@ export default function NotificationsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
-  title: { fontSize: 25, fontWeight: '800', color: colors.primaryDark }, row: { minHeight: 52, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, rowLabel: { color: colors.text },
+  title: { fontSize: 25, fontWeight: '800', color: colors.text }, row: { minHeight: 52, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, rowLabel: { color: colors.text },
   input: commonStyles.input, buttonRow: { gap: 8 }, primary: commonStyles.primaryButton,
-  secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, padding: 13, borderRadius: 20, alignItems: 'center' }, disabled: { backgroundColor: colors.disabled }, white: commonStyles.primaryButtonText, secondaryText: { color: colors.primaryDark, fontWeight: '700' },
+  secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, padding: 13, borderRadius: 20, alignItems: 'center' }, disabled: { backgroundColor: colors.disabled }, white: commonStyles.primaryButtonText, secondaryText: { color: colors.text, fontWeight: '700' },
   heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 14 }, card: { borderRadius: 14, padding: 14, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 }, unread: { backgroundColor: colors.surfaceMuted, borderLeftColor: colors.primary, borderLeftWidth: 4 }, cardTitle: { fontWeight: '800', color: colors.text },
   meta: { color: colors.textMuted, marginTop: 4 }, date: { color: colors.textMuted, fontSize: 11, marginTop: 6 },
-  errorBox: { backgroundColor: '#FCEBEC', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
+  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
 });

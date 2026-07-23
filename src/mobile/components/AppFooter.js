@@ -1,10 +1,12 @@
 import React from 'react';
 import TouchableOpacity from './TouchableOpacity';
 
-import {  StyleSheet, Text, View  } from 'react-native';
+import {  Platform, StyleSheet, Text, View  } from 'react-native';
 import { colors } from '../theme';
 
 export default function AppFooter({ navigation }) {
+  // On web the persistent sidebar already surfaces Credits and the version — avoid showing it twice.
+  if (Platform.OS === 'web') return null;
   return (
     <View style={styles.footerContainer}>
       <TouchableOpacity

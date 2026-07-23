@@ -14,6 +14,8 @@ import {
   getUsers,
   updatePaymentRequest,
 } from '../api';
+import AmbientBackground from '../components/AmbientBackground';
+import GradientButton from '../components/GradientButton';
 import { colors, commonStyles } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount, titleize } from '../utils';
 
@@ -91,6 +93,7 @@ export default function PaymentToolsScreen() {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>Requests & schedules</Text>
         {!!error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><TouchableOpacity onPress={load} style={styles.retry}><Text style={styles.action}>Try again</Text></TouchableOpacity></View>}
@@ -103,16 +106,14 @@ export default function PaymentToolsScreen() {
         </Picker>
 
         <Text style={styles.sectionLabel}>Request a payment</Text>
-        <TextInput style={styles.input} placeholder="Amount to request" keyboardType="decimal-pad" value={requestAmount} onChangeText={setRequestAmount} />
-        <TextInput style={styles.input} placeholder="Request note (optional)" value={requestNote} onChangeText={setRequestNote} maxLength={255} />
-        <TouchableOpacity style={[styles.primary, !!busy && styles.disabled]} disabled={!!busy} onPress={requestPayment}>
-          <Text style={styles.white}>{busy === 'create-request' ? 'Creating…' : 'Request payment'}</Text>
-        </TouchableOpacity>
+        <TextInput style={styles.input} placeholder="Amount to request" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={requestAmount} onChangeText={setRequestAmount} />
+        <TextInput style={styles.input} placeholder="Request note (optional)" placeholderTextColor={colors.textFaint} value={requestNote} onChangeText={setRequestNote} maxLength={255} />
+        <GradientButton label={busy === 'create-request' ? 'Creating…' : 'Request payment'} disabled={!!busy} onPress={requestPayment} />
 
         <Text style={styles.sectionLabel}>Schedule a transfer</Text>
-        <TextInput style={styles.input} placeholder="Transfer amount" keyboardType="decimal-pad" value={scheduleAmount} onChangeText={setScheduleAmount} />
-        <TextInput style={styles.input} placeholder="Transfer note (optional)" value={scheduleNote} onChangeText={setScheduleNote} maxLength={255} />
-        <TextInput style={styles.input} placeholder="Date and time, e.g. 2026-08-01 10:00" value={nextRunAt} onChangeText={setNextRunAt} />
+        <TextInput style={styles.input} placeholder="Transfer amount" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={scheduleAmount} onChangeText={setScheduleAmount} />
+        <TextInput style={styles.input} placeholder="Transfer note (optional)" placeholderTextColor={colors.textFaint} value={scheduleNote} onChangeText={setScheduleNote} maxLength={255} />
+        <TextInput style={styles.input} placeholder="Date and time, e.g. 2026-08-01 10:00" placeholderTextColor={colors.textFaint} value={nextRunAt} onChangeText={setNextRunAt} />
         <Text style={styles.hint}>The date and time are interpreted in your device timezone.</Text>
         <Picker selectedValue={frequency} onValueChange={setFrequency} style={styles.picker} enabled={!busy}>
           {['once', 'daily', 'weekly', 'monthly'].map((value) => <Picker.Item key={value} label={titleize(value)} value={value} />)}
@@ -151,14 +152,14 @@ export default function PaymentToolsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10 },
-  title: { fontSize: 24, fontWeight: '800', color: colors.primaryDark }, label: { fontWeight: '700', color: colors.text },
+  title: { fontSize: 24, fontWeight: '800', color: colors.text }, label: { fontWeight: '700', color: colors.text },
   sectionLabel: { fontSize: 17, fontWeight: '800', color: colors.text, marginTop: 12 },
   picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,
   primary: commonStyles.primaryButton, secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 20, padding: 14, alignItems: 'center' },
-  disabled: { backgroundColor: colors.disabled }, white: commonStyles.primaryButtonText, secondaryText: { color: colors.primaryDark, fontWeight: '700' },
+  disabled: { backgroundColor: colors.disabled }, white: commonStyles.primaryButtonText, secondaryText: { color: colors.text, fontWeight: '700' },
   hint: { color: colors.textMuted, fontSize: 12, lineHeight: 17 }, heading: { fontSize: 19, fontWeight: '800', color: colors.text, marginTop: 16 },
   card: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 14, padding: 14 }, cardTitle: { fontWeight: '700', color: colors.text },
   meta: { color: colors.textMuted, marginTop: 4, lineHeight: 18 }, row: { flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 10 },
   action: { color: colors.primary, fontWeight: '700' }, danger: { color: colors.danger, fontWeight: '700', marginTop: 8 }, rowDanger: { color: colors.danger, fontWeight: '700' },
-  errorBox: { backgroundColor: '#FCEBEC', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
+  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center' },
 });

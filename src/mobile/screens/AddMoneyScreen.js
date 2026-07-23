@@ -3,6 +3,8 @@ import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { createFundingIntent, getFundingIntents } from '../api';
+import AmbientBackground from '../components/AmbientBackground';
+import GradientButton from '../components/GradientButton';
 import { colors, commonStyles } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount, titleize } from '../utils';
 
@@ -43,11 +45,12 @@ export default function AddMoneyScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Add funds</Text>
         <Text style={styles.note}>Your balance changes only after the configured provider sends a verified, signed webhook.</Text>
-        <TextInput style={styles.input} placeholder="Amount" keyboardType="decimal-pad" value={amount} onChangeText={setAmount} accessibilityLabel="Funding amount" />
-        <TouchableOpacity style={[styles.primary, busy && styles.disabled]} disabled={busy} onPress={createIntent} accessibilityRole="button"><Text style={styles.primaryText}>{busy ? 'Starting…' : 'Continue with provider'}</Text></TouchableOpacity>
+        <TextInput style={styles.input} placeholder="Amount" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={amount} onChangeText={setAmount} accessibilityLabel="Funding amount" />
+        <GradientButton label={busy ? 'Starting…' : 'Continue with provider'} disabled={busy} onPress={createIntent} style={styles.primary} />
         <Text style={styles.heading}>Recent funding</Text>
         {!!error && <View style={styles.errorBox}><Text style={styles.errorText}>{error}</Text><TouchableOpacity onPress={load} style={styles.retry}><Text style={styles.retryText}>Try again</Text></TouchableOpacity></View>}
         {loading && <Text style={styles.meta}>Loading funding activity…</Text>}
@@ -58,7 +61,7 @@ export default function AddMoneyScreen({ navigation }) {
             <Text style={styles.meta}>{intent.provider}</Text>
           </View>
         ))}
-        <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}><Text>Back</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.back} onPress={() => navigation.goBack()}><Text style={styles.backText}>Back</Text></TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -66,14 +69,14 @@ export default function AddMoneyScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background }, content: { padding: 24 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.primaryDark },
+  title: { fontSize: 26, fontWeight: '800', color: colors.text },
   note: { color: colors.textMuted, lineHeight: 20, marginVertical: 14 },
   input: commonStyles.input,
   primary: { ...commonStyles.primaryButton, marginTop: 12 }, disabled: { backgroundColor: colors.disabled },
   primaryText: commonStyles.primaryButtonText, heading: { fontSize: 20, fontWeight: '700', color: colors.text, marginTop: 28, marginBottom: 10 },
   card: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 14, padding: 14, marginBottom: 10 },
   cardTitle: { fontWeight: '700', color: colors.text }, meta: { color: colors.textMuted, marginTop: 3 },
-  errorBox: { backgroundColor: '#FCEBEC', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger },
+  errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: 14, padding: 12 }, errorText: { color: colors.danger },
   retry: { minHeight: 44, justifyContent: 'center' }, retryText: { color: colors.primary, fontWeight: '700' },
-  back: { padding: 14, alignItems: 'center' },
+  back: { padding: 14, alignItems: 'center' }, backText: { color: colors.textMuted, fontWeight: '600' },
 });

@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import { 
+import {
   Alert,
-  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -13,10 +12,14 @@ import {
   TextInput,
   View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
+import GradientButton from '../components/GradientButton';
+import Logo from '../components/Logo';
+import Wordmark from '../components/Wordmark';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
-import { colors, commonStyles } from '../theme';
+import { colors, commonStyles, radii } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
 
 export default function LoginScreen({ navigation }) {
@@ -78,7 +81,7 @@ export default function LoginScreen({ navigation }) {
       } else {
         const response = await loginUser(normalizedEmail, password);
         await saveSession(response.data);
-        navigation.replace('Home');
+        navigation.replace('Home', { justLoggedIn: true, name: response.data.user?.name });
       }
     } catch (error) {
       const msg = getErrorMessage(error);
@@ -92,8 +95,8 @@ export default function LoginScreen({ navigation }) {
   async function biometricLogin() {
     try {
       if (!(await authenticateBiometric())) return;
-      await refreshUserSession();
-      navigation.replace('Home');
+      const response = await refreshUserSession();
+      navigation.replace('Home', { justLoggedIn: true, name: response?.data?.user?.name });
     } catch (error) {
       Alert.alert('Biometric login failed', getErrorMessage(error));
     }
@@ -101,24 +104,29 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safeArea}>
+      <AmbientBackground />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.flex} keyboardShouldPersistTaps="handled">
-          <Image source={require('../assets/login-bg.png')} style={styles.image} accessibilityIgnoresInvertColors />
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.brandRow}>
+            <Logo size={56} />
+            <View>
+              <Wordmark size={26} />
+              <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
+            </View>
+          </View>
           <View style={styles.panel}>
-            <Image source={require('../assets/digiwallsys-icon.png')} style={styles.logo} accessibilityLabel="digiwallsys logo" />
-            <Text style={styles.heading}>digiwallsys</Text>
-            <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
             {Boolean(errorMsg) && (
               <View style={styles.errorBox}>
                 <Text style={styles.errorText}>{errorMsg}</Text>
               </View>
             )}
             {registering && (
-              <TextInput style={styles.input} placeholder="Full name" value={name} onChangeText={setName} autoComplete="name" accessibilityLabel="Full name" />
+              <TextInput style={styles.input} placeholder="Full name" placeholderTextColor={colors.textFaint} value={name} onChangeText={setName} autoComplete="name" accessibilityLabel="Full name" />
             )}
             <TextInput
               style={styles.input}
               placeholder="Email"
+              placeholderTextColor={colors.textFaint}
               autoCapitalize="none"
               keyboardType="email-address"
               value={email}
@@ -130,6 +138,7 @@ export default function LoginScreen({ navigation }) {
               <TextInput
                 style={styles.passwordInput}
                 placeholder="Password (10+ characters)"
+                placeholderTextColor={colors.textFaint}
                 secureTextEntry={hidden}
                 value={password}
                 onChangeText={setPassword}
@@ -137,14 +146,17 @@ export default function LoginScreen({ navigation }) {
                 accessibilityLabel="Password"
               />
               <TouchableOpacity onPress={() => setHidden(!hidden)} accessibilityRole="button" accessibilityLabel={hidden ? 'Show password' : 'Hide password'} style={styles.iconButton}>
-                <Icon name={hidden ? 'eye-off-outline' : 'eye-outline'} size={22} color={colors.textMuted} />
+                <Icon name={hidden ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
-            <TouchableOpacity style={[styles.primary, (busy || restoring) && styles.disabled]} disabled={busy || restoring} onPress={submit} accessibilityRole="button">
-              <Text style={styles.primaryText}>{restoring ? 'Checking session…' : busy ? 'Please wait…' : registering ? 'Create account' : 'Log in'}</Text>
-            </TouchableOpacity>
+            <GradientButton
+              label={restoring ? 'Checking session…' : busy ? 'Please wait…' : registering ? 'Create account' : 'Log in'}
+              disabled={busy || restoring}
+              onPress={submit}
+              style={styles.primary}
+            />
             <TouchableOpacity style={styles.secondary} onPress={() => setRegistering(!registering)}>
-              <Text>{registering ? 'Back to login' : 'Create an account'}</Text>
+              <Text style={styles.secondaryText}>{registering ? 'Back to login' : 'Create an account'}</Text>
             </TouchableOpacity>
             {!registering && (
               <TouchableOpacity style={styles.link} onPress={() => navigation.navigate('Account Recovery')}>
@@ -153,12 +165,12 @@ export default function LoginScreen({ navigation }) {
             )}
             {biometricAvailable && !registering && (
               <TouchableOpacity style={styles.biometric} onPress={biometricLogin}>
-                <Icon name="finger-print-outline" size={24} color={colors.primary} />
+                <Icon name="finger-print-outline" size={22} color={colors.primary} />
                 <Text style={styles.linkText}>Use biometric login</Text>
               </TouchableOpacity>
             )}
-            <AppFooter navigation={navigation} />
           </View>
+          <AppFooter navigation={navigation} />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -166,23 +178,28 @@ export default function LoginScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: colors.primaryDark },
+  safeArea: { flex: 1, backgroundColor: colors.background },
   flex: { flexGrow: 1 },
-  image: { width: '100%', height: 260 },
-  panel: { flex: 1, marginTop: -28, padding: 24, backgroundColor: colors.background, borderTopLeftRadius: 30, borderTopRightRadius: 30 },
-  logo: { width: 72, height: 72, borderRadius: 18, marginBottom: 12 },
-  heading: { fontSize: 29, fontWeight: '800', color: colors.primaryDark },
-  subheading: { color: colors.textMuted, marginTop: 3, marginBottom: 24 },
-  errorBox: { backgroundColor: 'rgba(239, 68, 68, 0.15)', borderColor: colors.danger, borderWidth: 1, borderRadius: 12, padding: 12, marginBottom: 16 },
-  errorText: { color: '#FCA5A5', fontSize: 14, textAlign: 'center', fontWeight: '600' },
+  scroll: { flexGrow: 1, padding: 24, paddingTop: 48 },
+  brandRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 26 },
+  heading: { fontSize: 24, fontWeight: '800', color: colors.text, letterSpacing: -0.3 },
+  subheading: { color: colors.textMuted, marginTop: 3, fontSize: 12.5 },
+  panel: {
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.glassBorder,
+    borderRadius: radii.xl,
+    padding: 22,
+  },
+  errorBox: { backgroundColor: 'rgba(255,107,107,0.14)', borderColor: 'rgba(255,107,107,0.35)', borderWidth: 1, borderRadius: radii.md, padding: 12, marginBottom: 16 },
+  errorText: { color: '#FFB0B0', fontSize: 14, textAlign: 'center', fontWeight: '600' },
   input: { ...commonStyles.input, marginBottom: 14 },
-  passwordRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 14, paddingLeft: 15, marginBottom: 14 },
-  passwordInput: { flex: 1, paddingVertical: 15 },
+  passwordRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.glassBorder, borderWidth: 1, borderRadius: radii.md, paddingLeft: 16, marginBottom: 14 },
+  passwordInput: { flex: 1, paddingVertical: 15, color: colors.text },
   iconButton: { minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
-  primary: commonStyles.primaryButton,
-  primaryText: commonStyles.primaryButtonText,
-  disabled: { backgroundColor: colors.disabled },
-  secondary: { minHeight: 48, backgroundColor: colors.surfaceMuted, borderRadius: 24, padding: 14, alignItems: 'center', marginTop: 10 },
+  primary: { marginTop: 4 },
+  secondary: { minHeight: 48, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.pill, padding: 14, alignItems: 'center', marginTop: 10 },
+  secondaryText: { color: colors.text, fontWeight: '700' },
   link: { alignItems: 'center', marginTop: 18 },
   linkText: { color: colors.primary, fontWeight: '600' },
   biometric: { flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center', marginTop: 18 },

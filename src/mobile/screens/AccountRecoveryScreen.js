@@ -3,6 +3,8 @@ import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { forgotPassword, resendVerification, resetPassword, verifyEmail } from '../api';
+import AmbientBackground from '../components/AmbientBackground';
+import GradientButton from '../components/GradientButton';
 import { colors, commonStyles } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
 
@@ -43,17 +45,18 @@ export default function AccountRecoveryScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Account security</Text>
         <Text style={styles.help}>Use your account email to request a token, then paste that token below.</Text>
-        <TextInput style={styles.input} placeholder="Account email" autoCapitalize="none" keyboardType="email-address" autoComplete="email" value={email} onChangeText={setEmail} accessibilityLabel="Account email" />
-        <TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={() => run('forgot')}><Text>{busy === 'forgot' ? 'Sending…' : 'Send password-reset email'}</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={() => run('resend')}><Text>{busy === 'resend' ? 'Sending…' : 'Resend verification email'}</Text></TouchableOpacity>
-        <TextInput style={styles.input} placeholder="Verification or reset token" value={token} onChangeText={setToken} />
-        <TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={() => run('verify')}><Text>{busy === 'verify' ? 'Verifying…' : 'Verify email'}</Text></TouchableOpacity>
-        <TextInput style={styles.input} placeholder="New password (10+ characters)" secureTextEntry value={password} onChangeText={setPassword} />
-        <TouchableOpacity style={[styles.primary, !!busy && styles.disabled]} disabled={!!busy} onPress={() => run('reset')}><Text style={styles.primaryText}>{busy === 'reset' ? 'Resetting…' : 'Reset password'}</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.link} onPress={() => navigation.goBack()}><Text>Back</Text></TouchableOpacity>
+        <TextInput style={styles.input} placeholder="Account email" placeholderTextColor={colors.textFaint} autoCapitalize="none" keyboardType="email-address" autoComplete="email" value={email} onChangeText={setEmail} accessibilityLabel="Account email" />
+        <TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={() => run('forgot')}><Text style={styles.secondaryText}>{busy === 'forgot' ? 'Sending…' : 'Send password-reset email'}</Text></TouchableOpacity>
+        <TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={() => run('resend')}><Text style={styles.secondaryText}>{busy === 'resend' ? 'Sending…' : 'Resend verification email'}</Text></TouchableOpacity>
+        <TextInput style={styles.input} placeholder="Verification or reset token" placeholderTextColor={colors.textFaint} value={token} onChangeText={setToken} />
+        <TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={() => run('verify')}><Text style={styles.secondaryText}>{busy === 'verify' ? 'Verifying…' : 'Verify email'}</Text></TouchableOpacity>
+        <TextInput style={styles.input} placeholder="New password (10+ characters)" placeholderTextColor={colors.textFaint} secureTextEntry value={password} onChangeText={setPassword} />
+        <GradientButton label={busy === 'reset' ? 'Resetting…' : 'Reset password'} disabled={!!busy} onPress={() => run('reset')} />
+        <TouchableOpacity style={styles.link} onPress={() => navigation.goBack()}><Text style={styles.linkText}>Back</Text></TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -62,11 +65,10 @@ export default function AccountRecoveryScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { padding: 24, gap: 14 },
-  title: { fontSize: 26, fontWeight: '800', color: colors.primaryDark },
+  title: { fontSize: 26, fontWeight: '800', color: colors.text },
   help: { color: colors.textMuted, lineHeight: 20, marginBottom: 6 },
   input: commonStyles.input,
-  primary: commonStyles.primaryButton, disabled: { backgroundColor: colors.disabled },
-  primaryText: commonStyles.primaryButtonText,
-  secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 22, padding: 14, alignItems: 'center' },
-  link: { alignItems: 'center', padding: 12 },
+  secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: 22, padding: 14, alignItems: 'center' },
+  secondaryText: { color: colors.text, fontWeight: '600' },
+  link: { alignItems: 'center', padding: 12 }, linkText: { color: colors.primary, fontWeight: '600' },
 });
