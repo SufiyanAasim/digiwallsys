@@ -18,6 +18,8 @@ import SendMoneyScreen from './screens/SendMoneyScreen';
 import TransactionHistoryScreen from './screens/TransactionHistoryScreen';
 import { colors, navigationTheme } from './theme';
 
+import ErrorBoundary from './components/ErrorBoundary';
+
 const NativeStack = createNativeStackNavigator();
 const JSStack = createStackNavigator();
 
@@ -26,33 +28,35 @@ export default function App() {
   const Stack = isWeb ? JSStack : NativeStack;
 
   return (
-    <NavigationContainer theme={navigationTheme}>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{
-          headerStyle: { backgroundColor: colors.surface },
-          headerTintColor: colors.text,
-          headerTitleStyle: { fontWeight: '700', color: colors.text },
-          headerShadowVisible: false,
-          ...(isWeb
-            ? { cardStyle: { backgroundColor: colors.background }, animationEnabled: false }
-            : { contentStyle: { backgroundColor: colors.background } }),
-        }}
-      >
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Account Recovery" component={AccountRecoveryScreen} />
-        <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Add Money" component={AddMoneyScreen} />
-        <Stack.Screen name="Send Money" component={SendMoneyScreen} />
-        <Stack.Screen name="Transactions" component={TransactionHistoryScreen} />
-        <Stack.Screen name="Payment Tools" component={PaymentToolsScreen} />
-        <Stack.Screen name="QR Payment" component={QrPaymentScreen} />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
-        <Stack.Screen name="Security" component={SecurityScreen} />
-        <Stack.Screen name="Admin" component={AdminScreen} />
-        <Stack.Screen name="Credits" component={CreditsScreen} />
-        <Stack.Screen name="Logout" component={LogoutScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <ErrorBoundary>
+      <NavigationContainer theme={navigationTheme}>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{
+            headerStyle: { backgroundColor: colors.surface },
+            headerTintColor: colors.text,
+            headerTitleStyle: { fontWeight: '700', color: colors.text },
+            headerShadowVisible: false,
+            ...(isWeb
+              ? { cardStyle: { backgroundColor: colors.background }, animationEnabled: false }
+              : { contentStyle: { backgroundColor: colors.background } }),
+          }}
+        >
+          <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Account Recovery" component={AccountRecoveryScreen} />
+          <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Add Money" component={AddMoneyScreen} />
+          <Stack.Screen name="Send Money" component={SendMoneyScreen} />
+          <Stack.Screen name="Transactions" component={TransactionHistoryScreen} />
+          <Stack.Screen name="Payment Tools" component={PaymentToolsScreen} />
+          <Stack.Screen name="QR Payment" component={QrPaymentScreen} />
+          <Stack.Screen name="Notifications" component={NotificationsScreen} />
+          <Stack.Screen name="Security" component={SecurityScreen} />
+          <Stack.Screen name="Admin" component={AdminScreen} />
+          <Stack.Screen name="Credits" component={CreditsScreen} />
+          <Stack.Screen name="Logout" component={LogoutScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ErrorBoundary>
   );
 }
