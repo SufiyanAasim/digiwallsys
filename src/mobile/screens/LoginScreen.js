@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
+import TouchableOpacity from '../components/TouchableOpacity';
+
+import { 
   Alert,
   Image,
   KeyboardAvoidingView,
@@ -9,9 +11,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import AppFooter from '../components/AppFooter';
 import { loginUser, refreshUserSession, registerUser } from '../api';

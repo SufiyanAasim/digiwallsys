@@ -1,5 +1,7 @@
 import React, { useCallback, useState } from 'react';
-import { FlatList, Image, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import TouchableOpacity from '../components/TouchableOpacity';
+
+import {  FlatList, Image, SafeAreaView, StyleSheet, Text, View  } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { getBalance, getCurrentUser, getTransactions } from '../api';
 import AppFooter from '../components/AppFooter';

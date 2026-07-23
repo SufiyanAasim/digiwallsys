@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import TouchableOpacity from '../components/TouchableOpacity';
+
+import {  Alert, StyleSheet, Text, View  } from 'react-native';
 import { logoutUser } from '../api';
 import { clearSession } from '../session';
 import { colors } from '../theme';

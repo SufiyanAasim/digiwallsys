@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import TouchableOpacity from '../components/TouchableOpacity';
+
+import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
 import { acceptPaymentRequest, createPaymentRequest, getPaymentRequest } from '../api';
