@@ -110,6 +110,7 @@ export default function LoginScreen({ navigation }) {
       <AmbientBackground />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          <View style={styles.formColumn}>
           <View style={styles.brandRow}>
             <Logo size={56} />
             <View>
@@ -174,6 +175,7 @@ export default function LoginScreen({ navigation }) {
             )}
           </View>
           <AppFooter navigation={navigation} />
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -181,10 +183,19 @@ export default function LoginScreen({ navigation }) {
 }
 
 function buildStyles(colors, commonStyles) {
+  const isWeb = Platform.OS === 'web';
   return StyleSheet.create({
     safeArea: { flex: 1, backgroundColor: colors.background },
     flex: { flexGrow: 1 },
-    scroll: { flexGrow: 1, padding: 24, paddingTop: 48 },
+    // On web, center a fixed-width sign-in card in the viewport instead of
+    // stretching the fields edge to edge; on mobile it fills the phone width.
+    scroll: {
+      flexGrow: 1,
+      padding: 24,
+      paddingTop: isWeb ? 24 : 48,
+      ...(isWeb ? { alignItems: 'center', justifyContent: 'center' } : null),
+    },
+    formColumn: { width: '100%', maxWidth: isWeb ? 460 : undefined },
     brandRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 26 },
     subheading: { color: colors.textMuted, marginTop: 3, fontSize: 12.5 },
     panel: {

@@ -26,6 +26,7 @@ import WalletsScreen from './screens/WalletsScreen';
 import { getCurrentUser } from './api';
 import { useAppTheme, ThemeProvider } from './ThemeContext';
 
+import AmbientBackground from './components/AmbientBackground';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ToastProvider } from './components/ToastProvider';
 import Sidebar from './components/web/Sidebar';
@@ -68,6 +69,7 @@ function AppShell() {
         />
       )}
       <View style={styles.webContentArea}>
+        {isWeb && showSidebar && <AmbientBackground />}
         <View style={[styles.webContentColumn, !showSidebar && styles.fullWidthColumn]}>
           <NavigationContainer
             ref={navigationRef}
@@ -131,7 +133,10 @@ function buildStyles(colors) {
   return StyleSheet.create({
     webRoot: { flex: 1, flexDirection: 'row', backgroundColor: colors.background, minHeight: '100%' },
     webContentArea: { flex: 1, alignItems: 'center', backgroundColor: colors.background },
-    webContentColumn: { flex: 1, width: '100%', maxWidth: 860 },
+    // Desktop-scale content column: wide enough to use a 24" monitor, capped so
+    // dashboards stay readable. The ambient gradient fills the side margins so
+    // they read as intentional breathing room, never dead black space.
+    webContentColumn: { flex: 1, width: '100%', maxWidth: 1180 },
     fullWidthColumn: { maxWidth: undefined },
   });
 }

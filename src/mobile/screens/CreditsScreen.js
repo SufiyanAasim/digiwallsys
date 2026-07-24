@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import {  Linking, ScrollView, StyleSheet, Text, View  } from 'react-native';
+import {  Image, Linking, ScrollView, StyleSheet, Text, View  } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import Logo from '../components/Logo';
@@ -19,6 +19,7 @@ export default function CreditsScreen() {
     <View style={styles.screen}>
       <AmbientBackground />
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <View style={styles.inner}>
         <View style={styles.headerCard}>
           <Logo size={72} />
           <View style={styles.titleWrap}><Wordmark size={28} /></View>
@@ -33,8 +34,17 @@ export default function CreditsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>👨‍💻 System Architect & Creator</Text>
           <View style={styles.card}>
-            <Text style={styles.nameText}>Mohammad Sufiyan Aasim</Text>
-            <Text style={styles.roleText}>System Architecture · Financial Core · Mobile & Web Release</Text>
+            <View style={styles.architectRow}>
+              <Image
+                source={{ uri: 'https://github.com/SufiyanAasim.png' }}
+                style={styles.avatar}
+                accessibilityLabel="GitHub profile picture of Mohammad Sufiyan Aasim"
+              />
+              <View style={styles.architectText}>
+                <Text style={styles.nameText}>Mohammad Sufiyan Aasim</Text>
+                <Text style={styles.roleText}>System Architecture · Financial Core · Mobile & Web Release</Text>
+              </View>
+            </View>
             <TouchableOpacity style={styles.githubButton} onPress={openGitHub} accessibilityRole="button">
               <Icon name="logo-github" size={20} color="#FFFFFF" />
               <Text style={styles.githubButtonText}>@SufiyanAasim/digiwallsys</Text>
@@ -83,6 +93,7 @@ export default function CreditsScreen() {
         <View style={styles.footer}>
           <Text style={styles.footerText}>MIT License © 2026 Mohammad Sufiyan Aasim</Text>
         </View>
+        </View>
       </ScrollView>
     </View>
   );
@@ -91,9 +102,14 @@ export default function CreditsScreen() {
 function buildStyles(colors) {
   return StyleSheet.create({
     screen: { flex: 1, backgroundColor: colors.background },
-    container: { padding: 20, paddingBottom: 40 },
+    container: { padding: 20, paddingBottom: 40, alignItems: 'center' },
+    // Credits reads as a centered page rather than stretching across a wide monitor.
+    inner: { width: '100%', maxWidth: 820 },
     headerCard: { backgroundColor: colors.surface, borderRadius: 20, padding: 24, alignItems: 'center', borderColor: colors.border, borderWidth: 1, marginBottom: 20 },
     titleWrap: { marginTop: 14, marginBottom: 4 },
+    architectRow: { flexDirection: 'row', alignItems: 'center', gap: 16, marginBottom: 14 },
+    architectText: { flex: 1 },
+    avatar: { width: 64, height: 64, borderRadius: 32, borderWidth: 2, borderColor: colors.borderStrong, backgroundColor: colors.surfaceMuted },
     tagline: { fontSize: 14, color: colors.textMuted, textAlign: 'center', marginBottom: 16 },
     badgeRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap', justifyContent: 'center' },
     badge: { backgroundColor: colors.surfaceMuted, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
@@ -104,7 +120,7 @@ function buildStyles(colors) {
     sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.text, marginBottom: 10 },
     card: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderColor: colors.border, borderWidth: 1 },
     nameText: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 },
-    roleText: { fontSize: 13, color: colors.textMuted, marginBottom: 14 },
+    roleText: { fontSize: 13, color: colors.textMuted },
     githubButton: { flexDirection: 'row', gap: 8, alignItems: 'center', backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24, alignSelf: 'flex-start' },
     githubButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
     techRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomColor: colors.border, borderBottomWidth: 0.5 },
