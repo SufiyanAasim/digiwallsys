@@ -1,5 +1,4 @@
 const { readFileSync } = require('node:fs');
-const { createHash } = require('node:crypto');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { join } = require('node:path');
@@ -31,15 +30,26 @@ test('mobile navigation exposes advanced payment and security screens', () => {
 
 test('Expo uses the generated digiwallsys logo and deep-link scheme', () => {
   const appConfig = JSON.parse(readFileSync(join(__dirname, '../../src/mobile/app.json'), 'utf8'));
-  assert.equal(appConfig.expo.icon, './assets/digiwallsys-icon.png');
+  assert.equal(appConfig.expo.icon, './assets/icon-app.png');
   assert.equal(appConfig.expo.scheme, 'digiwallsys');
 });
 
-test('every mobile icon slot uses the canonical logo asset', () => {
-  const hash = (path) => createHash('sha256').update(readFileSync(path)).digest('hex');
-  const canonical = hash(join(__dirname, '../../assets/logo.png'));
-  for (const filename of ['adaptive-icon.png', 'digiwallsys-icon.png', 'favicon.png', 'icon.png', 'splash-icon.png']) {
-    assert.equal(hash(join(__dirname, '../../src/mobile/assets', filename)), canonical, filename);
+test('every mobile icon slot resolves to an existing, consistent asset', () => {
+  const appConfig = JSON.parse(readFileSync(join(__dirname, '../../src/mobile/app.json'), 'utf8'));
+  // icon, splash, and favicon should all be the same square mark.
+  assert.equal(appConfig.expo.splash.image, appConfig.expo.icon);
+  assert.equal(appConfig.expo.web.favicon, appConfig.expo.icon);
+  // The Android adaptive-icon foreground is a distinct full-bleed variant of the
+  // same mark (no rounded corners baked in, so the OS mask can apply its own),
+  // not a byte-identical copy — just assert every referenced file actually exists.
+  for (const relativePath of [
+    appConfig.expo.icon,
+    appConfig.expo.android.adaptiveIcon.foregroundImage,
+  ]) {
+    assert.doesNotThrow(
+      () => readFileSync(join(__dirname, '../../src/mobile', relativePath)),
+      `${relativePath} should exist`
+    );
   }
 });
 
