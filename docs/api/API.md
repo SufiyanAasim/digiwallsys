@@ -38,9 +38,18 @@ never expose verification/reset tokens; delivery occurs through the email outbox
 | --- | --- | --- | --- |
 | `GET` | `/api/users/me` | Bearer | Current profile and role |
 | `GET` | `/api/users` | Bearer | Verified payment recipients |
-| `GET` | `/api/wallet/balance` | Bearer | Cached balance and currency |
+| `GET` | `/api/wallet/balance` | Bearer | Cached balance and currency (`?currency=` selects which wallet, default `USD`) |
+| `GET` | `/api/wallet` | Bearer | Every currency wallet the user holds |
+| `POST` | `/api/wallet/currencies` | Bearer | Open a zero-balance wallet in a new currency. Body: `currency` |
+| `POST` | `/api/wallet/convert` | Bearer | Convert between the user's own wallets. Body: `fromCurrency`, `toCurrency`, `amount` |
+| `GET` | `/api/wallet/conversions` | Bearer | Recent currency-conversion history |
 
 The acting user never comes from a URL or request body.
+
+Conversion uses the most recent rate in `fx_rates` for the pair (or its inverse);
+`422` if no rate has been set. It is posted as two independently-balanced
+same-currency journals against a system FX suspense account rather than a single
+cross-currency journal, so it never weakens the ledger's existing balance check.
 
 ## Provider funding
 
@@ -79,9 +88,13 @@ posting a second credit.
 - Endpoint: `/api/transactions/send`
 - Method: `POST`
 - Authentication: Bearer and `Idempotency-Key`
-- Body: `receiverId`, `amount`, optional `description`.
-- Errors: `400` validation or insufficient balance, `403` risk block,
-  `404` wallet missing, `409` idempotency conflict.
+- Body: `receiverId`, `amount`, optional `description`, `category` (budget
+  category name), `currency` (default `USD`, must match a wallet you hold),
+  `fromOwnerId` (spend from a wallet shared with you instead of your own —
+  see [Family wallet](#family-wallet)).
+- Errors: `400` validation or insufficient balance, `403` risk block or
+  unauthorized/over-limit shared-wallet spend, `404` wallet missing,
+  `409` idempotency conflict.
 
 ### History and search
 
@@ -90,12 +103,14 @@ posting a second credit.
 - Query: `q`, `direction`, `from`, `to`, `min`, `max`, `cursor`, `limit`.
 - Response: `items` and `nextCursor`.
 
-### Receipt and export
+### Receipt, export, and tagging
 
 | Method | Endpoint | Response |
 | --- | --- | --- |
 | `GET` | `/api/transactions/receipt/:reference` | Authorized transaction receipt |
 | `GET` | `/api/transactions/export` | Up to 10,000 authorized rows as safe CSV |
+| `GET` | `/api/transactions/statement` | Formatted PDF statement (same filters as history) with received/sent/net totals |
+| `PATCH` | `/api/transactions/:reference/category` | Tag a transaction you sent with a budget category. Body: `category` (or `null` to clear) |
 
 ## Payment requests and QR
 
@@ -148,6 +163,58 @@ role read directly from PostgreSQL.
 | `GET` | `/api/admin/fraud-events` | Risk queue |
 | `POST` | `/api/admin/fraud-events/:eventId/review` | Review/dismiss/block event |
 | `POST` | `/api/admin/reconciliation` | Wallet-to-ledger reconciliation run |
+| `GET` | `/api/admin/fx-rates` | Current rate for every configured currency pair |
+| `POST` | `/api/admin/fx-rates` | Set a rate. Body: `baseCurrency`, `quoteCurrency`, `rate`. Appends to history; never overwrites |
+
+## Savings goals
+
+| Method | Endpoint | Authentication | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/api/savings-goals` | Bearer | List active/completed goals |
+| `POST` | `/api/savings-goals` | Bearer | Create a goal. Body: `name`, `targetAmount`, `roundUpEnabled` |
+| `POST` | `/api/savings-goals/:goalId/contribute` | Bearer | Move `amount` from your wallet balance into the goal |
+| `POST` | `/api/savings-goals/:goalId/withdraw` | Bearer | Move `amount` back out of the goal |
+| `POST` | `/api/savings-goals/:goalId/archive` | Bearer | Archive a goal |
+
+A goal is an earmark against the user's existing wallet balance, not a separate
+account — contribute/withdraw never touch the ledger. At most one goal per user
+may have `roundUpEnabled`; after a direct transfer, the rounded-up remainder is
+credited to it automatically (best-effort — it can never fail the transfer).
+
+## Budget categories
+
+| Method | Endpoint | Authentication | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/api/budget-categories` | Bearer | List categories with this month's spend |
+| `POST` | `/api/budget-categories` | Bearer | Create. Body: `name`, `monthlyLimit` |
+| `PUT` | `/api/budget-categories/:categoryId` | Bearer | Update `monthlyLimit` |
+| `DELETE` | `/api/budget-categories/:categoryId` | Bearer | Remove a category |
+
+Spend-per-category is computed live from `transactions.category` for the
+current calendar month — see [tagging](#receipt-export-and-tagging) above.
+
+## Security alerts
+
+| Method | Endpoint | Authentication | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/api/security/alerts` | Bearer | The authenticated user's own fraud-engine findings, in plain language |
+
+Surfaces the same `fraud_events` rows the admin fraud queue sees, filtered to
+the affected user and stripped of internal fields.
+
+## Family wallet
+
+| Method | Endpoint | Authentication | Purpose |
+| --- | --- | --- | --- |
+| `GET` | `/api/family/members` | Bearer | Members of your own wallet (`?currency=`, default `USD`) |
+| `POST` | `/api/family/members` | Bearer, owner only | Add a member. Body: `email`, `spendingLimit` (optional), `currency` |
+| `PUT` | `/api/family/members/:userId` | Bearer, owner only | Update a member's `spendingLimit` |
+| `DELETE` | `/api/family/members/:userId` | Bearer, owner only | Remove a member |
+| `GET` | `/api/family/shared-wallets` | Bearer | Wallets owned by someone else that you can spend from |
+
+A member spends from a shared wallet by passing `fromOwnerId` on
+[`/api/transactions/send`](#send). Every existing wallet is backfilled with its
+owner as the sole member, so nothing changes until someone is explicitly added.
 
 ## Common errors
 
