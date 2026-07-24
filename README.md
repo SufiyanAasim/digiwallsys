@@ -99,29 +99,35 @@ against a balanced double-entry ledger.
 ## 🏗️ Architecture
 
 ```text
-┌────────────────────────────────────────────────────────────────────┐
-│                     Expo React Native mobile                       │
-│ SecureStore · Biometrics · QR Camera · Push · CSV/Receipt sharing │
-└───────────────────────────────┬────────────────────────────────────┘
-                                │ HTTPS + JWT + Idempotency-Key
-                                ▼
-┌────────────────────────────────────────────────────────────────────┐
-│                         Express REST API                           │
-│ Auth · Funding · Transfers · Requests · Schedules · Admin · Audit │
-└───────────────┬───────────────────────┬────────────────────────────┘
-                │                       │
-                ▼                       ▼
-┌───────────────────────────┐  ┌─────────────────────────────────────┐
-│ PostgreSQL financial core │  │ Configurable external adapters      │
-│ Wallet cache              │  │ Funding checkout + signed webhook  │
-│ Immutable ledger          │  │ Email delivery webhook             │
-│ Fraud and audit events    │  │ Expo push service                  │
-│ Requests and schedules    │  └─────────────────────────────────────┘
-└───────────────────────────┘
+┌───────────────────────────────────┐   ┌────────────────────────────────────┐
+│      Expo React Native mobile     │   │   Same Expo codebase, Web build    │
+│ SecureStore · Biometrics · QR     │   │ Persistent sidebar shell instead   │
+│ Camera · Push · CSV/PDF sharing   │   │ of the mobile stack navigator      │
+└─────────────────┬──────────────────┘   └──────────────────┬─────────────────┘
+                  │                                         │
+                  └────────────────┬────────────────────────┘
+                                   │ HTTPS + JWT + Idempotency-Key
+                                   ▼
+┌────────────────────────────────────────────────────────────────────────┐
+│                            Express REST API                            │
+│ Auth · Funding · Transfers · Requests · Schedules · Savings · Budgets  │
+│ Multi-currency wallets & conversion · Family wallets · Admin · Audit   │
+└───────────────┬───────────────────────────────┬────────────────────────┘
+                │                               │
+                ▼                               ▼
+┌───────────────────────────────────┐  ┌─────────────────────────────────────┐
+│ PostgreSQL financial core         │  │ Configurable external adapters      │
+│ Multi-currency wallet cache +     │  │ Funding checkout + signed webhook  │
+│   wallet_members (shared wallets) │  │ Email delivery webhook             │
+│ Immutable ledger + FX suspense    │  │ Expo push service                  │
+│ Fraud, audit, savings, budgets    │  └─────────────────────────────────────┘
+│ Requests, schedules, fx_rates     │
+└───────────────────────────────────┘
 ```
 
 Transfers and funding post their ledger journal and cached wallet changes in
-the same PostgreSQL transaction. Full details are in
+the same PostgreSQL transaction. Full details, including the currency-conversion
+and shared-wallet sequence diagrams, are in
 [docs/architecture/Architecture.md](docs/architecture/Architecture.md).
 
 ---
@@ -299,8 +305,13 @@ digiwallsys/
 │   │   ├── workers/          # Email, push, and scheduled transfers
 │   │   └── scripts/          # Migration and syntax tooling
 │   └── mobile/
-│       ├── assets/           # Expo application imagery
-│       ├── screens/          # Wallet, QR, admin, alert, and security screens
+│       ├── assets/           # App icon, adaptive icon, and generated logo art
+│       ├── components/       # Shared UI: glass surfaces, toasts, charts,
+│       │                     #   themed Switch, and the web-only Sidebar
+│       ├── screens/          # Wallet, QR, admin, analytics, savings, budgets,
+│       │                     #   multi-currency wallets, family sharing, alerts
+│       ├── theme.js          # Ember Glass color/style tokens (dark + light)
+│       ├── ThemeContext.js   # Runtime theme provider + persisted toggle
 │       ├── api.js            # Authenticated API and refresh handling
 │       └── session.js        # Secure token and biometric session storage
 ├── tests/

@@ -22,9 +22,59 @@ the provider completes checkout and sends a verified webhook.
 
 ## History and alerts
 
-Search history by counterparty, note, or reference. Tap a row for its receipt or
-export CSV for sharing. Configure money, security, push, and spending-threshold
-alerts in **Notifications**.
+Search history by counterparty, note, or reference. Tap a row for its receipt,
+export CSV or a formatted PDF statement for sharing, or long-press a payment
+you sent to tag it with a budget category. Configure money, security, push,
+and spending-threshold alerts in **Notifications**; **Security** also lists
+any unusual-activity alerts the fraud engine has raised on your account.
+
+## Analytics
+
+**Analytics** shows this month's money in, money out, and balance as a donut
+chart, plus a breakdown of spending between direct transfers and requests/QR
+payments. If you've set a spending-alert amount in **Notifications**, it also
+shows a monthly spending-lock progress bar.
+
+## Savings goals
+
+**Savings** lets you earmark part of your balance toward something specific —
+create a goal with a target amount, then contribute or withdraw manually.
+Enable **round-up** on one goal at a time to automatically save the rounded-up
+remainder of every direct transfer you send (e.g. a $4.60 payment rounds up
+$0.40 into the goal). This never moves real money into a separate account —
+it earmarks part of your existing balance, validated so goals can't overcommit
+funds you don't have.
+
+## Budget categories
+
+**Budgets** lets you create categories with a monthly limit (e.g. "Groceries:
+$400") and see live spend-per-category, tagged when you send money or from
+Transaction history afterward.
+
+## Payment calendar
+
+**Payment calendar** shows your active scheduled transfers on a month view
+instead of a flat list, with a dot on any day something is due.
+
+## Wallets and currency conversion
+
+**Wallets** lets you hold more than one currency at once. Add a currency to
+open a new zero-balance wallet in it, then convert between your own wallets —
+conversion uses whatever exchange rate an administrator has most recently set
+for that pair; if none is set, conversion is unavailable until one is.
+
+## Family wallet
+
+**Family wallet** lets you share your wallet with people you trust. As the
+owner, add a member by their account email and optionally cap their monthly
+spending from your wallet. As a member, wallets shared with you appear as a
+"spend from" option when sending money, alongside your own.
+
+## Appearance
+
+Toggle dark/light theme from the web sidebar, or from **Security** /
+the icon next to your avatar on mobile — the choice is saved and applies
+everywhere in the app.
 
 Never use real banking credentials or money with an unconfigured pre-release
 deployment.

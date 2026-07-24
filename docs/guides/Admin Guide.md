@@ -15,7 +15,18 @@ should require multi-party approval.
 
 The **Admin** screen is visible to users whose current database role is `admin`.
 It shows user, transaction, wallet, funding, schedule, and fraud counts; recent
-audit events; the risk queue; review actions; and ledger reconciliation.
+audit events; the risk queue; review actions; ledger reconciliation; and
+exchange-rate management.
+
+## Exchange rates
+
+Users cannot convert between currencies until a rate exists for that pair.
+From **Admin**, enter a base currency, quote currency, and rate (e.g. `USD` →
+`EUR`, `0.92`) and set it. Rates are append-only — setting a new rate for a
+pair adds a new row rather than editing the old one, so past conversions stay
+auditable against the rate that was actually in effect when they happened.
+Either direction of a pair works for conversion (the API inverts the rate if
+only the reverse pair has been set).
 
 ## Reconciliation
 
