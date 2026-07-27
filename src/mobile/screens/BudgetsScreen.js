@@ -6,7 +6,7 @@ import { createBudgetCategory, deleteBudgetCategory, getBudgetCategories } from 
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
-import { radii } from '../theme';
+import { contentColumn, layout, radii } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function BudgetsScreen() {
@@ -105,7 +105,7 @@ export default function BudgetsScreen() {
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    content: { padding: 20, paddingBottom: 40, gap: 14 },
+    content: { padding: 20, paddingBottom: 40, gap: 14, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
     meta: { color: colors.textMuted },

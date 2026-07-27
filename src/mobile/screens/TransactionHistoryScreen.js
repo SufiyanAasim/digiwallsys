@@ -8,7 +8,7 @@ import { getBudgetCategories, getReceipt, getTransactions, transactionExportUrl,
 import AmbientBackground from '../components/AmbientBackground';
 import { getAccessToken } from '../session';
 import { useAppTheme } from '../ThemeContext';
-import { radii } from '../theme';
+import { contentColumn, layout, radii } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 export default function TransactionHistoryScreen() {
@@ -119,7 +119,7 @@ function buildStyles(colors, commonStyles) {
     white: { color: colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E', fontWeight: '700' },
     exportRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8, marginTop: 4 },
     export: { flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center' }, exportText: { color: colors.primary, fontWeight: '700', fontSize: 12.5 },
-    content: { padding: 20 }, card: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderColor: colors.border },
+    content: { padding: 20, ...contentColumn(layout.page) }, card: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderColor: colors.border },
     cardDetails: { flex: 1, marginRight: 12, gap: 4 },
     cardTitle: { fontWeight: '700', color: colors.text }, meta: { color: colors.textMuted, fontSize: 12, marginTop: 4 }, debit: { color: colors.danger, fontWeight: '800' }, credit: { color: colors.success, fontWeight: '800' },
     categoryTag: { alignSelf: 'flex-start', backgroundColor: colors.primarySoft, borderRadius: radii.pill, paddingHorizontal: 8, paddingVertical: 2 },

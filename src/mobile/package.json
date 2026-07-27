@@ -8,7 +8,7 @@
     "android": "node scripts/run-package-bin.js expo start --android",
     "ios": "node scripts/run-package-bin.js expo start --ios",
     "web": "node scripts/run-package-bin.js expo start --web",
-    "lint": "node scripts/run-package-bin.js eslint App.js api.js index.js screens",
+    "lint": "node scripts/run-package-bin.js eslint App.js api.js index.js navigation.js session.js theme.js ThemeContext.js utils.js components screens",
     "test": "node --test ../../tests/mobile/*.test.js",
     "build": "node scripts/run-package-bin.js expo export --platform android --output-dir dist",
     "build:web": "node scripts/run-package-bin.js expo export --platform web --output-dir dist-web",

@@ -3,6 +3,7 @@ import TouchableOpacity from '../components/TouchableOpacity';
 
 import {
   Alert,
+  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -15,13 +16,14 @@ import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
 import GradientButton from '../components/GradientButton';
-import Logo from '../components/Logo';
-import Wordmark from '../components/Wordmark';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
 import { useAppTheme } from '../ThemeContext';
 import { radii } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
+
+// Matches the API's registration/reset rule in authController.js.
+const MIN_PASSWORD_LENGTH = 10;
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -65,9 +67,12 @@ export default function LoginScreen({ navigation }) {
       Alert.alert('Missing details', 'Complete all required fields.');
       return;
     }
-    if (password.length < 6) {
-      setErrorMsg('Password must be at least 6 characters.');
-      Alert.alert('Password too short', 'Use at least 6 characters.');
+    // Only enforce a length on sign-up: the API requires 10+ there, but existing
+    // accounts may predate that rule, so login must not lock them out client-side.
+    if (registering && password.length < MIN_PASSWORD_LENGTH) {
+      const msg = `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
+      setErrorMsg(msg);
+      Alert.alert('Password too short', msg);
       return;
     }
     setBusy(true);
@@ -111,12 +116,15 @@ export default function LoginScreen({ navigation }) {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.formColumn}>
-          <View style={styles.brandRow}>
-            <Logo size={56} />
-            <View>
-              <Wordmark size={26} />
-              <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
-            </View>
+          <View style={styles.brandBlock}>
+            <Image
+              source={require('../assets/wordmark.png')}
+              style={styles.wordmarkImage}
+              resizeMode="contain"
+              accessibilityRole="image"
+              accessibilityLabel="digiwallsys"
+            />
+            <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
           </View>
           <View style={styles.panel}>
             {Boolean(errorMsg) && (
@@ -196,8 +204,12 @@ function buildStyles(colors, commonStyles) {
       ...(isWeb ? { alignItems: 'center', justifyContent: 'center' } : null),
     },
     formColumn: { width: '100%', maxWidth: isWeb ? 460 : undefined },
-    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 26 },
-    subheading: { color: colors.textMuted, marginTop: 3, fontSize: 12.5 },
+    brandBlock: { alignItems: 'center', marginBottom: 26 },
+    // Source art is 2172x724 (exactly 3:1). An explicit height keeps that ratio:
+    // react-native-web's Image ignores aspectRatio here and falls back to the
+    // intrinsic height. resizeMode="contain" letterboxes safely on narrow phones.
+    wordmarkImage: { width: '100%', maxWidth: 300, height: 100, borderRadius: radii.md },
+    subheading: { color: colors.textMuted, marginTop: 10, fontSize: 12.5, textAlign: 'center' },
     panel: {
       backgroundColor: colors.surface,
       borderWidth: 1,

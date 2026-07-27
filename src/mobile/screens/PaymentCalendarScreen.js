@@ -5,7 +5,7 @@ import TouchableOpacity from '../components/TouchableOpacity';
 import { getSchedules } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { useAppTheme } from '../ThemeContext';
-import { radii } from '../theme';
+import { contentColumn, layout, radii } from '../theme';
 import { formatMoney, getErrorMessage, titleize } from '../utils';
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
@@ -109,7 +109,7 @@ export default function PaymentCalendarScreen({ navigation }) {
 function buildStyles(colors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    content: { padding: 20, paddingBottom: 40, gap: 14 },
+    content: { padding: 20, paddingBottom: 40, gap: 14, ...contentColumn(layout.page) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
     meta: { color: colors.textMuted },

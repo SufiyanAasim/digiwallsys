@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import Logo from '../Logo';
+import { useLogout } from '../LogoutProvider';
 import ThemedSwitch from '../ThemedSwitch';
 import TouchableOpacity from '../TouchableOpacity';
 import Wordmark from '../Wordmark';
@@ -27,6 +28,7 @@ const NAV_ITEMS = [
 
 export default function Sidebar({ activeRoute, user, onNavigate }) {
   const { colors, isDark, toggleTheme } = useAppTheme();
+  const { requestLogout } = useLogout();
   const styles = useMemo(() => buildStyles(colors), [colors]);
   const initials = (user?.name || 'DW').trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join('').toUpperCase();
   const items = user?.role === 'admin' ? [...NAV_ITEMS, { route: 'Admin', label: 'Admin operations', icon: 'settings-outline' }] : NAV_ITEMS;
@@ -74,7 +76,7 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
           <Icon name="information-circle-outline" size={18} color={colors.textMuted} />
           <Text style={styles.navLabel}>Credits</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutItem} onPress={() => onNavigate('Logout')} accessibilityRole="button" accessibilityLabel="Log out">
+        <TouchableOpacity style={styles.logoutItem} onPress={requestLogout} accessibilityRole="button" accessibilityLabel="Log out">
           <Icon name="log-out-outline" size={18} color={colors.primary} />
           <Text style={styles.logoutLabel}>Log out</Text>
         </TouchableOpacity>
@@ -96,11 +98,11 @@ function buildStyles(colors) {
       paddingVertical: 22,
       paddingHorizontal: 16,
     },
-    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 6, marginBottom: 22 },
+    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 6, marginBottom: 16 },
     profileCard: {
       flexDirection: 'row', alignItems: 'center', gap: 10,
       backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder,
-      borderRadius: radii.md, padding: 12, marginBottom: 18,
+      borderRadius: radii.md, padding: 12, marginBottom: 14,
     },
     avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
     avatarText: { color: colors.primary, fontWeight: '800', fontSize: 12 },
@@ -108,7 +110,8 @@ function buildStyles(colors) {
     profileName: { color: colors.text, fontWeight: '700', fontSize: 13 },
     profileRole: { color: colors.textMuted, fontSize: 11, marginTop: 1 },
     nav: { flex: 1 },
-    navItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 10, borderRadius: radii.sm, marginBottom: 2 },
+    // Tightened so the full nav fits without clipping on a ~1000px-tall window.
+    navItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 9, paddingHorizontal: 10, borderRadius: radii.sm, marginBottom: 1 },
     navItemActive: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border },
     navLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 13.5 },
     navLabelActive: { color: colors.text },

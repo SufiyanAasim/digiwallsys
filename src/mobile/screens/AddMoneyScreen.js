@@ -6,6 +6,7 @@ import { createFundingIntent, getFundingIntents } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
+import { contentColumn, layout } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount, titleize } from '../utils';
 
 export default function AddMoneyScreen({ navigation }) {
@@ -71,7 +72,7 @@ export default function AddMoneyScreen({ navigation }) {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 24 },
+    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 24, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     note: { color: colors.textMuted, lineHeight: 20, marginVertical: 14 },
     input: commonStyles.input,

@@ -7,7 +7,7 @@ import AmbientBackground from '../components/AmbientBackground';
 import ThemedSwitch from '../components/ThemedSwitch';
 import { isBiometricEnabled, setBiometricEnabled } from '../session';
 import { useAppTheme } from '../ThemeContext';
-import { radii } from '../theme';
+import { contentColumn, layout, radii } from '../theme';
 import { getErrorMessage } from '../utils';
 
 export default function SecurityScreen() {
@@ -96,7 +96,7 @@ export default function SecurityScreen() {
 function buildStyles(colors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    content: { padding: 24, gap: 14 },
+    content: { padding: 24, gap: 14, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     row: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.glassBorder, borderWidth: 1, borderRadius: radii.lg, padding: 16 },
     copy: { flex: 1, paddingRight: 12 },

@@ -27,6 +27,24 @@ the Android signing keystore. An Apple Developer account is required for the iOS
 distribution certificate and provisioning profile. Use the package/bundle ID
 `com.sufiyanaasim.digiwallsys` in both stores.
 
+### Building an APK locally (no EAS account)
+
+`src/mobile/android` is a committed-ignored Expo prebuild whose `release`
+buildType is still wired to the **debug** keystore, so it produces an
+installable — but not store-signable — APK:
+
+```bash
+cd src/mobile/android && ./gradlew assembleRelease
+```
+
+Output: `src/mobile/android/app/build/outputs/apk/release/app-release.apk`.
+
+This path needs the Android SDK on the machine — set `ANDROID_HOME` or create
+`src/mobile/android/local.properties` with `sdk.dir=/path/to/Android/Sdk`.
+Without it Gradle fails at configuration time with `SDK location not found`.
+Use the EAS `production` profile (which manages a real upload keystore) for
+anything you intend to publish.
+
 ## Production gates
 
 Do not deploy real-money functionality until the roadmap's ledger, provider,

@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
+import {  Alert, Image, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { forgotPassword, resendVerification, resetPassword, verifyEmail } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
+import { contentColumn, layout, radii } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
 
 export default function AccountRecoveryScreen({ navigation }) {
@@ -49,6 +50,13 @@ export default function AccountRecoveryScreen({ navigation }) {
     <View style={styles.container}>
       <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content}>
+        <Image
+          source={require('../assets/wordmark.png')}
+          style={styles.wordmarkImage}
+          resizeMode="contain"
+          accessibilityRole="image"
+          accessibilityLabel="digiwallsys"
+        />
         <Text style={styles.title}>Account security</Text>
         <Text style={styles.help}>Use your account email to request a token, then paste that token below.</Text>
         <TextInput style={styles.input} placeholder="Account email" placeholderTextColor={colors.textFaint} autoCapitalize="none" keyboardType="email-address" autoComplete="email" value={email} onChangeText={setEmail} accessibilityLabel="Account email" />
@@ -67,7 +75,9 @@ export default function AccountRecoveryScreen({ navigation }) {
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    content: { padding: 24, gap: 14 },
+    content: { padding: 24, gap: 14, ...contentColumn(layout.form) },
+    // Source art is 2172x724 (exactly 3:1); explicit height preserves that ratio.
+    wordmarkImage: { width: '100%', maxWidth: 240, height: 80, borderRadius: radii.md, alignSelf: 'center', marginBottom: 8 },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     help: { color: colors.textMuted, lineHeight: 20, marginBottom: 6 },
     input: commonStyles.input,

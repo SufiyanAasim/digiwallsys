@@ -1,3 +1,5 @@
+import { Platform } from 'react-native';
+
 export const darkColors = {
   mode: 'dark',
   background: '#0B0A10',
@@ -81,6 +83,22 @@ export const radii = {
   xl: 28,
   pill: 999,
 };
+
+// Readable measure caps for the web build. Mobile keeps full-bleed width, so
+// these only ever apply when Platform.OS === 'web' (see contentColumn below).
+export const layout = {
+  form: 640,   // single-column forms: inputs stay a usable width on a monitor
+  page: 900,   // prose/detail pages
+  wide: 1180,  // dashboards and grids
+};
+
+// Spread into a ScrollView contentContainerStyle (or a View style) to centre
+// and cap content on web while leaving mobile layout untouched.
+export function contentColumn(maxWidth = layout.form) {
+  return Platform.OS === 'web'
+    ? { width: '100%', maxWidth, alignSelf: 'center' }
+    : null;
+}
 
 export function buildGlow(colors) {
   return {

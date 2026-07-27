@@ -6,6 +6,25 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Web layout: form screens now cap at a readable measure (`contentColumn()` in
+  `theme.js`) instead of stretching inputs across a full monitor; dashboards cap
+  wider. Mobile layout is untouched — the helper is a no-op off web.
+- Home action tiles use a fixed width on web so a desktop grid stays dense.
+- Sign-in and Account security screens render the `digiwallsys` wordmark asset.
+- Logging out now opens a confirmation dialog in place instead of navigating to
+  a dedicated screen; `LogoutScreen.js` was removed and its route deleted.
+- Mobile lint now covers `components/`, `navigation.js`, `session.js`,
+  `theme.js`, `ThemeContext.js`, and `utils.js` (previously screens only).
+
+### Fixed
+
+- Sign-up accepted 6-character passwords the API rejects at 10; the client now
+  enforces 10 on registration only, so pre-existing accounts can still sign in.
+- Sidebar navigation no longer clips its last item on a ~1000px-tall window.
+- `formatMoney` used an unused catch binding that failed the widened lint scope.
+
 ### Added
 
 - Professional repository structure, documentation, Docker environment, and

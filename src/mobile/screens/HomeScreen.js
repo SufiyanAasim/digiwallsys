@@ -8,11 +8,14 @@ import { getBalance, getCurrentUser, getTransactions } from '../api';
 import ActionTile from '../components/ActionTile';
 import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
+import { useLogout } from '../components/LogoutProvider';
 import { useToast } from '../components/ToastProvider';
 import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';
-import { radii } from '../theme';
+import { contentColumn, layout, radii } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
+
+const LOGOUT_ACTION = 'Logout';
 
 const actions = [
   ['Analytics', 'Analytics', 'bar-chart-outline'],
@@ -38,6 +41,7 @@ export default function HomeScreen({ navigation, route }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { showToast } = useToast();
+  const { requestLogout } = useLogout();
   const { colors, isDark, toggleTheme } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
 
@@ -114,7 +118,12 @@ export default function HomeScreen({ navigation, route }) {
             )}
             <View style={styles.grid}>
               {visibleActions.map(([route, label, icon]) => (
-                <ActionTile key={route} icon={icon} label={label} onPress={() => navigation.navigate(route)} />
+                <ActionTile
+                  key={route}
+                  icon={icon}
+                  label={label}
+                  onPress={route === LOGOUT_ACTION ? requestLogout : () => navigation.navigate(route)}
+                />
               ))}
             </View>
             <Text style={styles.heading}>Recent transactions</Text>
@@ -139,7 +148,7 @@ export default function HomeScreen({ navigation, route }) {
 function buildStyles(colors) {
   return StyleSheet.create({
     safeArea: { flex: 1, backgroundColor: colors.background },
-    container: { padding: 20, paddingBottom: 36 },
+    container: { padding: 20, paddingBottom: 36, ...contentColumn(layout.wide) },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     welcome: { color: colors.textMuted, marginTop: 2, fontSize: 12.5 },
     headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },

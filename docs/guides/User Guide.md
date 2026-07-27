@@ -3,9 +3,18 @@
 ## Account
 
 1. Register with a unique email and password of at least 10 characters.
-2. Verify the email using the delivered token/link before logging in.
+2. Verify the email using the delivered token/link before logging in. Signing in
+   before verifying is rejected with "Verify your email before signing in".
 3. Enable biometric login from **Security** on a supported enrolled device.
 4. Use **Account security** to resend verification or reset a password.
+
+## Logging out
+
+Selecting **Log out** — from the web sidebar or the Home tile on mobile — opens a
+confirmation dialog ("Are you sure you want to log out?"). **Cancel** dismisses
+it and leaves you where you were; **Log out** revokes the refresh token, clears
+the locally stored tokens, and returns you to the sign-in screen. Your local
+session is cleared even if the API is unreachable at that moment.
 
 ## Add funds
 

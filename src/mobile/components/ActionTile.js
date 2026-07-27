@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import TouchableOpacity from './TouchableOpacity';
 import { useAppTheme } from '../ThemeContext';
@@ -21,9 +21,11 @@ export default function ActionTile({ icon, label, onPress }) {
 function buildStyles(colors) {
   return StyleSheet.create({
     tile: {
-      flexBasis: '31%',
-      flexGrow: 1,
-      minWidth: 92,
+      // Phones fit 3 per row; on a desktop grid a percentage basis would make
+      // each tile ~350px wide, so cap them to a fixed, denser size instead.
+      ...(Platform.OS === 'web'
+        ? { flexBasis: 168, flexGrow: 0, minWidth: 168 }
+        : { flexBasis: '31%', flexGrow: 1, minWidth: 92 }),
       minHeight: 78,
       backgroundColor: colors.surfaceMuted,
       borderWidth: 1,

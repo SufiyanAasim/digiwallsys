@@ -23,7 +23,8 @@ export function formatMoney(amount, currency = 'USD') {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value);
-  } catch (_error) {
+  } catch {
+    // Unknown/unsupported currency code: fall back to a plain formatted amount.
     return `${currency || 'USD'} ${value.toFixed(2)}`;
   }
 }

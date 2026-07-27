@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
-import { createNavigationContainerRef, NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -13,7 +13,6 @@ import CreditsScreen from './screens/CreditsScreen';
 import FamilyScreen from './screens/FamilyScreen';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
-import LogoutScreen from './screens/LogoutScreen';
 import NotificationsScreen from './screens/NotificationsScreen';
 import PaymentCalendarScreen from './screens/PaymentCalendarScreen';
 import PaymentToolsScreen from './screens/PaymentToolsScreen';
@@ -24,16 +23,17 @@ import SendMoneyScreen from './screens/SendMoneyScreen';
 import TransactionHistoryScreen from './screens/TransactionHistoryScreen';
 import WalletsScreen from './screens/WalletsScreen';
 import { getCurrentUser } from './api';
+import { currentRouteName, navigate, navigationRef } from './navigation';
 import { useAppTheme, ThemeProvider } from './ThemeContext';
 
 import AmbientBackground from './components/AmbientBackground';
 import ErrorBoundary from './components/ErrorBoundary';
+import { LogoutProvider } from './components/LogoutProvider';
 import { ToastProvider } from './components/ToastProvider';
 import Sidebar from './components/web/Sidebar';
 
 const NativeStack = createNativeStackNavigator();
 const JSStack = createStackNavigator();
-const navigationRef = createNavigationContainerRef();
 const PUBLIC_ROUTES = ['Login', 'Account Recovery'];
 
 function AppShell() {
@@ -54,7 +54,7 @@ function AppShell() {
   }, [activeRoute, refreshUser]);
 
   const syncActiveRoute = useCallback(() => {
-    setActiveRoute(navigationRef.current?.getCurrentRoute()?.name || 'Login');
+    setActiveRoute(currentRouteName());
   }, []);
 
   const showSidebar = isWeb && !PUBLIC_ROUTES.includes(activeRoute);
@@ -62,11 +62,7 @@ function AppShell() {
   return (
     <View style={styles.webRoot}>
       {showSidebar && (
-        <Sidebar
-          activeRoute={activeRoute}
-          user={user}
-          onNavigate={(route) => navigationRef.current?.isReady() && navigationRef.current.navigate(route)}
-        />
+        <Sidebar activeRoute={activeRoute} user={user} onNavigate={navigate} />
       )}
       <View style={styles.webContentArea}>
         {isWeb && showSidebar && <AmbientBackground />}
@@ -108,7 +104,6 @@ function AppShell() {
               <Stack.Screen name="Security" component={SecurityScreen} />
               <Stack.Screen name="Admin" component={AdminScreen} />
               <Stack.Screen name="Credits" component={CreditsScreen} />
-              <Stack.Screen name="Logout" component={LogoutScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </View>
@@ -122,7 +117,9 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <ToastProvider>
-          <AppShell />
+          <LogoutProvider>
+            <AppShell />
+          </LogoutProvider>
         </ToastProvider>
       </ThemeProvider>
     </ErrorBoundary>
