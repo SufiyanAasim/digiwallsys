@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
 import { createBudgetCategory, deleteBudgetCategory, getBudgetCategories } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
+import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
 import { contentColumn, layout, radii } from '../theme';
@@ -17,6 +18,7 @@ export default function BudgetsScreen() {
   const [name, setName] = useState('');
   const [limit, setLimit] = useState('');
   const { colors, commonStyles } = useAppTheme();
+  const confirm = useConfirm();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   const load = useCallback(async () => {
@@ -45,6 +47,14 @@ export default function BudgetsScreen() {
   }
 
   async function remove(categoryId) {
+    const category = categories.find((c) => c.categoryid === categoryId);
+    const ok = await confirm({
+      title: 'Delete this category?',
+      message: `${category?.name || 'This category'} will be removed. Transactions already tagged with it keep their tag.`,
+      confirmLabel: 'Delete',
+      destructive: true,
+    });
+    if (!ok) return;
     setBusy(`delete-${categoryId}`);
     try { await deleteBudgetCategory(categoryId); await load(); }
     catch (deleteError) { Alert.alert('Could not delete category', getErrorMessage(deleteError)); }

@@ -117,13 +117,15 @@ export default function LoginScreen({ navigation }) {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.formColumn}>
           <View style={styles.brandBlock}>
-            <Image
-              source={require('../assets/wordmark.png')}
-              style={styles.wordmarkImage}
-              resizeMode="contain"
-              accessibilityRole="image"
-              accessibilityLabel="digiwallsys"
-            />
+            <View style={styles.wordmarkFrame}>
+              <Image
+                source={require('../assets/wordmark.png')}
+                style={styles.wordmarkImage}
+                resizeMode="cover"
+                accessibilityRole="image"
+                accessibilityLabel="digiwallsys"
+              />
+            </View>
             <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
           </View>
           <View style={styles.panel}>
@@ -205,10 +207,11 @@ function buildStyles(colors, commonStyles) {
     },
     formColumn: { width: '100%', maxWidth: isWeb ? 460 : undefined },
     brandBlock: { alignItems: 'center', marginBottom: 26 },
-    // Source art is 2172x724 (exactly 3:1). An explicit height keeps that ratio:
-    // react-native-web's Image ignores aspectRatio here and falls back to the
-    // intrinsic height. resizeMode="contain" letterboxes safely on narrow phones.
-    wordmarkImage: { width: '100%', maxWidth: 300, height: 100, borderRadius: radii.md },
+    // Source art is 2172x724 (exactly 3:1). A wrapper View honours aspectRatio
+    // reliably (Image does not on react-native-web), so the mark scales down on
+    // narrow phones with no letterboxing and no distortion.
+    wordmarkFrame: { width: '100%', maxWidth: 300, aspectRatio: 3, borderRadius: radii.md, overflow: 'hidden' },
+    wordmarkImage: { width: '100%', height: '100%' },
     subheading: { color: colors.textMuted, marginTop: 10, fontSize: 12.5, textAlign: 'center' },
     panel: {
       backgroundColor: colors.surface,

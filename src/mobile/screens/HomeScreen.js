@@ -8,7 +8,7 @@ import { getBalance, getCurrentUser, getTransactions } from '../api';
 import ActionTile from '../components/ActionTile';
 import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
-import { useLogout } from '../components/LogoutProvider';
+import { useLogout } from '../components/ConfirmProvider';
 import { useToast } from '../components/ToastProvider';
 import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';

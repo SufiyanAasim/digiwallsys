@@ -16,6 +16,14 @@ it and leaves you where you were; **Log out** revokes the refresh token, clears
 the locally stored tokens, and returns you to the sign-in screen. Your local
 session is cleared even if the API is unreachable at that moment.
 
+## Confirmations
+
+Anything destructive or irreversible asks first, using the same in-app dialog:
+removing a family member, archiving a savings goal, deleting a budget category,
+declining or cancelling a payment request, cancelling a scheduled transfer, and
+paying a scanned QR request. Each dialog states what will happen; **Cancel**
+always leaves things unchanged.
+
 ## Add funds
 
 Open **Add funds**, enter an amount, and continue with the configured provider.

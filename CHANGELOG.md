@@ -15,6 +15,15 @@ All notable changes to this project are documented here. The format follows
 - Sign-in and Account security screens render the `digiwallsys` wordmark asset.
 - Logging out now opens a confirmation dialog in place instead of navigating to
   a dedicated screen; `LogoutScreen.js` was removed and its route deleted.
+- `ConfirmProvider` exposes a promise-based `useConfirm()`, now used for every
+  destructive action (remove member, archive goal, delete category, decline or
+  cancel a request, cancel a schedule, pay a scanned QR request). These
+  previously either had no confirmation at all, or relied on the web `Alert`
+  polyfill's `window.confirm()`, which browsers suppress.
+- The web build paints one ambient gradient at shell level covering the full
+  content area; screen-level `AmbientBackground` is a no-op on web. Previously
+  the login background stopped at the 1180px column (leaving flat edges on a
+  wide monitor) and authed pages drew it twice, producing a brighter band.
 - Mobile lint now covers `components/`, `navigation.js`, `session.js`,
   `theme.js`, `ThemeContext.js`, and `utils.js` (previously screens only).
 
@@ -24,6 +33,10 @@ All notable changes to this project are documented here. The format follows
   enforces 10 on registration only, so pre-existing accounts can still sign in.
 - Sidebar navigation no longer clips its last item on a ~1000px-tall window.
 - `formatMoney` used an unused catch binding that failed the widened lint scope.
+- A 404 from an endpoint the deployed API does not have yet now explains that
+  the server needs the latest release, instead of surfacing "Route not found".
+- The auth-screen wordmark is framed by a `View` with `aspectRatio`, which
+  react-native-web honours (the `Image` did not), removing the letterboxing.
 
 ### Added
 

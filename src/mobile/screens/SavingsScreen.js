@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
 import { archiveSavingsGoal, contributeToSavingsGoal, createSavingsGoal, getSavingsGoals, withdrawFromSavingsGoal } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
+import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
 import ThemedSwitch from '../components/ThemedSwitch';
 import { useAppTheme } from '../ThemeContext';
@@ -20,6 +21,7 @@ export default function SavingsScreen() {
   const [roundUp, setRoundUp] = useState(false);
   const [amounts, setAmounts] = useState({});
   const { colors, commonStyles } = useAppTheme();
+  const confirm = useConfirm();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   const load = useCallback(async () => {
@@ -61,6 +63,14 @@ export default function SavingsScreen() {
   }
 
   async function archive(goalId) {
+    const goal = goals.find((g) => g.goalid === goalId);
+    const ok = await confirm({
+      title: 'Archive this goal?',
+      message: `${goal?.name || 'This goal'} will be hidden and any earmarked amount returns to your available balance.`,
+      confirmLabel: 'Archive',
+      destructive: true,
+    });
+    if (!ok) return;
     setBusy(`archive-${goalId}`);
     try { await archiveSavingsGoal(goalId); await load(); }
     catch (archiveError) { Alert.alert('Could not archive goal', getErrorMessage(archiveError)); }

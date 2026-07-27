@@ -6,6 +6,8 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
 import { acceptPaymentRequest, createPaymentRequest, getPaymentRequest } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
+import { useConfirm } from '../components/ConfirmProvider';
+import { useToast } from '../components/ToastProvider';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
 import { contentColumn, layout } from '../theme';
@@ -20,6 +22,8 @@ export default function QrPaymentScreen({ navigation }) {
   const [scanned, setScanned] = useState(false);
   const [busy, setBusy] = useState(false);
   const { colors, commonStyles } = useAppTheme();
+  const confirm = useConfirm();
+  const { showToast } = useToast();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function generate() {
@@ -44,17 +48,19 @@ export default function QrPaymentScreen({ navigation }) {
     if (!match) { Alert.alert('Invalid QR code', 'This is not a digiwallsys payment request.'); setScanned(false); return; }
     try {
       const request = (await getPaymentRequest(match[1])).data;
-      Alert.alert(
-        'Pay request?',
-        `${request.requester_name} requested ${formatMoney(request.amount, request.currency)}.`,
-        [
-          { text: 'Cancel', onPress: () => setScanned(false) },
-          { text: 'Pay', onPress: async () => {
-            try { await acceptPaymentRequest(request.requestid); Alert.alert('Paid', 'Payment request completed.'); navigation.navigate('Home'); }
-            catch (error) { Alert.alert('Payment failed', getErrorMessage(error)); setScanned(false); }
-          } },
-        ]
-      );
+      // In-app dialog rather than Alert with buttons: browsers suppress the
+      // window.confirm() the web Alert polyfill falls back to.
+      const ok = await confirm({
+        title: 'Pay this request?',
+        message: `${request.requester_name} requested ${formatMoney(request.amount, request.currency)}.`,
+        confirmLabel: 'Pay',
+      });
+      if (!ok) { setScanned(false); return; }
+      try {
+        await acceptPaymentRequest(request.requestid);
+        showToast('Payment sent', 'The payment request was completed.');
+        navigation.navigate('Home');
+      } catch (payError) { Alert.alert('Payment failed', getErrorMessage(payError)); setScanned(false); }
     } catch (error) { Alert.alert('Request unavailable', getErrorMessage(error)); setScanned(false); }
   }
 

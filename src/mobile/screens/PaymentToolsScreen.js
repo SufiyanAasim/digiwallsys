@@ -15,6 +15,7 @@ import {
   updatePaymentRequest,
 } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
+import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
 import { contentColumn, layout } from '../theme';
@@ -36,6 +37,7 @@ export default function PaymentToolsScreen() {
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
   const { colors, commonStyles } = useAppTheme();
+  const confirm = useConfirm();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function load() {
@@ -69,6 +71,13 @@ export default function PaymentToolsScreen() {
     } finally {
       setBusy('');
     }
+  }
+
+  // Destructive request/schedule actions confirm in-app first.
+  async function actWithConfirm(key, callback, success, dialog) {
+    const ok = await confirm({ destructive: true, confirmLabel: 'Yes', cancelLabel: 'No', ...dialog });
+    if (!ok) return;
+    await act(key, callback, success);
   }
 
   function requestPayment() {
@@ -133,8 +142,8 @@ export default function PaymentToolsScreen() {
             <Text style={styles.meta}>{request.requester_name} requested from {request.payer_name || 'QR payer'} · {request.note || 'No note'}</Text>
             {request.status === 'pending' && <View style={styles.row}>
               {request.payer_userid === currentUser?.id && <TouchableOpacity disabled={!!busy} onPress={() => act(`pay-${request.requestid}`, () => acceptPaymentRequest(request.requestid), 'Request paid.')}><Text style={styles.action}>Pay</Text></TouchableOpacity>}
-              {request.payer_userid === currentUser?.id && <TouchableOpacity disabled={!!busy} onPress={() => act(`decline-${request.requestid}`, () => updatePaymentRequest(request.requestid, 'decline'), 'Request declined.')}><Text style={styles.rowDanger}>Decline</Text></TouchableOpacity>}
-              {request.requester_userid === currentUser?.id && <TouchableOpacity disabled={!!busy} onPress={() => act(`cancel-${request.requestid}`, () => updatePaymentRequest(request.requestid, 'cancel'), 'Request cancelled.')}><Text style={styles.rowDanger}>Cancel</Text></TouchableOpacity>}
+              {request.payer_userid === currentUser?.id && <TouchableOpacity disabled={!!busy} onPress={() => actWithConfirm(`decline-${request.requestid}`, () => updatePaymentRequest(request.requestid, 'decline'), 'Request declined.', { title: 'Decline this request?', message: 'The requester will be told you declined.', confirmLabel: 'Decline' })}><Text style={styles.rowDanger}>Decline</Text></TouchableOpacity>}
+              {request.requester_userid === currentUser?.id && <TouchableOpacity disabled={!!busy} onPress={() => actWithConfirm(`cancel-${request.requestid}`, () => updatePaymentRequest(request.requestid, 'cancel'), 'Request cancelled.', { title: 'Cancel this request?', message: 'The request will be withdrawn and can no longer be paid.', confirmLabel: 'Cancel request' })}><Text style={styles.rowDanger}>Cancel</Text></TouchableOpacity>}
             </View>}
           </View>
         ))}
@@ -145,7 +154,7 @@ export default function PaymentToolsScreen() {
           <View key={schedule.scheduleid} style={styles.card}>
             <Text style={styles.cardTitle}>{formatMoney(schedule.amount, schedule.currency)} to {schedule.receiver_name}</Text>
             <Text style={styles.meta}>{titleize(schedule.frequency)} · {titleize(schedule.status)} · {new Date(schedule.next_run_at).toLocaleString()}</Text>
-            {schedule.status === 'active' && <TouchableOpacity disabled={!!busy} onPress={() => act(`schedule-${schedule.scheduleid}`, () => cancelSchedule(schedule.scheduleid), 'Schedule cancelled.')}><Text style={styles.danger}>Cancel schedule</Text></TouchableOpacity>}
+            {schedule.status === 'active' && <TouchableOpacity disabled={!!busy} onPress={() => actWithConfirm(`schedule-${schedule.scheduleid}`, () => cancelSchedule(schedule.scheduleid), 'Schedule cancelled.', { title: 'Cancel this scheduled transfer?', message: 'No further transfers will run on this schedule.', confirmLabel: 'Cancel schedule' })}><Text style={styles.danger}>Cancel schedule</Text></TouchableOpacity>}
           </View>
         ))}
       </ScrollView>

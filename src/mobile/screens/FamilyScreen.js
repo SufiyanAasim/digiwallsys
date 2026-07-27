@@ -4,6 +4,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import TouchableOpacity from '../components/TouchableOpacity';
 import { addFamilyMember, getFamilyMembers, getSharedWallets, removeFamilyMember } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
+import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
 import { contentColumn, layout, radii } from '../theme';
@@ -18,6 +19,7 @@ export default function FamilyScreen() {
   const [email, setEmail] = useState('');
   const [limit, setLimit] = useState('');
   const { colors, commonStyles } = useAppTheme();
+  const confirm = useConfirm();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   const load = useCallback(async () => {
@@ -56,6 +58,14 @@ export default function FamilyScreen() {
   }
 
   async function remove(userId) {
+    const member = members.find((m) => m.userid === userId);
+    const ok = await confirm({
+      title: 'Remove this member?',
+      message: `${member?.name || 'This member'} will no longer be able to spend from your wallet.`,
+      confirmLabel: 'Remove',
+      destructive: true,
+    });
+    if (!ok) return;
     setBusy(`remove-${userId}`);
     try { await removeFamilyMember(userId); await load(); }
     catch (removeError) { Alert.alert('Could not remove member', getErrorMessage(removeError)); }

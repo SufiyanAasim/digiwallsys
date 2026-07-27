@@ -24,11 +24,12 @@ import TransactionHistoryScreen from './screens/TransactionHistoryScreen';
 import WalletsScreen from './screens/WalletsScreen';
 import { getCurrentUser } from './api';
 import { currentRouteName, navigate, navigationRef } from './navigation';
+import { layout } from './theme';
 import { useAppTheme, ThemeProvider } from './ThemeContext';
 
-import AmbientBackground from './components/AmbientBackground';
+import { AmbientLayer } from './components/AmbientBackground';
 import ErrorBoundary from './components/ErrorBoundary';
-import { LogoutProvider } from './components/LogoutProvider';
+import { ConfirmProvider } from './components/ConfirmProvider';
 import { ToastProvider } from './components/ToastProvider';
 import Sidebar from './components/web/Sidebar';
 
@@ -65,7 +66,7 @@ function AppShell() {
         <Sidebar activeRoute={activeRoute} user={user} onNavigate={navigate} />
       )}
       <View style={styles.webContentArea}>
-        {isWeb && showSidebar && <AmbientBackground />}
+        {isWeb && <AmbientLayer />}
         <View style={[styles.webContentColumn, !showSidebar && styles.fullWidthColumn]}>
           <NavigationContainer
             ref={navigationRef}
@@ -117,9 +118,9 @@ export default function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <ToastProvider>
-          <LogoutProvider>
+          <ConfirmProvider>
             <AppShell />
-          </LogoutProvider>
+          </ConfirmProvider>
         </ToastProvider>
       </ThemeProvider>
     </ErrorBoundary>
@@ -133,7 +134,11 @@ function buildStyles(colors) {
     // Desktop-scale content column: wide enough to use a 24" monitor, capped so
     // dashboards stay readable. The ambient gradient fills the side margins so
     // they read as intentional breathing room, never dead black space.
-    webContentColumn: { flex: 1, width: '100%', maxWidth: 1180 },
-    fullWidthColumn: { maxWidth: undefined },
+    webContentColumn: { flex: 1, width: '100%', maxWidth: layout.wide },
+    // Auth screens have no sidebar, so they run full-bleed and let the screen's
+    // own ambient gradient cover the whole viewport. `maxWidth: undefined` does
+    // not reliably override the value above once styles are flattened, so this
+    // must be an explicit value.
+    fullWidthColumn: { maxWidth: '100%' },
   });
 }

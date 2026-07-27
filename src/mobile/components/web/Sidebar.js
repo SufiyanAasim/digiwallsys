@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import Logo from '../Logo';
-import { useLogout } from '../LogoutProvider';
+import { useLogout } from '../ConfirmProvider';
 import ThemedSwitch from '../ThemedSwitch';
 import TouchableOpacity from '../TouchableOpacity';
 import Wordmark from '../Wordmark';
