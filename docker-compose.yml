@@ -23,15 +23,32 @@ services:
       database:
         condition: service_healthy
     environment:
+      # Local stack only. The image defaults to NODE_ENV=production; development
+      # is set back here on purpose so emailService returns the verification
+      # token in the API response. Without it there is no mail provider wired up
+      # locally, so no account could ever be verified and nobody could sign in.
+      NODE_ENV: development
       PORT: 5000
+      # Placeholders — replace every secret below before any real deployment.
       JWT_SECRET: local-development-secret-change-before-deployment
       ACCESS_TOKEN_MINUTES: 15
       REFRESH_TOKEN_DAYS: 30
       DATABASE_URL: postgresql://digiwallsys:digiwallsys@database:5432/digiwallsys
       DATABASE_SSL: "false"
+      DATABASE_POOL_SIZE: 10
       CORS_ORIGIN: http://localhost:8081,http://localhost:19006
+      # Numeric: app.js passes this straight to Express' "trust proxy".
+      TRUST_PROXY: 0
+      GLOBAL_RATE_LIMIT: 300
+      MAX_TRANSFER_AMOUNT: 10000
+      DAILY_TRANSFER_AMOUNT: 25000
+      HOURLY_TRANSFER_COUNT: 20
       FUNDING_PROVIDER: sandbox
       FUNDING_WEBHOOK_SECRET: local-funding-webhook-secret-change-me
+      # Workers read "false" to opt out; scheduler and email stay on to match the
+      # default runtime, push is off because there are no device tokens locally.
+      ENABLE_SCHEDULER: "true"
+      ENABLE_EMAIL_WORKER: "true"
       ENABLE_PUSH_WORKER: "false"
     ports:
       - "5000:5000"

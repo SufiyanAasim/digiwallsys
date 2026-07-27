@@ -6,8 +6,33 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- `config/database.sql` still stopped at migration `002`, so every fresh
+  database — including the Docker stack, which initializes from it — came up
+  without the Convoy and Estuary tables. It now includes `003` and `004`.
+- The Docker stack inherited `NODE_ENV=production` from the image, which makes
+  `emailService` withhold the verification token. With no mail provider wired up
+  locally, no account could be verified and nobody could sign in; compose now
+  sets `NODE_ENV=development` for the local stack.
+- Sign-up accepted 6-character passwords the API rejects at 10; the client now
+  enforces 10 on registration only, so pre-existing accounts can still sign in.
+- Sidebar navigation no longer clips its last item on a ~1000px-tall window.
+- `formatMoney` used an unused catch binding that failed the widened lint scope.
+- A 404 from an endpoint the deployed API does not have yet now explains that
+  the server needs the latest release, instead of surfacing "Route not found".
+- Transaction category tagging was unusable on web: it passed an option list to
+  `Alert`, which the web polyfill collapses to `window.confirm()`, so it always
+  applied the first option ("No category") instead of the chosen category.
+  `ConfirmDialog` now supports a single-select list via `useChoose()`.
+- The auth-screen wordmark is framed by a `View` with `aspectRatio`, which
+  react-native-web honours (the `Image` did not), removing the letterboxing.
+
 ### Changed
 
+- `docker-compose.yml` now sets the pool size, proxy, rate-limit, risk-control
+  and worker variables it previously left implicit, and `docker/README.md`
+  documents that the schema only initializes on an empty volume.
 - Web layout: form screens now cap at a readable measure (`contentColumn()` in
   `theme.js`) instead of stretching inputs across a full monitor; dashboards cap
   wider. Mobile layout is untouched — the helper is a no-op off web.
@@ -32,21 +57,8 @@ All notable changes to this project are documented here. The format follows
   3x the rendered width so it stays crisp) to cut the bundle and page weight.
 - Mobile lint now covers `components/`, `navigation.js`, `session.js`,
   `theme.js`, `ThemeContext.js`, and `utils.js` (previously screens only).
-
-### Fixed
-
-- Sign-up accepted 6-character passwords the API rejects at 10; the client now
-  enforces 10 on registration only, so pre-existing accounts can still sign in.
-- Sidebar navigation no longer clips its last item on a ~1000px-tall window.
-- `formatMoney` used an unused catch binding that failed the widened lint scope.
-- A 404 from an endpoint the deployed API does not have yet now explains that
-  the server needs the latest release, instead of surfacing "Route not found".
-- Transaction category tagging was unusable on web: it passed an option list to
-  `Alert`, which the web polyfill collapses to `window.confirm()`, so it always
-  applied the first option ("No category") instead of the chosen category.
-  `ConfirmDialog` now supports a single-select list via `useChoose()`.
-- The auth-screen wordmark is framed by a `View` with `aspectRatio`, which
-  react-native-web honours (the `Image` did not), removing the letterboxing.
+- Standardized the project identity as `digiwallsys`.
+- Consolidated application code under `src/backend` and `src/mobile`.
 
 ### Added
 
@@ -62,19 +74,11 @@ All notable changes to this project are documented here. The format follows
 - Role-protected administrator dashboard, fraud review, and reconciliation APIs.
 - PostgreSQL integration and concurrent-overdraft test suite for CI.
 
-### Changed
-
-- Standardized the project identity as `digiwallsys`.
-- Consolidated application code under `src/backend` and `src/mobile`.
-
 ### Improved
 
 - Made transfers atomic and validated monetary amounts.
 - Made the mobile API URL environment-configurable.
 - Added stable UUID references and ledger-backed receipts to money movement.
-
-### Fixed
-
 - Corrected transaction history to resolve the authenticated user's wallet.
 - Cleared stored authentication data during logout.
 

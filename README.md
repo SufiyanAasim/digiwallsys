@@ -221,6 +221,10 @@ LAN address. Apply migrations to an existing database with:
 npm run migrate --workspace @digiwallsys/api
 ```
 
+Compose builds the schema from `config/database.sql` only when the data volume
+is empty, so run the command above — or `docker compose down -v` to start over —
+after pulling new migrations. See [docker/README.md](docker/README.md).
+
 ### Build installable mobile apps
 
 Expo Application Services (EAS) creates signed native packages. Sign in once

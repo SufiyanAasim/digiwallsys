@@ -43,7 +43,9 @@ change; the version and release name themselves never change.
 
 1. Create `release/vMAJOR.MINOR.PATCH` from `develop`.
 2. Run `npm ci`, `npm run verify`, and the production mobile build.
-3. Test database migrations and transfer rollback behavior cleanly.
+3. Test database migrations and transfer rollback behavior cleanly. Confirm that
+   every migration in `config/migrations` is listed in `config/database.sql`, so
+   a database created from scratch matches one built by migrating forward.
 4. Update `CHANGELOG.md` with concise change entries.
 5. Complete the matching file in `docs/releases`.
 
