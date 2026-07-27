@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Modal, Platform, StyleSheet, Text, View } from 'react-native';
+import { Modal, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import TouchableOpacity from './TouchableOpacity';
 import { useAppTheme } from '../ThemeContext';
 import { radii } from '../theme';
@@ -15,6 +15,9 @@ export default function ConfirmDialog({
   cancelLabel = 'Cancel',
   destructive = false,
   busy = false,
+  // When provided, the dialog becomes a single-select list ([{label, value}])
+  // and onConfirm receives the chosen value instead of acting as a yes/no.
+  options = null,
   onConfirm,
   onCancel,
 }) {
@@ -27,6 +30,22 @@ export default function ConfirmDialog({
         <View style={styles.dialog} accessibilityViewIsModal accessibilityRole="alert">
           <Text style={styles.title}>{title}</Text>
           {!!message && <Text style={styles.message}>{message}</Text>}
+
+          {options && (
+            <ScrollView style={styles.optionList} keyboardShouldPersistTaps="handled">
+              {options.map((option) => (
+                <TouchableOpacity
+                  key={String(option.value)}
+                  style={styles.option}
+                  onPress={() => onConfirm(option.value)}
+                  accessibilityRole="button"
+                >
+                  <Text style={styles.optionText}>{option.label}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          )}
+
           <View style={styles.actions}>
             <TouchableOpacity
               style={[styles.button, styles.cancel]}
@@ -36,14 +55,16 @@ export default function ConfirmDialog({
             >
               <Text style={styles.cancelText}>{cancelLabel}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.button, destructive ? styles.confirmDestructive : styles.confirm, busy && styles.disabled]}
-              onPress={onConfirm}
-              disabled={busy}
-              accessibilityRole="button"
-            >
-              <Text style={styles.confirmText}>{busy ? 'Please wait…' : confirmLabel}</Text>
-            </TouchableOpacity>
+            {!options && (
+              <TouchableOpacity
+                style={[styles.button, destructive ? styles.confirmDestructive : styles.confirm, busy && styles.disabled]}
+                onPress={onConfirm}
+                disabled={busy}
+                accessibilityRole="button"
+              >
+                <Text style={styles.confirmText}>{busy ? 'Please wait…' : confirmLabel}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </View>
@@ -81,6 +102,18 @@ function buildStyles(colors) {
     },
     title: { color: colors.text, fontSize: 18, fontWeight: '800', letterSpacing: -0.2 },
     message: { color: colors.textMuted, fontSize: 13.5, lineHeight: 20, marginTop: 10 },
+    optionList: { maxHeight: 260, marginTop: 16 },
+    option: {
+      minHeight: 46,
+      justifyContent: 'center',
+      paddingHorizontal: 14,
+      borderRadius: radii.sm,
+      borderWidth: 1,
+      borderColor: colors.glassBorder,
+      backgroundColor: colors.surfaceMuted,
+      marginBottom: 8,
+    },
+    optionText: { color: colors.text, fontWeight: '600', fontSize: 14 },
     actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10, marginTop: 22 },
     button: {
       minHeight: 44,

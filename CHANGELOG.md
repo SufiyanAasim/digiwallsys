@@ -35,6 +35,10 @@ All notable changes to this project are documented here. The format follows
 - `formatMoney` used an unused catch binding that failed the widened lint scope.
 - A 404 from an endpoint the deployed API does not have yet now explains that
   the server needs the latest release, instead of surfacing "Route not found".
+- Transaction category tagging was unusable on web: it passed an option list to
+  `Alert`, which the web polyfill collapses to `window.confirm()`, so it always
+  applied the first option ("No category") instead of the chosen category.
+  `ConfirmDialog` now supports a single-select list via `useChoose()`.
 - The auth-screen wordmark is framed by a `View` with `aspectRatio`, which
   react-native-web honours (the `Image` did not), removing the letterboxing.
 

@@ -6,6 +6,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import { getBudgetCategories, getReceipt, getTransactions, transactionExportUrl, transactionStatementUrl, updateTransactionCategory } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
+import { useChoose } from '../components/ConfirmProvider';
 import { getAccessToken } from '../session';
 import { useAppTheme } from '../ThemeContext';
 import { contentColumn, layout, radii } from '../theme';
@@ -19,6 +20,7 @@ export default function TransactionHistoryScreen() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const { colors, commonStyles } = useAppTheme();
+  const choose = useChoose();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   async function load() {
@@ -42,15 +44,18 @@ export default function TransactionHistoryScreen() {
 
   async function tagCategory(item) {
     if (item.direction !== 'debit' || categories.length === 0) return;
-    Alert.alert(
-      'Tag category',
-      item.counterparty,
-      [
-        { text: 'No category', onPress: () => applyCategory(item.reference, null) },
-        ...categories.map((category) => ({ text: category.name, onPress: () => applyCategory(item.reference, category.name) })),
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+    // A real single-select dialog: Alert with an option list collapses to
+    // window.confirm() on web, which always picked the first option.
+    const picked = await choose({
+      title: 'Tag category',
+      message: item.counterparty,
+      options: [
+        { label: 'No category', value: '' },
+        ...categories.map((category) => ({ label: category.name, value: category.name })),
+      ],
+    });
+    if (picked === null) return;
+    await applyCategory(item.reference, picked || null);
   }
 
   async function applyCategory(reference, category) {

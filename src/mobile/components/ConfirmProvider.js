@@ -6,6 +6,7 @@ import ConfirmDialog from './ConfirmDialog';
 
 const ConfirmContext = createContext({
   confirm: async () => false,
+  choose: async () => null,
   requestLogout: () => {},
 });
 
@@ -18,6 +19,12 @@ export function ConfirmProvider({ children }) {
   const resolver = useRef(null);
 
   const confirm = useCallback((options) => new Promise((resolve) => {
+    resolver.current = resolve;
+    setDialog(options);
+  }), []);
+
+  // Single-select list. Resolves the chosen value, or null if dismissed.
+  const choose = useCallback((options) => new Promise((resolve) => {
     resolver.current = resolve;
     setDialog(options);
   }), []);
@@ -46,7 +53,7 @@ export function ConfirmProvider({ children }) {
   }, [confirm]);
 
   return (
-    <ConfirmContext.Provider value={{ confirm, requestLogout }}>
+    <ConfirmContext.Provider value={{ confirm, choose, requestLogout }}>
       {children}
       <ConfirmDialog
         visible={!!dialog}
@@ -55,9 +62,14 @@ export function ConfirmProvider({ children }) {
         confirmLabel={dialog?.confirmLabel || 'Confirm'}
         cancelLabel={dialog?.cancelLabel || 'Cancel'}
         destructive={!!dialog?.destructive}
+        options={dialog?.options || null}
         busy={busy}
-        onConfirm={() => { setBusy(true); settle(true); }}
-        onCancel={() => settle(false)}
+        onConfirm={(value) => {
+          if (dialog?.options) { settle(value); return; }
+          setBusy(true);
+          settle(true);
+        }}
+        onCancel={() => settle(dialog?.options ? null : false)}
       />
     </ConfirmContext.Provider>
   );
@@ -65,6 +77,10 @@ export function ConfirmProvider({ children }) {
 
 export function useConfirm() {
   return useContext(ConfirmContext).confirm;
+}
+
+export function useChoose() {
+  return useContext(ConfirmContext).choose;
 }
 
 export function useLogout() {
