@@ -11,6 +11,6 @@ images remain in `src/mobile/assets` so Expo can bundle them.
 | `wordmark-glass-alt.png` | Smoked-glass "digiwallsys" wordmark (brand use) |
 
 The light **wordmark used at runtime** lives at `src/mobile/assets/wordmark.png`
-(2172x724, exactly 3:1) because Expo can only bundle assets under the mobile
+(900x300, exactly 3:1) because Expo can only bundle assets under the mobile
 project root. It is rendered on the sign-in and account-security screens; keep a
 single copy there rather than duplicating it back into this folder.

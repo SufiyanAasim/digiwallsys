@@ -1,8 +1,9 @@
-import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { logoutUser } from '../api';
 import { clearSession } from '../session';
 import { resetToLogin } from '../navigation';
 import ConfirmDialog from './ConfirmDialog';
+import { setAlertHandler } from './alertBridge';
 
 const ConfirmContext = createContext({
   confirm: async () => false,
@@ -15,8 +16,16 @@ const ConfirmContext = createContext({
 // design system). `confirm()` resolves true/false like window.confirm does.
 export function ConfirmProvider({ children }) {
   const [dialog, setDialog] = useState(null);
+  const [alert, setAlert] = useState(null);
   const [busy, setBusy] = useState(false);
   const resolver = useRef(null);
+
+  // Route Alert.alert(title, message) through this dialog on web. Kept in its
+  // own state so an informational alert can never clobber an open confirm.
+  useEffect(() => {
+    setAlertHandler((title, message) => setAlert({ title, message }));
+    return () => setAlertHandler(null);
+  }, []);
 
   const confirm = useCallback((options) => new Promise((resolve) => {
     resolver.current = resolve;
@@ -70,6 +79,15 @@ export function ConfirmProvider({ children }) {
           settle(true);
         }}
         onCancel={() => settle(dialog?.options ? null : false)}
+      />
+      <ConfirmDialog
+        visible={!!alert}
+        title={alert?.title || ''}
+        message={alert?.message}
+        confirmLabel="OK"
+        infoOnly
+        onConfirm={() => setAlert(null)}
+        onCancel={() => setAlert(null)}
       />
     </ConfirmContext.Provider>
   );

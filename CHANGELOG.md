@@ -24,6 +24,12 @@ All notable changes to this project are documented here. The format follows
   content area; screen-level `AmbientBackground` is a no-op on web. Previously
   the login background stopped at the 1180px column (leaving flat edges on a
   wide monitor) and authed pages drew it twice, producing a brighter band.
+- On web, `Alert.alert(title, message)` now renders through the in-app dialog
+  via `components/alertBridge.js` rather than `window.alert()`, which browsers
+  suppress in embedded contexts and which ignores the design system. Native
+  keeps the OS alert.
+- The auth wordmark was downscaled 2172x724 -> 900x300 (1066KB -> 186KB, still
+  3x the rendered width so it stays crisp) to cut the bundle and page weight.
 - Mobile lint now covers `components/`, `navigation.js`, `session.js`,
   `theme.js`, `ThemeContext.js`, and `utils.js` (previously screens only).
 

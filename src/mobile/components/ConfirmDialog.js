@@ -18,6 +18,8 @@ export default function ConfirmDialog({
   // When provided, the dialog becomes a single-select list ([{label, value}])
   // and onConfirm receives the chosen value instead of acting as a yes/no.
   options = null,
+  // Informational: a single acknowledge button, no Cancel.
+  infoOnly = false,
   onConfirm,
   onCancel,
 }) {
@@ -47,14 +49,16 @@ export default function ConfirmDialog({
           )}
 
           <View style={styles.actions}>
-            <TouchableOpacity
-              style={[styles.button, styles.cancel]}
-              onPress={onCancel}
-              disabled={busy}
-              accessibilityRole="button"
-            >
-              <Text style={styles.cancelText}>{cancelLabel}</Text>
-            </TouchableOpacity>
+            {!infoOnly && (
+              <TouchableOpacity
+                style={[styles.button, styles.cancel]}
+                onPress={onCancel}
+                disabled={busy}
+                accessibilityRole="button"
+              >
+                <Text style={styles.cancelText}>{cancelLabel}</Text>
+              </TouchableOpacity>
+            )}
             {!options && (
               <TouchableOpacity
                 style={[styles.button, destructive ? styles.confirmDestructive : styles.confirm, busy && styles.disabled]}
