@@ -73,6 +73,12 @@ function AppShell() {
             theme={navigationTheme}
             onReady={syncActiveRoute}
             onStateChange={syncActiveRoute}
+            // Without this the browser tab is just the route name ("Home"),
+            // which reads as someone else's page in a crowded tab bar.
+            documentTitle={{
+              formatter: (options, route) =>
+                `digiwallsys · ${options?.title ?? route?.name ?? 'Sign in'}`,
+            }}
           >
             <Stack.Navigator
               initialRouteName="Login"

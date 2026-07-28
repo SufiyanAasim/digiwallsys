@@ -7,12 +7,26 @@ const ACCESS_TOKEN = 'digiwallsys.accessToken';
 const REFRESH_TOKEN = 'digiwallsys.refreshToken';
 const USER = 'digiwallsys.user';
 const BIOMETRIC = 'digiwallsys.biometricEnabled';
+const REMEMBER = 'digiwallsys.remember';
 
 const isWeb = Platform.OS === 'web';
 
-async function setStoreItem(key, value) {
+// Web token storage is deliberately split. sessionStorage is emptied when the
+// tab closes, so the default is that a browser cannot silently resume someone
+// else's wallet later — a reload during the same visit still works, which is
+// what the access-token refresh needs. localStorage is used only when the
+// person ticks "keep me signed in", making the trade-off theirs to make.
+// Native is unaffected: it keeps SecureStore, backed by biometric unlock.
+function webStore(remember) {
+  return remember ? window.localStorage : window.sessionStorage;
+}
+
+async function setStoreItem(key, value, remember) {
   if (isWeb) {
-    await AsyncStorage.setItem(key, value);
+    webStore(remember).setItem(key, value);
+    // Never leave the same key behind in the other store, or a stale token
+    // could outlive the choice that was just made.
+    webStore(!remember).removeItem(key);
   } else {
     await SecureStore.setItemAsync(key, value);
   }
@@ -20,23 +34,36 @@ async function setStoreItem(key, value) {
 
 async function getStoreItem(key) {
   if (isWeb) {
-    return AsyncStorage.getItem(key);
+    return window.sessionStorage.getItem(key) ?? window.localStorage.getItem(key);
   }
   return SecureStore.getItemAsync(key);
 }
 
 async function deleteStoreItem(key) {
   if (isWeb) {
-    await AsyncStorage.removeItem(key);
+    window.sessionStorage.removeItem(key);
+    window.localStorage.removeItem(key);
   } else {
     await SecureStore.deleteItemAsync(key);
   }
 }
 
-export async function saveSession(session) {
+// The choice has to outlive the sign-in call: api.js re-saves on every silent
+// token refresh, and without a remembered flag each refresh would quietly move
+// the tokens back to sessionStorage and sign the person out at the next launch.
+function rememberedChoice() {
+  if (!isWeb) return true;
+  return window.localStorage.getItem(REMEMBER) === 'true';
+}
+
+export async function saveSession(session, { remember } = {}) {
+  if (isWeb && remember !== undefined) {
+    window.localStorage.setItem(REMEMBER, remember ? 'true' : 'false');
+  }
+  const persist = remember ?? rememberedChoice();
   await Promise.all([
-    setStoreItem(ACCESS_TOKEN, session.accessToken),
-    setStoreItem(REFRESH_TOKEN, session.refreshToken),
+    setStoreItem(ACCESS_TOKEN, session.accessToken, persist),
+    setStoreItem(REFRESH_TOKEN, session.refreshToken, persist),
     AsyncStorage.setItem(USER, JSON.stringify(session.user)),
   ]);
 }
@@ -55,6 +82,9 @@ export async function getStoredUser() {
 }
 
 export async function clearSession() {
+  // Drop the remember flag too: it belongs to the person who just signed out,
+  // and leaving it set would apply their choice to whoever signs in next.
+  if (isWeb) window.localStorage.removeItem(REMEMBER);
   await Promise.all([
     deleteStoreItem(ACCESS_TOKEN),
     deleteStoreItem(REFRESH_TOKEN),

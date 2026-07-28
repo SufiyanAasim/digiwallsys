@@ -8,6 +8,19 @@
 3. Enable biometric login from **Security** on a supported enrolled device.
 4. Use **Account security** to resend verification or reset a password.
 
+## Staying signed in
+
+On the web, closing the browser signs you out. Reloading the page during the same
+visit keeps you where you were, but the next time you open the site you are asked
+for your password again — so a shared computer does not leave your wallet open.
+
+Tick **Keep me signed in on this browser** before signing in if you want the
+session to survive a restart. Only do that on a device that is yours. Logging out
+clears the setting again.
+
+On mobile the session is held in the device's secure storage and can be put
+behind biometric unlock, so it persists between launches.
+
 ## Logging out
 
 Selecting **Log out** — from the web sidebar or the Home tile on mobile — opens a

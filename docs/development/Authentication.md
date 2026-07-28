@@ -2,9 +2,22 @@
 
 Login requires a verified email and returns a short-lived access JWT plus a
 rotating opaque refresh token. Refresh tokens are hashed in PostgreSQL and
-revoked on rotation, logout, password reset, or detected reuse. The mobile client
-stores both tokens with Expo SecureStore and can require device biometrics before
-using the saved refresh session.
+revoked on rotation, logout, password reset, or detected reuse.
+
+Client token storage differs by platform (`src/mobile/session.js`):
+
+| Platform | Store | Survives a restart? |
+| --- | --- | --- |
+| Native | Expo SecureStore, optionally behind device biometrics | Yes |
+| Web, default | `sessionStorage` | No — cleared with the tab |
+| Web, "keep me signed in" ticked | `localStorage` | Yes |
+
+Web defaults to `sessionStorage` on purpose. A reload during the same visit still
+resumes the session, which is what the silent access-token refresh needs, but a
+shared or public browser cannot bring someone's wallet back later without their
+password. Staying signed in across restarts is opt-in per sign-in, recorded as
+`digiwallsys.remember`, and `clearSession()` drops that flag along with the
+tokens so the choice never carries over to the next person who signs in.
 
 Password length is enforced at **10+ characters** by the API on registration and
 password reset (`authController.js`). The client mirrors that rule on sign-up

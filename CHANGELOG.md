@@ -36,8 +36,21 @@ All notable changes to this project are documented here. The format follows
   glyphs themselves, stays sharp at any size, and follows the active theme. The
   unused `src/mobile/assets/wordmark.png` was deleted.
 
+### Security
+
+- The web client kept refresh tokens in `localStorage`, so opening the site
+  silently restored the previous session — on a shared or public browser that
+  handed over a funded wallet with no password. Tokens now default to
+  `sessionStorage`, which is cleared when the browser closes; a reload during
+  the same visit still resumes, so the silent access-token refresh is unaffected.
+  Persisting across restarts is opt-in per sign-in via **Keep me signed in on
+  this browser**, and logging out clears that choice. Native is unchanged and
+  keeps SecureStore with optional biometric unlock.
+
 ### Changed
 
+- The browser tab now reads `digiwallsys · <screen>` instead of just the route
+  name, which read as an unrelated page in a crowded tab bar.
 - `docker-compose.yml` now sets the pool size, proxy, rate-limit, risk-control
   and worker variables it previously left implicit, and `docker/README.md`
   documents that the schema only initializes on an empty volume.

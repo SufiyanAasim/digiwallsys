@@ -34,6 +34,9 @@ export default function LoginScreen({ navigation }) {
   const [biometricAvailable, setBiometricAvailable] = useState(false);
   const [busy, setBusy] = useState(false);
   const [restoring, setRestoring] = useState(true);
+  // Off by default on web: staying signed in across browser restarts is a
+  // choice the account holder makes, not something a payments app assumes.
+  const [remember, setRemember] = useState(false);
   const { colors, commonStyles } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
@@ -88,7 +91,7 @@ export default function LoginScreen({ navigation }) {
         setRegistering(false);
       } else {
         const response = await loginUser(normalizedEmail, password);
-        await saveSession(response.data);
+        await saveSession(response.data, { remember: Platform.OS === 'web' ? remember : true });
         navigation.replace('Home', { justLoggedIn: true, name: response.data.user?.name });
       }
     } catch (error) {
@@ -155,6 +158,20 @@ export default function LoginScreen({ navigation }) {
                 <Icon name={hidden ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
+            {Platform.OS === 'web' && !registering && (
+              <TouchableOpacity
+                style={styles.rememberRow}
+                onPress={() => setRemember(!remember)}
+                accessibilityRole="checkbox"
+                accessibilityState={{ checked: remember }}
+                accessibilityLabel="Keep me signed in on this browser"
+              >
+                <View style={[styles.checkbox, remember && styles.checkboxOn]}>
+                  {remember && <Icon name="checkmark" size={14} color="#FFFFFF" />}
+                </View>
+                <Text style={styles.rememberText}>Keep me signed in on this browser</Text>
+              </TouchableOpacity>
+            )}
             <GradientButton
               label={restoring ? 'Checking session…' : busy ? 'Please wait…' : registering ? 'Create account' : 'Log in'}
               disabled={busy || restoring}
@@ -217,6 +234,19 @@ function buildStyles(colors, commonStyles) {
     passwordRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.glassBorder, borderWidth: 1, borderRadius: radii.md, paddingLeft: 16, marginBottom: 14 },
     passwordInput: { flex: 1, paddingVertical: 15, color: colors.text },
     iconButton: { minWidth: 48, minHeight: 48, alignItems: 'center', justifyContent: 'center' },
+    rememberRow: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, marginBottom: 6 },
+    checkbox: {
+      width: 20,
+      height: 20,
+      borderRadius: 6,
+      borderWidth: 1,
+      borderColor: colors.borderStrong,
+      backgroundColor: colors.surfaceMuted,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkboxOn: { backgroundColor: colors.primary, borderColor: colors.primary },
+    rememberText: { color: colors.textMuted, fontSize: 13, flex: 1 },
     primary: { marginTop: 4 },
     secondary: { minHeight: 48, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.pill, padding: 14, alignItems: 'center', marginTop: 10 },
     secondaryText: { color: colors.text, fontWeight: '700' },
