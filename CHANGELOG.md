@@ -51,6 +51,11 @@ All notable changes to this project are documented here. The format follows
 
 - The browser tab now reads `digiwallsys · <screen>` instead of just the route
   name, which read as an unrelated page in a crowded tab bar.
+- The favicon is the bare "di" monogram on transparency
+  (`src/mobile/assets/favicon.png`, built by `scripts/generate-favicon.js`)
+  rather than the launcher icon. At the ~16px a tab renders, the launcher
+  icon's gradient badge swallowed the glyphs and showed as a plain coloured
+  square. The launcher icon and splash are unchanged.
 - `docker-compose.yml` now sets the pool size, proxy, rate-limit, risk-control
   and worker variables it previously left implicit, and `docker/README.md`
   documents that the schema only initializes on an empty volume.

@@ -36,14 +36,19 @@ test('Expo uses the generated digiwallsys logo and deep-link scheme', () => {
 
 test('every mobile icon slot resolves to an existing, consistent asset', () => {
   const appConfig = JSON.parse(readFileSync(join(__dirname, '../../src/mobile/app.json'), 'utf8'));
-  // icon, splash, and favicon should all be the same square mark.
+  // The launcher icon and splash share the badged square mark.
   assert.equal(appConfig.expo.splash.image, appConfig.expo.icon);
-  assert.equal(appConfig.expo.web.favicon, appConfig.expo.icon);
+  // The favicon deliberately does NOT: a browser tab renders it at ~16px, where
+  // a gradient-filled badge collapses into a coloured blob. It is the bare "di"
+  // monogram on transparency instead.
+  assert.notEqual(appConfig.expo.web.favicon, appConfig.expo.icon);
+  assert.equal(appConfig.expo.web.favicon, './assets/favicon.png');
   // The Android adaptive-icon foreground is a distinct full-bleed variant of the
   // same mark (no rounded corners baked in, so the OS mask can apply its own),
   // not a byte-identical copy — just assert every referenced file actually exists.
   for (const relativePath of [
     appConfig.expo.icon,
+    appConfig.expo.web.favicon,
     appConfig.expo.android.adaptiveIcon.foregroundImage,
   ]) {
     assert.doesNotThrow(

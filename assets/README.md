@@ -12,6 +12,25 @@ images remain in `src/mobile/assets` so Expo can bundle them.
 
 These are **marketing assets only** — nothing here is bundled into the app.
 
+The two marks the app itself ships are under `src/mobile/assets/`:
+
+| File | Use | Source |
+| --- | --- | --- |
+| `icon-app.png` | Launcher icon and splash — the badged square | design tool |
+| `favicon.png` | Browser tab — the bare "di" monogram on transparency | `scripts/generate-favicon.js` |
+
+The favicon is deliberately not the launcher icon. A tab renders it at roughly
+16px, where the badge's gradient fill swallows the glyphs and the mark reads as
+a plain coloured square. Dropping the badge leaves only the letterforms, which
+still resolve at that size. Regenerate it with:
+
+```bash
+node scripts/generate-favicon.js
+```
+
+The glyphs there are drawn as geometry rather than text, so the output does not
+depend on which fonts the build machine happens to have installed.
+
 The wordmark shown inside the app is not artwork: `components/Wordmark.js` draws
 the text with the Ember Glass gradient applied to the glyphs. The PNG wordmarks
 have their gradient baked in as an opaque rectangle, so on screen they read as a
