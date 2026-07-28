@@ -283,6 +283,25 @@ Developer membership and signing access are required for a device IPA.
 Never place `JWT_SECRET`, database credentials, webhook secrets, or provider
 tokens in Expo public variables.
 
+### Deployment target env files
+
+`digiwallsys-api.onrender.com` (Render), a Vercel web deployment, and a
+Supabase-hosted PostgreSQL database are the providers this project actually
+deploys to. Each has its own environment surface — a Render dashboard, a
+Vercel dashboard, and a Supabase connection string are three different places
+to set variables, none of which read a `.env` file from the repo. `examples/`
+has a template for each:
+
+| File | Set it in | Covers |
+| --- | --- | --- |
+| `examples/render.env.example` | Render service → Environment | The full backend set, production-shaped (`NODE_ENV=production`, real `CORS_ORIGIN`, etc.) |
+| `examples/supabase.env.example` | N/A — feeds `DATABASE_URL` on Render | Connection string format, pooler-vs-direct guidance, SSL |
+| `examples/vercel.env.example` | Vercel project → Environment Variables | Only the `EXPO_PUBLIC_*` variables Expo inlines into the web bundle |
+| `examples/mobile.env.example` | `src/mobile/.env` (local dev) | Same `EXPO_PUBLIC_*` variables, for running on a physical device |
+
+Each file documents its own variables inline; `.env.example` at the repo root
+remains the canonical description of what every variable does.
+
 ---
 
 ## 🗂️ Project structure

@@ -18,6 +18,20 @@ All notable changes to this project are documented here. The format follows
   simple next-month forecast per user, run locally against a copy of the
   database. It is not imported by, or reachable from, the API or the app —
   see `analytics/README.md` for the read-only guarantees and how to run it.
+- Motion on the sign-in/sign-up page: the hero and each feature card fade and
+  slide in on load (staggered), feature cards lift slightly on hover, and
+  three soft glows drift and pulse behind the hero copy, scoped to
+  `LandingHero.js` only — the app-wide `AmbientBackground` behind every other
+  screen is untouched.
+- A fixed footer (Credits · version · tagline) on the sign-in/sign-up page,
+  the one web screen with no sidebar to already show them. It stays pinned to
+  the viewport bottom while the page above it scrolls (`PublicWebFooter.js`).
+- Deployment-target env templates: `examples/render.env.example` (the full
+  backend set, production-shaped, for Render's dashboard),
+  `examples/supabase.env.example` (connection-string format and pooler-vs-
+  direct guidance), and `examples/vercel.env.example` (the `EXPO_PUBLIC_*`
+  subset Vercel needs). These are the three providers this project actually
+  deploys to; see the README's "Deployment target env files" section.
 
 ### Fixed
 

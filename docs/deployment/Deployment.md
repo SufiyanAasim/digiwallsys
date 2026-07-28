@@ -9,6 +9,19 @@
 5. Restrict `CORS_ORIGIN` and expose the API only over HTTPS.
 6. Verify `/api/health` and test registration, login, and a rollback-safe transfer.
 
+### Render, Supabase, and Vercel
+
+This is the provider combination the project actually deploys to: Render runs
+the API, Supabase hosts PostgreSQL, Vercel serves the exported web build.
+`examples/render.env.example`, `examples/supabase.env.example`, and
+`examples/vercel.env.example` are ready-to-fill templates for each — none of
+these three read a `.env` file from the repo, so every variable has to be set
+in that provider's own dashboard. See the README's "Deployment target env
+files" section for which file goes where.
+
+Render auto-injects `PORT`; do not set it. Point Render at either the root
+`Dockerfile` or a native Node runtime running `npm run start:api` — both work.
+
 ## Mobile
 
 Set `EXPO_PUBLIC_API_URL` to the deployed HTTPS API before creating the Expo

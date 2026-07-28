@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import GradientButton from './GradientButton';
 import Wordmark from './Wordmark';
@@ -29,44 +29,167 @@ const FEATURES = [
   },
 ];
 
+// Three soft, slowly drifting glows behind the hero copy -- purely decorative,
+// scoped to this component only (the app-wide AmbientBackground behind every
+// other screen is untouched). Each loops opacity and a small vertical drift
+// on its own offset timer so they never move in lockstep.
+const ORBS = [
+  { top: -60, left: -40, size: 220, colorKey: 'gradientAmbientTop', duration: 7000, delay: 0 },
+  { top: 40, right: -60, size: 260, colorKey: 'gradientAmbientBottom', duration: 8200, delay: 600 },
+  { top: 180, left: '38%', size: 160, colorKey: 'gradientAmbientTop', duration: 6400, delay: 1200 },
+];
+
+function GlowOrbs({ colors }) {
+  const animsRef = useRef(ORBS.map(() => new Animated.Value(0)));
+
+  useEffect(() => {
+    const loops = animsRef.current.map((value, index) =>
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(ORBS[index].delay),
+          Animated.timing(value, { toValue: 1, duration: ORBS[index].duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(value, { toValue: 0, duration: ORBS[index].duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+        ])
+      )
+    );
+    loops.forEach((loop) => loop.start());
+    return () => loops.forEach((loop) => loop.stop());
+  }, []);
+
+  return (
+    <View style={decorativeStyles.orbLayer} pointerEvents="none">
+      {ORBS.map((orb, index) => {
+        const value = animsRef.current[index];
+        return (
+          <Animated.View
+            key={index}
+            style={[
+              decorativeStyles.orb,
+              {
+                top: orb.top,
+                left: orb.left,
+                right: orb.right,
+                width: orb.size,
+                height: orb.size,
+                borderRadius: orb.size,
+                backgroundColor: colors[orb.colorKey],
+                opacity: value.interpolate({ inputRange: [0, 1], outputRange: [0.35, 0.75] }),
+                transform: [{ translateY: value.interpolate({ inputRange: [0, 1], outputRange: [0, -14] }) }],
+              },
+            ]}
+          />
+        );
+      })}
+    </View>
+  );
+}
+
+function FeatureCard({ feature, colors, styles, index }) {
+  const enter = useRef(new Animated.Value(0)).current;
+  const hover = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(enter, {
+      toValue: 1,
+      duration: 420,
+      delay: 150 + index * 90,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [enter, index]);
+
+  function setHovered(hovered) {
+    Animated.timing(hover, { toValue: hovered ? 1 : 0, duration: 180, useNativeDriver: true }).start();
+  }
+
+  return (
+    <Animated.View
+      style={{
+        opacity: enter,
+        transform: [
+          { translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [18, 0] }) },
+          { translateY: hover.interpolate({ inputRange: [0, 1], outputRange: [0, -4] }) },
+          { scale: hover.interpolate({ inputRange: [0, 1], outputRange: [1, 1.02] }) },
+        ],
+      }}
+    >
+      <Pressable style={styles.card} onHoverIn={() => setHovered(true)} onHoverOut={() => setHovered(false)}>
+        <View style={styles.cardIcon}>
+          <Icon name={feature.icon} size={20} color={colors.primary} />
+        </View>
+        <Text style={styles.cardTitle}>{feature.title}</Text>
+        <Text style={styles.cardBody}>{feature.body}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
 // Web-only marketing section shown above the sign-in panel: a hero, then a
 // grid of the product's actual features (nothing here is aspirational copy —
 // every line matches a shipped screen). Native skips straight to the form,
 // where a full-screen pitch would just be in the way on a phone.
 export default function LandingHero({ onGetStarted }) {
   const { colors } = useAppTheme();
-  const styles = useMemo(() => buildStyles(colors), [colors]);
+  const themedStyles = useMemo(() => buildStyles(colors), [colors]);
+  const heroEnter = useRef(new Animated.Value(0)).current;
+  const [pressed, setPressed] = useState(false);
+
+  useEffect(() => {
+    Animated.timing(heroEnter, {
+      toValue: 1,
+      duration: 480,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [heroEnter]);
+
+  function handleGetStarted() {
+    setPressed(true);
+    onGetStarted?.();
+  }
 
   return (
-    <View style={styles.wrap}>
-      <View style={styles.heroBlock}>
+    <View style={themedStyles.wrap}>
+      <GlowOrbs colors={colors} />
+      <Animated.View
+        style={[
+          themedStyles.heroBlock,
+          {
+            opacity: heroEnter,
+            transform: [{ translateY: heroEnter.interpolate({ inputRange: [0, 1], outputRange: [14, 0] }) }],
+          },
+        ]}
+      >
         <Wordmark size={54} />
-        <Text style={styles.headline}>Money, held together properly.</Text>
-        <Text style={styles.subheadline}>
+        <Text style={themedStyles.headline}>Money, held together properly.</Text>
+        <Text style={themedStyles.subheadline}>
           A digital wallet with a real double-entry ledger underneath — multi-currency,
           shared, and budgeted, not just a balance and a button.
         </Text>
-        <GradientButton label="Get started" onPress={onGetStarted} style={styles.cta} />
-      </View>
+        <GradientButton
+          label={pressed ? 'Scrolling down…' : 'Get started'}
+          onPress={handleGetStarted}
+          style={themedStyles.cta}
+        />
+      </Animated.View>
 
-      <View style={styles.grid}>
-        {FEATURES.map((feature) => (
-          <View key={feature.title} style={styles.card}>
-            <View style={styles.cardIcon}>
-              <Icon name={feature.icon} size={20} color={colors.primary} />
-            </View>
-            <Text style={styles.cardTitle}>{feature.title}</Text>
-            <Text style={styles.cardBody}>{feature.body}</Text>
-          </View>
+      <View style={themedStyles.grid}>
+        {FEATURES.map((feature, index) => (
+          <FeatureCard key={feature.title} feature={feature} colors={colors} styles={themedStyles} index={index} />
         ))}
       </View>
     </View>
   );
 }
 
+const decorativeStyles = StyleSheet.create({
+  orbLayer: { ...StyleSheet.absoluteFillObject, overflow: 'hidden' },
+  orb: { position: 'absolute', filter: Platform.OS === 'web' ? 'blur(40px)' : undefined },
+});
+
 function buildStyles(colors) {
   return StyleSheet.create({
-    wrap: { width: '100%', maxWidth: 920, alignSelf: 'center', marginBottom: 48 },
+    wrap: { width: '100%', maxWidth: 920, alignSelf: 'center', marginBottom: 48, position: 'relative' },
     heroBlock: { alignItems: 'center', paddingVertical: 32, gap: 14 },
     headline: {
       color: colors.text,
@@ -100,6 +223,10 @@ function buildStyles(colors) {
       borderRadius: radii.lg,
       padding: 18,
       gap: 8,
+      ...Platform.select({
+        web: { boxShadow: '0 0 0 rgba(0,0,0,0)', transitionProperty: 'border-color', transitionDuration: '180ms' },
+        default: null,
+      }),
     },
     cardIcon: {
       width: 38,

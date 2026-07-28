@@ -16,6 +16,7 @@ import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
 import GradientButton from '../components/GradientButton';
 import LandingHero from '../components/LandingHero';
+import PublicWebFooter, { PUBLIC_FOOTER_HEIGHT } from '../components/PublicWebFooter';
 import Wordmark from '../components/Wordmark';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
@@ -234,6 +235,7 @@ export default function LoginScreen({ navigation }) {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
+      <PublicWebFooter navigation={navigation} />
     </SafeAreaView>
   );
 }
@@ -249,6 +251,9 @@ function buildStyles(colors, commonStyles) {
       flexGrow: 1,
       padding: 24,
       paddingTop: isWeb ? 24 : 48,
+      // PublicWebFooter is fixed outside this scroll content, so its own
+      // height has to be reserved here or the last section ends up behind it.
+      paddingBottom: isWeb ? 24 + PUBLIC_FOOTER_HEIGHT : 24,
       ...(isWeb ? { alignItems: 'center', justifyContent: 'center' } : null),
     },
     formColumn: { width: '100%', maxWidth: isWeb ? 460 : undefined },
