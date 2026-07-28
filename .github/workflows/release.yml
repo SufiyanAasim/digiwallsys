@@ -39,6 +39,11 @@ jobs:
             v1.4.5) NAME="Trade"; PRERELEASE="false" ;;
             v1.5.0) NAME="Meridian"; PRERELEASE="false" ;;
             v1.5.5) NAME="Armada"; PRERELEASE="false" ;;
+            v1.6.0) NAME="Lantern"; PRERELEASE="false" ;;
+            v1.6.5) NAME="Marina"; PRERELEASE="false" ;;
+            v1.7.0) NAME="Compass"; PRERELEASE="false" ;;
+            v1.7.5) NAME="Convoy"; PRERELEASE="false" ;;
+            v1.8.0) NAME="Estuary"; PRERELEASE="false" ;;
             *) echo "Unsupported release version: $VERSION" >&2; exit 1 ;;
           esac
           test -f "docs/releases/${VERSION}.md"
