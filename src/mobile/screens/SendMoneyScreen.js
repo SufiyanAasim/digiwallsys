@@ -7,7 +7,7 @@ import { getBudgetCategories, getSharedWallets, getUsers, getWallets, sendMoney 
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout } from '../theme';
+import { contentColumn, layout, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function SendMoneyScreen({ navigation, route }) {
@@ -115,7 +115,7 @@ export default function SendMoneyScreen({ navigation, route }) {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 24, gap: 12, ...contentColumn(layout.form) },
+    container: { flex: 1, backgroundColor: screenBackground(colors) }, content: { padding: 24, gap: 12, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text, marginBottom: 8 }, label: { fontWeight: '700', color: colors.text },
     picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,
     back: { alignItems: 'center', padding: 12 }, backText: { color: colors.textMuted, fontWeight: '600' },

@@ -18,7 +18,7 @@ import AmbientBackground from '../components/AmbientBackground';
 import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout } from '../theme';
+import { contentColumn, layout, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount, titleize } from '../utils';
 
 export default function PaymentToolsScreen() {
@@ -164,7 +164,7 @@ export default function PaymentToolsScreen() {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10, ...contentColumn(layout.form) },
+    container: { flex: 1, backgroundColor: screenBackground(colors) }, content: { padding: 20, gap: 10, ...contentColumn(layout.form) },
     title: { fontSize: 24, fontWeight: '800', color: colors.text }, label: { fontWeight: '700', color: colors.text },
     sectionLabel: { fontSize: 17, fontWeight: '800', color: colors.text, marginTop: 12 },
     picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,

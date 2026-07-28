@@ -9,7 +9,7 @@ import AmbientBackground from '../components/AmbientBackground';
 import { useChoose } from '../components/ConfirmProvider';
 import { getAccessToken } from '../session';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout, radii } from '../theme';
+import { contentColumn, layout, radii, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 export default function TransactionHistoryScreen() {
@@ -118,7 +118,7 @@ export default function TransactionHistoryScreen() {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background }, header: { padding: 20, paddingBottom: 12 },
+    container: { flex: 1, backgroundColor: screenBackground(colors) }, header: { padding: 20, paddingBottom: 12 },
     title: { fontSize: 25, fontWeight: '800', color: colors.text }, searchRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8 },
     search: { ...commonStyles.input, flex: 1 }, searchButton: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.primary, borderRadius: 12, paddingHorizontal: 14 },
     white: { color: colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E', fontWeight: '700' },

@@ -7,7 +7,7 @@ import AmbientBackground from '../components/AmbientBackground';
 import { ChartLegend } from '../components/DonutChart';
 import DonutChart from '../components/DonutChart';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout, radii } from '../theme';
+import { contentColumn, layout, radii, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 const MAX_PAGES = 4;
@@ -189,7 +189,7 @@ export default function AnalyticsScreen({ navigation }) {
 
 function buildStyles(colors) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background },
+    container: { flex: 1, backgroundColor: screenBackground(colors) },
     content: { padding: 20, paddingBottom: 40, gap: 14, ...contentColumn(layout.page) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },

@@ -25,8 +25,16 @@ All notable changes to this project are documented here. The format follows
   `Alert`, which the web polyfill collapses to `window.confirm()`, so it always
   applied the first option ("No category") instead of the chosen category.
   `ConfirmDialog` now supports a single-select list via `useChoose()`.
-- The auth-screen wordmark is framed by a `View` with `aspectRatio`, which
-  react-native-web honours (the `Image` did not), removing the letterboxing.
+- The web build showed no ambient gradient at all: React Navigation's `cardStyle`
+  and every screen's own container each painted an opaque page colour over the
+  shell's gradient layer, leaving a flat black page. Both are transparent on web
+  now (`screenBackground()` in `theme.js`), and native is unchanged.
+- The sign-in and Account security screens showed the wordmark as a coloured
+  rectangle: the PNG has its gradient baked in as an opaque background with pale
+  text on top, so no amount of framing could remove the box. Both screens now
+  draw the existing `Wordmark` component, which applies the gradient to the
+  glyphs themselves, stays sharp at any size, and follows the active theme. The
+  unused `src/mobile/assets/wordmark.png` was deleted.
 
 ### Changed
 
@@ -37,7 +45,7 @@ All notable changes to this project are documented here. The format follows
   `theme.js`) instead of stretching inputs across a full monitor; dashboards cap
   wider. Mobile layout is untouched — the helper is a no-op off web.
 - Home action tiles use a fixed width on web so a desktop grid stays dense.
-- Sign-in and Account security screens render the `digiwallsys` wordmark asset.
+- Sign-in and Account security screens carry the `digiwallsys` wordmark.
 - Logging out now opens a confirmation dialog in place instead of navigating to
   a dedicated screen; `LogoutScreen.js` was removed and its route deleted.
 - `ConfirmProvider` exposes a promise-based `useConfirm()`, now used for every
@@ -49,12 +57,12 @@ All notable changes to this project are documented here. The format follows
   content area; screen-level `AmbientBackground` is a no-op on web. Previously
   the login background stopped at the 1180px column (leaving flat edges on a
   wide monitor) and authed pages drew it twice, producing a brighter band.
+- Brand assets under `assets/` are marketing-only; nothing there is bundled into
+  the app, and the in-app wordmark is drawn by `components/Wordmark.js`.
 - On web, `Alert.alert(title, message)` now renders through the in-app dialog
   via `components/alertBridge.js` rather than `window.alert()`, which browsers
   suppress in embedded contexts and which ignores the design system. Native
   keeps the OS alert.
-- The auth wordmark was downscaled 2172x724 -> 900x300 (1066KB -> 186KB, still
-  3x the rendered width so it stays crisp) to cut the bundle and page weight.
 - Mobile lint now covers `components/`, `navigation.js`, `session.js`,
   `theme.js`, `ThemeContext.js`, and `utils.js` (previously screens only).
 - Standardized the project identity as `digiwallsys`.

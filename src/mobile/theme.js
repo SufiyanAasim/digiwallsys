@@ -100,6 +100,14 @@ export function contentColumn(maxWidth = layout.form) {
     : null;
 }
 
+// Background for a screen's outermost container. On web the shell already
+// paints the page colour and one ambient gradient behind every screen, so an
+// opaque screen background would cover the glow and leave a flat black page.
+// On native each screen paints its own, because there is no shell layer.
+export function screenBackground(colors) {
+  return Platform.OS === 'web' ? 'transparent' : colors.background;
+}
+
 export function buildGlow(colors) {
   return {
     shadowColor: colors.primary,

@@ -12,7 +12,7 @@ import { useLogout } from '../components/ConfirmProvider';
 import { useToast } from '../components/ToastProvider';
 import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout, radii } from '../theme';
+import { contentColumn, layout, radii, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 const LOGOUT_ACTION = 'Logout';
@@ -147,7 +147,7 @@ export default function HomeScreen({ navigation, route }) {
 
 function buildStyles(colors) {
   return StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: colors.background },
+    safeArea: { flex: 1, backgroundColor: screenBackground(colors) },
     container: { padding: 20, paddingBottom: 36, ...contentColumn(layout.wide) },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     welcome: { color: colors.textMuted, marginTop: 2, fontSize: 12.5 },

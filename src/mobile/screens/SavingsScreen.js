@@ -8,7 +8,7 @@ import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
 import ThemedSwitch from '../components/ThemedSwitch';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout, radii } from '../theme';
+import { contentColumn, layout, radii, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 export default function SavingsScreen() {
@@ -147,7 +147,7 @@ export default function SavingsScreen() {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background },
+    container: { flex: 1, backgroundColor: screenBackground(colors) },
     content: { padding: 20, paddingBottom: 40, gap: 14, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },

@@ -83,7 +83,11 @@ function AppShell() {
                 headerTitleStyle: { fontWeight: '700', color: colors.text },
                 headerShadowVisible: false,
                 ...(isWeb
-                  ? { cardStyle: { backgroundColor: colors.background }, animationEnabled: false }
+                  // The card must not paint a background: the shell already
+                  // paints the page colour and the ambient gradient behind it,
+                  // and an opaque card covered the glow entirely. Transitions
+                  // are disabled here, so nothing shows through mid-animation.
+                  ? { cardStyle: { backgroundColor: 'transparent' }, animationEnabled: false }
                   : { contentStyle: { backgroundColor: colors.background } }),
               }}
             >

@@ -7,6 +7,7 @@ import AmbientBackground from '../components/AmbientBackground';
 import Logo from '../components/Logo';
 import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';
+import { screenBackground } from '../theme';
 
 export default function CreditsScreen() {
   const { colors } = useAppTheme();
@@ -101,7 +102,7 @@ export default function CreditsScreen() {
 
 function buildStyles(colors) {
   return StyleSheet.create({
-    screen: { flex: 1, backgroundColor: colors.background },
+    screen: { flex: 1, backgroundColor: screenBackground(colors) },
     container: { padding: 20, paddingBottom: 40, alignItems: 'center' },
     // Credits reads as a centered page rather than stretching across a wide monitor.
     inner: { width: '100%', maxWidth: 820 },

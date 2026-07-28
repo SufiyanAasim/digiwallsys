@@ -7,7 +7,7 @@ import { addCurrencyWallet, convertCurrency, getConversions, getWallets } from '
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout, radii } from '../theme';
+import { contentColumn, layout, radii, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage, parsePositiveAmount } from '../utils';
 
 const COMMON_CURRENCIES = ['USD', 'EUR', 'GBP', 'JPY', 'AUD', 'CAD', 'INR', 'PKR'];
@@ -129,7 +129,7 @@ export default function WalletsScreen() {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background },
+    container: { flex: 1, backgroundColor: screenBackground(colors) },
     content: { padding: 20, paddingBottom: 40, gap: 14, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },

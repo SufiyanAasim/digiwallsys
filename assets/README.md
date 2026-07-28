@@ -10,7 +10,11 @@ images remain in `src/mobile/assets` so Expo can bundle them.
 | `logo.svg` | Scalable monogram for docs |
 | `wordmark-glass-alt.png` | Smoked-glass "digiwallsys" wordmark (brand use) |
 
-The light **wordmark used at runtime** lives at `src/mobile/assets/wordmark.png`
-(900x300, exactly 3:1) because Expo can only bundle assets under the mobile
-project root. It is rendered on the sign-in and account-security screens; keep a
-single copy there rather than duplicating it back into this folder.
+These are **marketing assets only** — nothing here is bundled into the app.
+
+The wordmark shown inside the app is not artwork: `components/Wordmark.js` draws
+the text with the Ember Glass gradient applied to the glyphs. The PNG wordmarks
+have their gradient baked in as an opaque rectangle, so on screen they read as a
+coloured box rather than a mark on the page, and they cannot follow the
+light/dark theme. Use the component in the UI and keep the PNGs for README,
+social previews, and anywhere an image file is required.

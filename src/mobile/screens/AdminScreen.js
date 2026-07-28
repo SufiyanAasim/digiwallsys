@@ -6,7 +6,7 @@ import { getAdminOverview, getAuditLogs, getFraudEvents, getFxRates, reviewFraud
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout } from '../theme';
+import { contentColumn, layout, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage, titleize } from '../utils';
 
 export default function AdminScreen() {
@@ -110,7 +110,7 @@ export default function AdminScreen() {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10, ...contentColumn(layout.page) },
+    container: { flex: 1, backgroundColor: screenBackground(colors) }, content: { padding: 20, gap: 10, ...contentColumn(layout.page) },
     title: { fontSize: 24, fontWeight: '800', color: colors.text }, grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 }, metric: { flexBasis: '47%', flexGrow: 1, backgroundColor: colors.surfaceMuted, borderRadius: 12, padding: 12 },
     metricValue: { fontSize: 18, fontWeight: '800', color: colors.text }, meta: { color: colors.textMuted, fontSize: 12, marginTop: 4 },
     heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 14 }, card: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, cardTitle: { fontWeight: '700', color: colors.text }, reviewRow: { flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 8 }, review: { color: colors.primary, fontWeight: '700' },

@@ -15,7 +15,7 @@ import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
 import ThemedSwitch from '../components/ThemedSwitch';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout } from '../theme';
+import { contentColumn, layout, screenBackground } from '../theme';
 import { getErrorMessage, parsePositiveAmount } from '../utils';
 
 const preferenceLabels = { moneyMovement: 'Money movement', securityEvents: 'Security events', pushEnabled: 'Push notifications' };
@@ -106,7 +106,7 @@ export default function NotificationsScreen() {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background }, content: { padding: 20, gap: 10, ...contentColumn(layout.form) },
+    container: { flex: 1, backgroundColor: screenBackground(colors) }, content: { padding: 20, gap: 10, ...contentColumn(layout.form) },
     title: { fontSize: 25, fontWeight: '800', color: colors.text }, row: { minHeight: 52, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, rowLabel: { color: colors.text },
     input: commonStyles.input, buttonRow: { gap: 8 },
     secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, padding: 13, borderRadius: 20, alignItems: 'center' }, secondaryText: { color: colors.text, fontWeight: '700' },

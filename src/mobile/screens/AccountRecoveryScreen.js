@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import {  Alert, Image, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
+import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { forgotPassword, resendVerification, resetPassword, verifyEmail } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import GradientButton from '../components/GradientButton';
+import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';
-import { contentColumn, layout, radii } from '../theme';
+import { contentColumn, layout, screenBackground } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
 
 export default function AccountRecoveryScreen({ navigation }) {
@@ -50,14 +51,8 @@ export default function AccountRecoveryScreen({ navigation }) {
     <View style={styles.container}>
       <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content}>
-        <View style={styles.wordmarkFrame}>
-          <Image
-            source={require('../assets/wordmark.png')}
-            style={styles.wordmarkImage}
-            resizeMode="cover"
-            accessibilityRole="image"
-            accessibilityLabel="digiwallsys"
-          />
+        <View style={styles.brandBlock}>
+          <Wordmark size={30} />
         </View>
         <Text style={styles.title}>Account security</Text>
         <Text style={styles.help}>Use your account email to request a token, then paste that token below.</Text>
@@ -76,11 +71,10 @@ export default function AccountRecoveryScreen({ navigation }) {
 
 function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background },
+    container: { flex: 1, backgroundColor: screenBackground(colors) },
     content: { padding: 24, gap: 14, ...contentColumn(layout.form) },
     // Source art is 2172x724 (exactly 3:1); the wrapper View holds the ratio.
-    wordmarkFrame: { width: '100%', maxWidth: 240, aspectRatio: 3, borderRadius: radii.md, overflow: 'hidden', alignSelf: 'center', marginBottom: 8 },
-    wordmarkImage: { width: '100%', height: '100%' },
+    brandBlock: { alignItems: 'center', marginBottom: 8 },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     help: { color: colors.textMuted, lineHeight: 20, marginBottom: 6 },
     input: commonStyles.input,

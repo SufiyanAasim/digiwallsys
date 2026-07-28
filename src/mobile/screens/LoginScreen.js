@@ -3,7 +3,6 @@ import TouchableOpacity from '../components/TouchableOpacity';
 
 import {
   Alert,
-  Image,
   KeyboardAvoidingView,
   Platform,
   SafeAreaView,
@@ -16,10 +15,11 @@ import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
 import GradientButton from '../components/GradientButton';
+import Wordmark from '../components/Wordmark';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
 import { useAppTheme } from '../ThemeContext';
-import { radii } from '../theme';
+import { radii, screenBackground } from '../theme';
 import { getErrorMessage, isValidEmail } from '../utils';
 
 // Matches the API's registration/reset rule in authController.js.
@@ -117,15 +117,7 @@ export default function LoginScreen({ navigation }) {
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           <View style={styles.formColumn}>
           <View style={styles.brandBlock}>
-            <View style={styles.wordmarkFrame}>
-              <Image
-                source={require('../assets/wordmark.png')}
-                style={styles.wordmarkImage}
-                resizeMode="cover"
-                accessibilityRole="image"
-                accessibilityLabel="digiwallsys"
-              />
-            </View>
+            <Wordmark size={42} />
             <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
           </View>
           <View style={styles.panel}>
@@ -195,7 +187,7 @@ export default function LoginScreen({ navigation }) {
 function buildStyles(colors, commonStyles) {
   const isWeb = Platform.OS === 'web';
   return StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: colors.background },
+    safeArea: { flex: 1, backgroundColor: screenBackground(colors) },
     flex: { flexGrow: 1 },
     // On web, center a fixed-width sign-in card in the viewport instead of
     // stretching the fields edge to edge; on mobile it fills the phone width.
@@ -206,12 +198,11 @@ function buildStyles(colors, commonStyles) {
       ...(isWeb ? { alignItems: 'center', justifyContent: 'center' } : null),
     },
     formColumn: { width: '100%', maxWidth: isWeb ? 460 : undefined },
+    // The wordmark is drawn as gradient text, not artwork: the PNG had its
+    // gradient baked in as an opaque rectangle, so it always read as a coloured
+    // box sitting on the page. Text also stays sharp at any size and re-reads
+    // the palette when the theme is toggled.
     brandBlock: { alignItems: 'center', marginBottom: 26 },
-    // Source art is 2172x724 (exactly 3:1). A wrapper View honours aspectRatio
-    // reliably (Image does not on react-native-web), so the mark scales down on
-    // narrow phones with no letterboxing and no distortion.
-    wordmarkFrame: { width: '100%', maxWidth: 300, aspectRatio: 3, borderRadius: radii.md, overflow: 'hidden' },
-    wordmarkImage: { width: '100%', height: '100%' },
     subheading: { color: colors.textMuted, marginTop: 10, fontSize: 12.5, textAlign: 'center' },
     panel: {
       backgroundColor: colors.surface,
