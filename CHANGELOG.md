@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Security
+
+- Pinned build-tooling transitive dependencies flagged by Dependabot to
+  same-major patched versions via `package.json` `overrides`: `flatted`,
+  `tar`, and the specific vulnerable `minimatch`/`brace-expansion` instances
+  nested under ESLint and EAS CLI. None of these ship in the deployed API or
+  the exported app; `npm audit --omit=dev` in `src/backend` was and remains 0
+  vulnerabilities. `postcss` (needs Expo SDK 57) and `uuid` (needs a major
+  bump inside EAS CLI's own `xcode`/telemetry dependencies, unverifiable here
+  without macOS/Xcode) are intentionally left — see `SECURITY.md`.
+
 ### Fixed
 
 - `config/database.sql` still stopped at migration `002`, so every fresh
