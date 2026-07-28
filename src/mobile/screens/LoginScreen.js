@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {
@@ -15,6 +15,7 @@ import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
 import GradientButton from '../components/GradientButton';
+import LandingHero from '../components/LandingHero';
 import Wordmark from '../components/Wordmark';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
@@ -39,6 +40,23 @@ export default function LoginScreen({ navigation }) {
   const [remember, setRemember] = useState(false);
   const { colors, commonStyles } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
+  const scrollRef = useRef(null);
+  const panelY = useRef(0);
+  const isWeb = Platform.OS === 'web';
+
+  function scrollToPanel() {
+    const target = Math.max(panelY.current - 24, 0);
+    // On web the page itself scrolls (the ScrollView's own node ends up sized
+    // to its content, not clipped to the viewport, so its imperative scrollTo
+    // has nothing to scroll) -- the DOM's own scrolling element is the one
+    // that actually moves. Native never calls this: LandingHero, and the
+    // button that triggers it, only render on web.
+    if (isWeb && typeof document !== 'undefined') {
+      (document.scrollingElement || document.documentElement).scrollTo({ top: target, behavior: 'smooth' });
+      return;
+    }
+    scrollRef.current?.scrollTo({ y: target, animated: true });
+  }
 
   useEffect(() => {
     let active = true;
@@ -91,7 +109,7 @@ export default function LoginScreen({ navigation }) {
         setRegistering(false);
       } else {
         const response = await loginUser(normalizedEmail, password);
-        await saveSession(response.data, { remember: Platform.OS === 'web' ? remember : true });
+        await saveSession(response.data, { remember: isWeb ? remember : true });
         navigation.replace('Home', { justLoggedIn: true, name: response.data.user?.name });
       }
     } catch (error) {
@@ -117,8 +135,12 @@ export default function LoginScreen({ navigation }) {
     <SafeAreaView style={styles.safeArea}>
       <AmbientBackground />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          <View style={styles.formColumn}>
+        <ScrollView ref={scrollRef} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          {isWeb && !registering && <LandingHero onGetStarted={scrollToPanel} />}
+          <View
+            style={styles.formColumn}
+            onLayout={(event) => { panelY.current = event.nativeEvent.layout.y; }}
+          >
           <View style={styles.brandBlock}>
             <Wordmark size={42} />
             <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
@@ -158,7 +180,7 @@ export default function LoginScreen({ navigation }) {
                 <Icon name={hidden ? 'eye-off-outline' : 'eye-outline'} size={20} color={colors.textMuted} />
               </TouchableOpacity>
             </View>
-            {Platform.OS === 'web' && !registering && (
+            {isWeb && !registering && (
               <TouchableOpacity
                 style={styles.rememberRow}
                 onPress={() => setRemember(!remember)}
@@ -178,16 +200,31 @@ export default function LoginScreen({ navigation }) {
               onPress={submit}
               style={styles.primary}
             />
-            <TouchableOpacity style={styles.secondary} onPress={() => setRegistering(!registering)}>
+            <TouchableOpacity
+              style={styles.secondary}
+              onPress={() => setRegistering(!registering)}
+              accessibilityRole="button"
+              accessibilityLabel={registering ? 'Back to login' : 'Create an account'}
+            >
               <Text style={styles.secondaryText}>{registering ? 'Back to login' : 'Create an account'}</Text>
             </TouchableOpacity>
             {!registering && (
-              <TouchableOpacity style={styles.link} onPress={() => navigation.navigate('Account Recovery')}>
+              <TouchableOpacity
+                style={styles.link}
+                onPress={() => navigation.navigate('Account Recovery')}
+                accessibilityRole="button"
+                accessibilityLabel="Verify email or reset password"
+              >
                 <Text style={styles.linkText}>Verify email or reset password</Text>
               </TouchableOpacity>
             )}
             {biometricAvailable && !registering && (
-              <TouchableOpacity style={styles.biometric} onPress={biometricLogin}>
+              <TouchableOpacity
+                style={styles.biometric}
+                onPress={biometricLogin}
+                accessibilityRole="button"
+                accessibilityLabel="Use biometric login"
+              >
                 <Icon name="finger-print-outline" size={22} color={colors.primary} />
                 <Text style={styles.linkText}>Use biometric login</Text>
               </TouchableOpacity>

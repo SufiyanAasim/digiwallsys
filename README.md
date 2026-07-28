@@ -146,6 +146,7 @@ and shared-wallet sequence diagrams, are in
 | Background work | Schedule, email-outbox, and Expo push workers |
 | Testing | Node test runner · disposable PostgreSQL CI service |
 | Delivery | Docker Compose · GitHub Actions |
+| Analytics | Python · pandas · scikit-learn · matplotlib (standalone, read-only — see `analytics/README.md`) |
 
 ---
 
@@ -289,6 +290,9 @@ tokens in Expo public variables.
 ```text
 digiwallsys/
 ├── .github/                  # Templates and separate CI workflows
+├── analytics/                 # Standalone, read-only Python spend-analysis
+│                              #   pipeline (see analytics/README.md); not
+│                              #   imported by the API or the app
 ├── assets/                   # README logo and shared brand assets
 ├── config/
 │   ├── database.sql          # Fresh PostgreSQL bootstrap entrypoint

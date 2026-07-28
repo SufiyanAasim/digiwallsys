@@ -6,6 +6,26 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- A marketing hero section above the sign-in form on web only: headline,
+  product description, and four feature cards for capabilities that already
+  ship (multi-currency wallets, shared wallets, budgets/savings, analytics).
+  "Get started" scrolls to the existing auth panel below it; native is
+  unchanged, since a full-screen pitch has no room on a phone before sign-in.
+- `analytics/`: a standalone, read-only Python pipeline (pandas, scikit-learn,
+  matplotlib) that reports monthly spend trends, a category breakdown, and a
+  simple next-month forecast per user, run locally against a copy of the
+  database. It is not imported by, or reachable from, the API or the app —
+  see `analytics/README.md` for the read-only guarantees and how to run it.
+
+### Fixed
+
+- The "Create an account" / "Back to login" toggle, the "Verify email or
+  reset password" link, and "Use biometric login" on the sign-in screen had
+  no `accessibilityRole`, so they read as plain, unlabeled text to a screen
+  reader or this repo's accessibility-tree tooling instead of as buttons.
+
 ### Security
 
 - Pinned build-tooling transitive dependencies flagged by Dependabot to
