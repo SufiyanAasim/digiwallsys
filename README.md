@@ -252,10 +252,12 @@ Developer membership and signing access are required for a device IPA.
 
 | Variable | Required | Default | Description |
 | --- | --- | --- | --- |
+| `NODE_ENV` | No | Unset | `production` withholds verification/reset tokens from API responses and requires `EMAIL_WEBHOOK_URL` for delivery — see `docs/development/Authentication.md` |
 | `PORT` | No | `5000` | API listening port |
 | `DATABASE_URL` | Yes | None | PostgreSQL connection string |
 | `DATABASE_SSL` | No | `false` | Enables hosted PostgreSQL TLS |
 | `DATABASE_POOL_SIZE` | No | `10` | Maximum database pool connections |
+| `TEST_DATABASE_URL` | No | Unset | Enables the PostgreSQL integration suite when set to a database ending in `_test` |
 | `JWT_SECRET` | Yes | None | Access-token signing secret |
 | `ACCESS_TOKEN_MINUTES` | No | `15` | Short-lived access-token duration |
 | `REFRESH_TOKEN_DAYS` | No | `30` | Rotating refresh-token duration |
@@ -273,6 +275,7 @@ Developer membership and signing access are required for a device IPA.
 | `ENABLE_SCHEDULER` | No | `true` | Runs scheduled-transfer worker |
 | `ENABLE_PUSH_WORKER` | No | `true` | Runs Expo push dispatcher |
 | `ENABLE_EMAIL_WORKER` | No | `true` | Runs email-outbox dispatcher |
+| `API_BASE_URL` | No | `http://localhost:$PORT` | Target for `scripts/simulate-funding-webhook.js` |
 | `EXPO_PUBLIC_API_URL` | No | `http://localhost:5000` | Mobile API base URL |
 | `EXPO_PUBLIC_EAS_PROJECT_ID` | Push | None | Expo project ID for push tokens |
 
