@@ -20,21 +20,45 @@ export function ConfirmProvider({ children }) {
   const [busy, setBusy] = useState(false);
   const resolver = useRef(null);
 
+  // `visible` and the dialog's own content both come from `dialog`/`alert`,
+  // so closing it (setDialog(null)/setAlert(null)) flips both in the same
+  // render — but Modal's fade-out keeps the content mounted for the
+  // animation's duration, and it re-renders with whatever `dialog`/`alert`
+  // is *now*, not what it was when the close began. With the content read
+  // directly from `dialog`/`alert`, that meant a fading-out dialog would
+  // flash blank title text and the generic default "Cancel"/"Confirm"
+  // labels for the remainder of the animation — a distinct, unlabeled box
+  // that appeared to pop up behind the real one and vanish within
+  // milliseconds. Keeping the last non-null content separately from the
+  // visibility flag means the fade-out always shows the dialog that was
+  // actually open, never a blank placeholder.
+  // Set together with dialog/alert (not derived from them via an effect) so
+  // the very first open render already has the right content instead of
+  // waiting one extra render for an effect to catch up.
+  const [dialogContent, setDialogContent] = useState(null);
+  const [alertContent, setAlertContent] = useState(null);
+
   // Route Alert.alert(title, message) through this dialog on web. Kept in its
   // own state so an informational alert can never clobber an open confirm.
   useEffect(() => {
-    setAlertHandler((title, message) => setAlert({ title, message }));
+    setAlertHandler((title, message) => {
+      const value = { title, message };
+      setAlertContent(value);
+      setAlert(value);
+    });
     return () => setAlertHandler(null);
   }, []);
 
   const confirm = useCallback((options) => new Promise((resolve) => {
     resolver.current = resolve;
+    setDialogContent(options);
     setDialog(options);
   }), []);
 
   // Single-select list. Resolves the chosen value, or null if dismissed.
   const choose = useCallback((options) => new Promise((resolve) => {
     resolver.current = resolve;
+    setDialogContent(options);
     setDialog(options);
   }), []);
 
@@ -66,12 +90,12 @@ export function ConfirmProvider({ children }) {
       {children}
       <ConfirmDialog
         visible={!!dialog}
-        title={dialog?.title || ''}
-        message={dialog?.message}
-        confirmLabel={dialog?.confirmLabel || 'Confirm'}
-        cancelLabel={dialog?.cancelLabel || 'Cancel'}
-        destructive={!!dialog?.destructive}
-        options={dialog?.options || null}
+        title={dialogContent?.title || ''}
+        message={dialogContent?.message}
+        confirmLabel={dialogContent?.confirmLabel || 'Confirm'}
+        cancelLabel={dialogContent?.cancelLabel || 'Cancel'}
+        destructive={!!dialogContent?.destructive}
+        options={dialogContent?.options || null}
         busy={busy}
         onConfirm={(value) => {
           if (dialog?.options) { settle(value); return; }
@@ -82,8 +106,8 @@ export function ConfirmProvider({ children }) {
       />
       <ConfirmDialog
         visible={!!alert}
-        title={alert?.title || ''}
-        message={alert?.message}
+        title={alertContent?.title || ''}
+        message={alertContent?.message}
         confirmLabel="OK"
         infoOnly
         onConfirm={() => setAlert(null)}

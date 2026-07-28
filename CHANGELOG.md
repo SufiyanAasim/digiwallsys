@@ -6,6 +6,37 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- The web ambient gradient behind every screen only covered one viewport's
+  height (`position: absolute` sizes to its nearest positioned ancestor,
+  which on web is a flex container matched to viewport height, not to the
+  page's full scrollable height). Any page taller than one viewport —
+  routine now that the sign-in page carries a hero and a fixed footer —
+  scrolled the gradient out from behind the lower content, exposing the
+  browser's plain white page background. Changed to `position: fixed` on
+  web, which always covers exactly the viewport regardless of document
+  height; native is unaffected, since its ScrollViews clip to their own
+  bounds and never had this mismatch.
+- The sign-in panel repeated the wordmark and tagline directly below
+  LandingHero's own copy of both, so "Get started" scrolled past the hero's
+  wordmark only to land on a second one instead of the form. It's now only
+  rendered where the hero isn't shown: native, and the web "Create an
+  account" state.
+- `PublicWebFooter`'s text sat pinned to the bar's top edge with empty space
+  below it. `alignItems` only centers items within their own wrapped line;
+  with `flexWrap` set, the line itself packs to the cross-axis start unless
+  `alignContent` says otherwise. Added `alignContent: 'center'`.
+- Closing (or opening) any `ConfirmDialog` — most visibly the logout
+  confirmation — flashed a second, blank, generically-labelled box for the
+  remainder of the modal's fade animation: `visible` and the dialog's
+  content both came from the same state value, so clearing it to close the
+  dialog also blanked the title and fell back to generic "Cancel"/"Confirm"
+  labels while the fade was still playing. The displayed content is now
+  tracked separately from the visibility flag and only ever updated to a
+  real value, so a closing (or opening) dialog always shows the dialog that
+  was actually asked for.
+
 ### Added
 
 - A marketing hero section above the sign-in form on web only: headline,

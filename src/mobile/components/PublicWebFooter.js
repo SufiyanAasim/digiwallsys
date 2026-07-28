@@ -47,6 +47,13 @@ function buildStyles(colors) {
       alignItems: 'center',
       justifyContent: 'center',
       flexWrap: 'wrap',
+      // alignItems only centers items within their own wrapped line; with
+      // flexWrap set, the line itself packs to the cross-axis start by
+      // default, leaving the single line of text pinned to the bar's top
+      // edge with all the bar's extra height as dead space below it.
+      // alignContent centers the line (or lines, on a narrow viewport)
+      // within the bar's full height instead.
+      alignContent: 'center',
       gap: 6,
       paddingHorizontal: 12,
       backgroundColor: colors.backgroundElevated,

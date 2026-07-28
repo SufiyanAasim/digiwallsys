@@ -142,10 +142,18 @@ export default function LoginScreen({ navigation }) {
             style={styles.formColumn}
             onLayout={(event) => { panelY.current = event.nativeEvent.layout.y; }}
           >
-          <View style={styles.brandBlock}>
-            <Wordmark size={42} />
-            <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
-          </View>
+          {/* LandingHero already carries the wordmark and tagline right above
+              this panel, so repeating them here would just be the same brand
+              mark twice in one scroll -- and exactly what "Get started"
+              scrolled past to land on before this. Only show it where the
+              hero isn't rendered: native (no hero there at all) and the web
+              "Create an account" state (hero hides itself while registering). */}
+          {(!isWeb || registering) && (
+            <View style={styles.brandBlock}>
+              <Wordmark size={42} />
+              <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
+            </View>
+          )}
           <View style={styles.panel}>
             {Boolean(errorMsg) && (
               <View style={styles.errorBox}>

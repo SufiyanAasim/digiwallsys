@@ -64,6 +64,19 @@ export function AmbientLayer() {
 }
 
 const styles = StyleSheet.create({
-  wrap: { ...StyleSheet.absoluteFillObject, overflow: 'hidden' },
+  // `position: absolute` (StyleSheet.absoluteFillObject) sizes this to its
+  // nearest positioned ancestor's own box -- on web that ancestor is a flex
+  // container sized to the viewport, not to the page's full scrollable
+  // height. Any screen taller than one viewport (this shell now regularly is,
+  // with LandingHero and the fixed public footer) scrolled the gradient out
+  // of view partway down, leaving the browser's plain white page background
+  // exposed underneath the rest of the content. `fixed` anchors to the
+  // viewport itself regardless of document height, so it always covers
+  // exactly what's on screen. Native keeps absoluteFillObject: its ScrollViews
+  // clip to their own bounds, so this mismatch does not exist there.
+  wrap: Platform.select({
+    web: { position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden' },
+    default: { ...StyleSheet.absoluteFillObject, overflow: 'hidden' },
+  }),
   blob: { position: 'absolute' },
 });
