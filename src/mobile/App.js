@@ -23,7 +23,8 @@ import SendMoneyScreen from './screens/SendMoneyScreen';
 import TransactionHistoryScreen from './screens/TransactionHistoryScreen';
 import WalletsScreen from './screens/WalletsScreen';
 import { getCurrentUser } from './api';
-import { currentRouteName, navigate, navigationRef } from './navigation';
+import { getRefreshToken } from './session';
+import { currentRouteName, navigate, navigationRef, resetToLogin } from './navigation';
 import { layout } from './theme';
 import { useAppTheme, ThemeProvider } from './ThemeContext';
 
@@ -37,6 +38,40 @@ const NativeStack = createNativeStackNavigator();
 const JSStack = createStackNavigator();
 const PUBLIC_ROUTES = ['Login', 'Account Recovery'];
 
+// Without this the address bar stays on "/" no matter which screen is open, so
+// nothing can be bookmarked or shared, the browser's Back button does nothing,
+// and a refresh always dumps you back on Home. Paths are written out rather
+// than derived from the route names, so renaming a screen cannot silently
+// change a URL somebody has already saved.
+const linking = {
+  prefixes: [
+    'digiwallsys://',
+    ...(Platform.OS === 'web' && typeof window !== 'undefined' ? [window.location.origin] : []),
+  ],
+  config: {
+    screens: {
+      Home: '',
+      Login: 'login',
+      'Account Recovery': 'account-recovery',
+      Analytics: 'analytics',
+      'Add Money': 'add-money',
+      'Send Money': 'send-money',
+      Transactions: 'transactions',
+      'Payment Tools': 'payment-tools',
+      'Payment Calendar': 'payment-calendar',
+      'QR Payment': 'qr-payment',
+      Savings: 'savings',
+      Budgets: 'budgets',
+      Wallets: 'wallets',
+      Family: 'family',
+      Notifications: 'notifications',
+      Security: 'security',
+      Admin: 'admin',
+      Credits: 'credits',
+    },
+  },
+};
+
 function AppShell() {
   const isWeb = Platform.OS === 'web';
   const Stack = isWeb ? JSStack : NativeStack;
@@ -46,7 +81,21 @@ function AppShell() {
   const styles = useMemo(() => buildStyles(colors), [colors]);
 
   const refreshUser = useCallback(() => {
-    getCurrentUser().then((response) => setUser(response.data)).catch(() => setUser(null));
+    getCurrentUser()
+      .then((response) => setUser(response.data))
+      .catch(async () => {
+        setUser(null);
+        // A URL can now name a protected screen directly, so an unauthenticated
+        // visitor could land on one and see nothing but failed requests. Send
+        // them to sign in instead.
+        //
+        // The error shape cannot decide this: when there is no refresh token,
+        // the interceptor rejects with a plain Error carrying no `response`, so
+        // a status check never matches. Ask the store instead — the interceptor
+        // clears the session precisely when a refresh genuinely fails, whereas
+        // a network blip leaves the tokens in place and must not sign anyone out.
+        if (!(await getRefreshToken())) resetToLogin();
+      });
   }, []);
 
   useEffect(() => {
@@ -71,6 +120,7 @@ function AppShell() {
           <NavigationContainer
             ref={navigationRef}
             theme={navigationTheme}
+            linking={linking}
             onReady={syncActiveRoute}
             onStateChange={syncActiveRoute}
             // Without this the browser tab is just the route name ("Home"),

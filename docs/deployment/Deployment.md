@@ -14,6 +14,15 @@
 Set `EXPO_PUBLIC_API_URL` to the deployed HTTPS API before creating the Expo
 release build. Never embed database credentials or `JWT_SECRET` in the client.
 
+### Web hosting
+
+`npm run build:web` exports a single-page app to `src/mobile/dist-web`. Every
+screen has its own URL (`/analytics`, `/wallets`, …) but there is only one
+`index.html`, so the host must fall back to it for any path that is not a real
+file. `vercel.json` does this with a rewrite; on another host, configure the
+equivalent SPA fallback or every URL except `/` will 404 on a direct visit or a
+page refresh.
+
 The EAS profiles live in `src/mobile/eas.json`:
 
 | Command | Output | Use |

@@ -47,6 +47,17 @@ All notable changes to this project are documented here. The format follows
   this browser**, and logging out clears that choice. Native is unchanged and
   keeps SecureStore with optional biometric unlock.
 
+### Added
+
+- Real URLs on the web. `NavigationContainer` had no `linking` config, so the
+  address bar sat on `/` on every screen: nothing could be bookmarked or shared,
+  Back and Forward did nothing, and a refresh always returned to Home. Each
+  screen now has a path (`/analytics`, `/wallets`, …), written out explicitly so
+  renaming a screen cannot change a URL someone has saved. `vercel.json` adds
+  the SPA fallback the export needs for a direct visit to resolve.
+- An auth guard for those URLs: reaching a protected path without a session now
+  redirects to sign-in instead of rendering a screen that can only show errors.
+
 ### Changed
 
 - The browser tab now reads `digiwallsys · <screen>` instead of just the route
