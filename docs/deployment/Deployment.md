@@ -19,9 +19,18 @@ release build. Never embed database credentials or `JWT_SECRET` in the client.
 `npm run build:web` exports a single-page app to `src/mobile/dist-web`. Every
 screen has its own URL (`/analytics`, `/wallets`, …) but there is only one
 `index.html`, so the host must fall back to it for any path that is not a real
-file. `vercel.json` does this with a rewrite; on another host, configure the
-equivalent SPA fallback or every URL except `/` will 404 on a direct visit or a
-page refresh.
+file. Without that fallback every URL except `/` returns 404 on a direct visit
+or a page refresh.
+
+`vercel.json` supplies the rewrite. It is committed **twice on purpose** — once
+at the repository root and once in `src/mobile/` — because Vercel only reads the
+`vercel.json` that sits in the project's configured **Root Directory**. If the
+Vercel project points at `src/mobile`, a root-level file is ignored, which is
+exactly how `/analytics` kept 404-ing while `/` worked. Keeping both copies makes
+the fallback survive either setting; if you change one, change the other.
+
+On any other host, configure the equivalent SPA fallback (Netlify `_redirects`,
+nginx `try_files $uri /index.html`, S3/CloudFront error-document rewrite).
 
 The EAS profiles live in `src/mobile/eas.json`:
 

@@ -3,7 +3,7 @@ name: Test
 on:
   pull_request:
   push:
-    branches: [main, develop]
+    branches: [main, backend, frontend, database]
 
 permissions:
   contents: read

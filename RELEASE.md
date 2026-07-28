@@ -41,7 +41,9 @@ change; the version and release name themselves never change.
 
 ## Before the release
 
-1. Create `release/vMAJOR.MINOR.PATCH` from `develop`.
+1. Merge the area branches (`backend`, `frontend`, `database`) that carry work
+   for this release into `main`, then create `release/vMAJOR.MINOR.PATCH` from
+   `main`.
 2. Run `npm ci`, `npm run verify`, and the production mobile build.
 3. Test database migrations and transfer rollback behavior cleanly. Confirm that
    every migration in `config/migrations` is listed in `config/database.sql`, so
@@ -55,4 +57,6 @@ change; the version and release name themselves never change.
 2. Run the release workflow using the exact version including `v`.
 3. Confirm that the generated tag and release name match the table exactly.
 4. Publish checksums alongside platform artifacts.
-5. Merge the release branch back into `develop` and monitor the release.
+5. Fast-forward `backend`, `frontend`, and `database` to the released `main` so
+   the area branches do not start the next cycle behind it, then monitor the
+   release.

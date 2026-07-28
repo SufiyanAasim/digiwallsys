@@ -8,7 +8,7 @@ on:
       - src/backend/**
       - config/**
   push:
-    branches: [main]
+    branches: [main, backend, frontend, database]
 
 permissions:
   contents: read
