@@ -42,6 +42,7 @@ export default function LoginScreen({ navigation }) {
   const { colors, commonStyles } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
   const scrollRef = useRef(null);
+  const emailRef = useRef(null);
   const panelY = useRef(0);
   const isWeb = Platform.OS === 'web';
 
@@ -52,11 +53,33 @@ export default function LoginScreen({ navigation }) {
     // has nothing to scroll) -- the DOM's own scrolling element is the one
     // that actually moves. Native never calls this: LandingHero, and the
     // button that triggers it, only render on web.
-    if (isWeb && typeof document !== 'undefined') {
-      (document.scrollingElement || document.documentElement).scrollTo({ top: target, behavior: 'smooth' });
+    if (!(isWeb && typeof document !== 'undefined')) {
+      scrollRef.current?.scrollTo({ y: target, animated: true });
       return;
     }
-    scrollRef.current?.scrollTo({ y: target, animated: true });
+    const scroller = document.scrollingElement || document.documentElement;
+    const reduceMotion = typeof window !== 'undefined'
+      && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    scroller.scrollTo({ top: target, behavior: reduceMotion ? 'auto' : 'smooth' });
+
+    // Land the cursor in the email field once the scroll settles, so "Get
+    // started" hands off straight into typing rather than leaving the click
+    // as the only thing that happened. `scrollend` fires exactly when the
+    // animation finishes, but a synthetic/interrupted scroll can fail to
+    // raise it at all -- keep a timeout running regardless as a backstop, and
+    // let whichever fires first win.
+    let focused = false;
+    const focusEmail = () => {
+      if (focused) return;
+      focused = true;
+      emailRef.current?.focus();
+    };
+    if (reduceMotion) {
+      focusEmail();
+    } else {
+      scroller.addEventListener('scrollend', focusEmail, { once: true });
+      setTimeout(focusEmail, 500);
+    }
   }
 
   useEffect(() => {
@@ -164,6 +187,7 @@ export default function LoginScreen({ navigation }) {
               <TextInput style={styles.input} placeholder="Full name" placeholderTextColor={colors.textFaint} value={name} onChangeText={setName} autoComplete="name" accessibilityLabel="Full name" />
             )}
             <TextInput
+              ref={emailRef}
               style={styles.input}
               placeholder="Email"
               placeholderTextColor={colors.textFaint}

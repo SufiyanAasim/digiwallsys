@@ -8,6 +8,21 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- Clicking "Credits" from the public sign-in footer opened the Credits screen
+  and immediately bounced back to Login. Credits needs no session — it's
+  static app/version info — but wasn't exempt from the redirect-to-login
+  guard added for URLs naming a protected screen, so an unauthenticated
+  visitor's `getCurrentUser()` 401 triggered that guard same as any real
+  protected route would. Credits is now exempt from the redirect (a new
+  `NO_REDIRECT_ROUTES` list); it still fetches the user opportunistically, so
+  an authenticated visitor arriving from the sidebar keeps that sidebar
+  exactly as before.
+- "Get started" now focuses the email field once the scroll settles (via the
+  `scrollend` event, with a timeout backstop in case a browser or an
+  interrupted scroll never raises it), and respects
+  `prefers-reduced-motion` — an immediate jump and instant focus instead of
+  the smooth scroll.
+
 - The web ambient gradient behind every screen only covered one viewport's
   height (`position: absolute` sizes to its nearest positioned ancestor,
   which on web is a flex container matched to viewport height, not to the

@@ -37,6 +37,14 @@ import Sidebar from './components/web/Sidebar';
 const NativeStack = createNativeStackNavigator();
 const JSStack = createStackNavigator();
 const PUBLIC_ROUTES = ['Login', 'Account Recovery'];
+// Credits needs a session for nothing -- it's static app/version info -- but
+// it isn't in PUBLIC_ROUTES because an authenticated visitor reaching it from
+// the sidebar should keep that sidebar, unlike the pre-auth screens above.
+// Without this exemption, an unauthenticated visitor clicking "Credits" from
+// the public sign-in footer got bounced straight back to Login: refreshUser's
+// getCurrentUser() 401s with no session, and the redirect below didn't know
+// Credits was supposed to be viewable either way.
+const NO_REDIRECT_ROUTES = [...PUBLIC_ROUTES, 'Credits'];
 
 // Without this the address bar stays on "/" no matter which screen is open, so
 // nothing can be bookmarked or shared, the browser's Back button does nothing,
@@ -94,7 +102,14 @@ function AppShell() {
         // a status check never matches. Ask the store instead — the interceptor
         // clears the session precisely when a refresh genuinely fails, whereas
         // a network blip leaves the tokens in place and must not sign anyone out.
-        if (!(await getRefreshToken())) resetToLogin();
+        //
+        // Read the route at the moment of deciding, not a value captured when
+        // this callback was created (it never changes, since refreshUser has
+        // no dependencies) — the person may have already navigated on by the
+        // time this async catch runs.
+        if (!(await getRefreshToken()) && !NO_REDIRECT_ROUTES.includes(currentRouteName())) {
+          resetToLogin();
+        }
       });
   }, []);
 
