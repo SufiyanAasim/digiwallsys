@@ -53,6 +53,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- The mobile lint toolchain keeps `@eslint/js` on the ESLint 9-compatible line;
+  the independently merged ESLint 10 preset required a peer version that the
+  React and React Native lint plugins do not yet support.
 - Production CORS always permits the canonical Vercel web origin while retaining
   support for additional configured origins.
 - The administrator bootstrap script requires validated environment variables
