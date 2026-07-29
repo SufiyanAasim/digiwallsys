@@ -1,8 +1,6 @@
-# digiwallsys — vMAJOR.MINOR.PATCH
+# 🌊 digiwallsys — vMAJOR.MINOR.PATCH
 
-> *Name: Exact mapped name*
-
-**Status:** Planned, Pre-release, or Release
+> Codename: *Exact mapped name* - Concise release outcome
 
 ---
 

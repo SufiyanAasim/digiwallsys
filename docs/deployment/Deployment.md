@@ -6,16 +6,17 @@
 2. Provision PostgreSQL and apply `config/database.sql` through a migration job.
 3. Store `DATABASE_URL` and a random `JWT_SECRET` in a secret manager.
 4. Enable `DATABASE_SSL` when the provider requires it.
-5. Restrict `CORS_ORIGIN` and expose the API only over HTTPS.
+5. Set `PUBLIC_WEB_ORIGIN` to the canonical HTTPS web app, restrict any
+   additional `CORS_ORIGIN` values, and expose the API only over HTTPS.
 6. Verify `/api/health` and test registration, login, and a rollback-safe transfer.
 
 ### Supported provider shape
 
-No live provider deployment is currently claimed. One supported shape uses
-Render for the API and dedicated worker, managed PostgreSQL for data, and
-Vercel for the exported web build.
+The current deployment uses Vercel for the exported web build, Render for the
+API, and Supabase PostgreSQL for data. The dedicated Render worker remains a
+separate service whose status and secrets are managed in the Render dashboard.
 `examples/render.env.example`, `examples/supabase.env.example`, and
-`examples/vercel.env.example` are ready-to-fill templates for each — none of
+`examples/vercel.env.example` document the deployed shape — none of
 these three read a `.env` file from the repo, so every variable has to be set
 in that provider's own dashboard. See the README's "Deployment target env
 files" section for which file goes where.
@@ -23,6 +24,14 @@ files" section for which file goes where.
 Render auto-injects `PORT`; do not set it. Point the web service at the root
 `Dockerfile` or `npm run start:api`. Create a separate background worker
 service using `npm run start:worker`; do not run workers in every API instance.
+
+### One-time administrator bootstrap
+
+The bootstrap script has no built-in credentials and never prints a password.
+Set `ADMIN_BOOTSTRAP_EMAIL`, `ADMIN_BOOTSTRAP_PASSWORD`, and optionally
+`ADMIN_BOOTSTRAP_NAME` in a trusted one-time shell, run `npm run admin:seed`,
+then remove those variables. Rotate any password that has ever appeared in
+source history, deployment logs, or chat.
 
 ## Mobile
 
@@ -60,10 +69,12 @@ the Android signing keystore. An Apple Developer account is required for the iOS
 distribution certificate and provisioning profile. Use the package/bundle ID
 `com.sufiyanaasim.digiwallsys` in both stores.
 
-No checked-in or current APK is claimed. Generate native projects with Expo
-prebuild only when local native debugging is needed; use the EAS preview
-profile for an installable test APK and the production profiles for store
-artifacts. Always set the final `EXPO_PUBLIC_API_URL` before building.
+EAS Android build `9` produced an installable APK and a Play Store AAB for
+public version `1.8.0`. Build artifacts remain outside Git and are retained
+locally under the ignored `artifacts/` directory and in EAS. Generate native
+projects with Expo prebuild only when local native debugging is needed; use
+the EAS preview profile for an installable test APK and the production profiles
+for store artifacts. Always set the final `EXPO_PUBLIC_API_URL` before building.
 
 ## Production gates
 

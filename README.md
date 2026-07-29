@@ -9,7 +9,7 @@
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
 [![Version](https://img.shields.io/badge/version-v1.8.0-713b49?style=flat)](docs/releases/v1.8.0.md)
 [![Release](https://img.shields.io/badge/name-Estuary-c6533c?style=flat)](docs/releases/v1.8.0.md)
-[![Status](https://img.shields.io/badge/status-local--candidate-e9a23b?style=flat)](docs/releases/v1.8.0.md)
+[![Status](https://img.shields.io/badge/status-deployed-16a34a?style=flat)](docs/releases/v1.8.0.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-64748b?style=flat)]()
 [![Build](https://img.shields.io/badge/build-passing-16a34a?style=flat)](.github/workflows/build.yml)
@@ -19,7 +19,7 @@ Register securely, fund through a verified provider, send or request money,
 scan QR payments, schedule transfers, receive alerts, and reconcile every wallet
 against a balanced double-entry ledger.
 
-[**Estuary release**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
+[**Web app**](https://digiwallsys.vercel.app) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Estuary release**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
 
 </div>
 
@@ -154,7 +154,7 @@ and shared-wallet sequence diagrams, are in
 
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
-| [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Local candidate | Multi-currency wallets and shared/family wallets |
+| [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Deployed | Multi-currency wallets and shared/family wallets |
 | [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Implemented | Savings goals, budgets, calendar, tagging, statements, alerts |
 | [v1.7.0](docs/releases/v1.7.0.md) | **Compass** | Implemented | Real-data analytics, spend breakdown, spending alerts |
 | [v1.6.5](docs/releases/v1.6.5.md) | **Marina** | Completed | Web dashboard sidebar shell |
@@ -173,10 +173,10 @@ and shared-wallet sequence diagrams, are in
 | [v1.0.0](docs/releases/v1.0.0.md) | **Anchor** | Base Release | Secure wallet foundation and PostgreSQL acceptance gates |
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
-prerelease identifiers. The current checkout is the local `v1.8.0` (`Estuary`)
-candidate. No remote repository or production deployment is currently claimed;
-publish and deploy only after the production gates in
-[Deployment.md](docs/deployment/Deployment.md) pass.
+prerelease identifiers. `v1.8.0` (`Estuary`) is deployed as a Vercel web app
+with a Render API and Supabase PostgreSQL. Signed Android build `9` is available
+as an internal APK and Play Store AAB; the GitHub tag/release remains a separate
+publication step governed by [Deployment.md](docs/deployment/Deployment.md).
 
 ---
 
@@ -263,7 +263,11 @@ Developer membership and signing access are required for a device IPA.
 | `JWT_SECRET` | Yes | None | Access-token signing secret |
 | `ACCESS_TOKEN_MINUTES` | No | `15` | Short-lived access-token duration |
 | `REFRESH_TOKEN_DAYS` | No | `30` | Rotating refresh-token duration |
-| `CORS_ORIGIN` | No | All | Comma-separated permitted web origins |
+| `ADMIN_BOOTSTRAP_EMAIL` | One-time setup | None | Explicit email used by `npm run admin:seed` |
+| `ADMIN_BOOTSTRAP_PASSWORD` | One-time setup | None | Explicit bootstrap password (minimum 12 characters); remove after seeding |
+| `ADMIN_BOOTSTRAP_NAME` | No | `System Administrator` | Display name used by the one-time bootstrap command |
+| `CORS_ORIGIN` | No | Unset | Additional comma-separated permitted web origins |
+| `PUBLIC_WEB_ORIGIN` | Production | `https://digiwallsys.vercel.app` | Canonical web origin always permitted by the production API |
 | `TRUST_PROXY` | No | `0` | Express proxy-hop trust count |
 | `GLOBAL_RATE_LIMIT` | No | `120` | Requests per IP per minute |
 | `MAX_TRANSFER_AMOUNT` | No | `10000` | Single-transfer risk limit |
@@ -287,10 +291,10 @@ tokens in Expo public variables.
 
 ### Deployment target env files
 
-No provider is currently recorded as a live deployment. The templates below
-show supported deployment shapes; dashboard variables and database credentials
-must be configured in the chosen provider and are never read from these
-example files automatically:
+The web app is deployed on Vercel, the API and worker run on Render, and
+PostgreSQL is hosted by Supabase. Dashboard variables and database credentials
+must still be configured in each provider and are never read from these example
+files automatically:
 
 | File | Set it in | Covers |
 | --- | --- | --- |

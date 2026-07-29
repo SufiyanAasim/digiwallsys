@@ -8,6 +8,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- EAS ownership and production profiles for signed Android `v1.8.0` build `9`
+  APK and AAB artifacts.
+- Explicit one-time administrator bootstrap variables; the repository no longer
+  contains or prints a built-in administrator password.
 - Dedicated background-worker entrypoint and environment template for scheduled
   transfers, email delivery, and push delivery.
 - Operational-hardening migration finalizes ledger journals, leases outbox rows,
@@ -19,6 +23,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Deployment documentation now records the live Vercel web app, Render API and
+  worker, and Supabase PostgreSQL topology.
 - CI and release instructions again recognize the documented four-branch
   workflow: `main`, `backend`, `frontend`, and `database`.
 - The landing page gained a "How it works" section (three numbered steps whose
@@ -47,6 +53,14 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- Production CORS always permits the canonical Vercel web origin while retaining
+  support for additional configured origins.
+- The administrator bootstrap script requires validated environment variables
+  instead of accepting positional or hardcoded credentials.
+- Android monorepo builds resolve the current Expo CLI and React Native `0.86`
+  Hermes compiler paths correctly.
+- Mobile development retains a localhost API fallback while production bundles
+  use the live HTTPS Render API.
 - Pickers on Send money, Requests & schedules, QR payments, and Wallets now
   keep a 48px minimum height on web instead of collapsing to a difficult-to-use
   native-select row.
@@ -58,8 +72,8 @@ All notable changes to this project are documented here. The format follows
 - Savings round-ups now select the enabled goal correctly, include completed
   non-archived goals in earmarked balances, and cannot exceed the remaining
   goal target or available wallet balance.
-- iOS and Android build identifiers advanced to build 4 for the next signed
-  `v1.8.0` binary while the public app version remains `1.8.0`.
+- Android advanced to signed build `9`; iOS remains at build `4` while the
+  public app version stays `1.8.0`.
 - `react/jsx-no-undef` is now enabled. Core `no-undef` does not treat a JSX
   element name as an identifier reference, so a component used without being
   imported passed lint and only failed at runtime — which is exactly how a

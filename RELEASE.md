@@ -1,7 +1,8 @@
 # Release process
 
-`digiwallsys` uses the exact release versions and names listed below. A release
-name is not a codename and must not be extended with a subtitle.
+`digiwallsys` uses the exact release versions and names listed below. Release
+documents present the mapped name as a codename with a short descriptive
+outcome, while Git tags and GitHub release titles remain exact.
 
 | Version | Name | Purpose |
 | --- | --- | --- |
@@ -27,7 +28,11 @@ name is not a codename and must not be extended with a subtitle.
 
 - The Git tag is the exact version, for example `v1.0.0`.
 - The GitHub release name is the exact mapped name, for example `Anchor`.
-- Do not add `digiwallsys`, an emoji, a subtitle, or any other prefix or suffix.
+- Do not add `digiwallsys`, an emoji, a subtitle, or any other prefix or suffix
+  to the tag or GitHub release title.
+- Release documents use
+  `> Codename: *Exact mapped name* - Concise release outcome`; that description
+  is not part of the mapped release name.
 - `v1.0.0` is marked as a GitHub pre-release, but its version remains exactly
   `v1.0.0`. Do not append `alpha`, `beta`, `rc`, or another identifier.
 - Later release status is decided when that release is prepared; its mapped

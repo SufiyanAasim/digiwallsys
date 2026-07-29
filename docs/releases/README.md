@@ -3,13 +3,14 @@
 Each release gets one file named exactly after its tag, such as `v1.0.0.md`.
 Versions and release names are fixed in `RELEASE.md`.
 
-The file heading contains only the exact version. The `Name` field contains only
-the exact mapped name. Do not add the project name, emoji, codename label,
-subtitle, version suffix, or release-name prefix.
+The file heading uses `🌊 digiwallsys — vMAJOR.MINOR.PATCH`. The next line uses
+`Codename: *Exact mapped name* - Concise release outcome`. The outcome is
+documentation, not part of the Git tag or GitHub release name.
 
 `v1.0.0` is a pre-release named `Anchor`. Pre-release is GitHub release status;
 it does not change the tag or version string.
 
-Every release document follows `Template.md`: overview, objectives, feature
-groups, changes, architecture progress, compatibility, ownership, and release
-summary. Planned releases describe assigned scope without claiming publication.
+Release status is tracked only in the README's app-version table, not repeated
+inside individual release documents. Every release document follows
+`Template.md`: overview, objectives, feature groups, changes, architecture
+progress, compatibility, ownership, and release summary.
