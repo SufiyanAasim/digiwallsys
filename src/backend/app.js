@@ -16,12 +16,11 @@ const transactionRoutes = require('./routes/transaction');
 const userRoutes = require('./routes/users');
 const walletRoutes = require('./routes/wallet');
 const pool = require('./db');
+const { resolveAllowedOrigins } = require('./config/cors');
 
 const app = express();
 
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
-  : true;
+const allowedOrigins = resolveAllowedOrigins();
 
 app.disable('x-powered-by');
 app.set('trust proxy', Number(process.env.TRUST_PROXY || 0));

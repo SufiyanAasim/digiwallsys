@@ -3,11 +3,26 @@ const bcrypt = require('bcryptjs');
 const pool = require('../db');
 const { ensureWalletAccount } = require('../services/ledgerService');
 
-const email = String(process.argv[2] || 'admin@digiwallsys.com').trim().toLowerCase();
-const password = String(process.argv[3] || 'admin@584');
-const name = String(process.argv[4] || 'System Administrator').trim();
+function readBootstrapConfig(environment = process.env) {
+  const email = String(environment.ADMIN_BOOTSTRAP_EMAIL || '').trim().toLowerCase();
+  const password = String(environment.ADMIN_BOOTSTRAP_PASSWORD || '');
+  const name = String(environment.ADMIN_BOOTSTRAP_NAME || 'System Administrator').trim();
 
-(async () => {
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw new Error('ADMIN_BOOTSTRAP_EMAIL must be a valid email address.');
+  }
+  if (password.length < 12) {
+    throw new Error('ADMIN_BOOTSTRAP_PASSWORD must contain at least 12 characters.');
+  }
+  if (!name) {
+    throw new Error('ADMIN_BOOTSTRAP_NAME cannot be empty.');
+  }
+
+  return { email, password, name };
+}
+
+async function createAdminAccount(environment = process.env) {
+  const { email, password, name } = readBootstrapConfig(environment);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
@@ -60,7 +75,7 @@ const name = String(process.argv[4] || 'System Administrator').trim();
     );
     
     await client.query('COMMIT');
-    console.log(`Success! Admin credentials:\n  Email: ${email}\n  Password: ${password}`);
+    console.log(`Admin bootstrap completed for ${email}.`);
   } catch (error) {
     await client.query('ROLLBACK');
     throw error;
@@ -68,7 +83,16 @@ const name = String(process.argv[4] || 'System Administrator').trim();
     client.release();
     await pool.end();
   }
-})().catch((error) => {
-  console.error('Error creating admin account:', error.message);
-  process.exitCode = 1;
-});
+}
+
+if (require.main === module) {
+  createAdminAccount().catch((error) => {
+    console.error('Error creating admin account:', error.message);
+    process.exitCode = 1;
+  });
+}
+
+module.exports = {
+  createAdminAccount,
+  readBootstrapConfig,
+};

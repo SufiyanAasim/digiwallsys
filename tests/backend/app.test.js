@@ -30,6 +30,23 @@ test('health endpoint identifies digiwallsys', async () => {
   });
 });
 
+test('canonical web app receives production CORS headers', async () => {
+  const response = await fetch(`${baseUrl}/api/auth/login`, {
+    method: 'OPTIONS',
+    headers: {
+      origin: 'https://digiwallsys.vercel.app',
+      'access-control-request-method': 'POST',
+      'access-control-request-headers': 'content-type',
+    },
+  });
+
+  assert.equal(response.status, 204);
+  assert.equal(
+    response.headers.get('access-control-allow-origin'),
+    'https://digiwallsys.vercel.app'
+  );
+});
+
 test('wallet endpoints require a bearer token', async () => {
   const response = await fetch(`${baseUrl}/api/wallet/balance`);
   assert.equal(response.status, 401);
