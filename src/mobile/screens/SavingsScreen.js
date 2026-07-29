@@ -115,7 +115,7 @@ export default function SavingsScreen() {
               </View>
               <Text style={styles.goalMeta}>
                 {formatMoney(goal.current_amount, goal.currency)} of {formatMoney(goal.target_amount, goal.currency)}
-                {goal.status === 'completed' ? ' · Complete 🎉' : ''}
+                {goal.status === 'completed' ? ' · Complete' : ''}
               </Text>
               <View style={styles.track}><View style={[styles.fill, { width: `${progress * 100}%` }]} /></View>
               <View style={styles.goalActions}>

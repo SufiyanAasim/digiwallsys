@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, Platform, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import GradientButton from './GradientButton';
 import Wordmark from './Wordmark';
 import { useAppTheme } from '../ThemeContext';
@@ -27,6 +28,35 @@ const FEATURES = [
     title: 'Real-time analytics',
     body: 'See money in, money out, and the spending-lock progress for the current month.',
   },
+];
+
+// Every line below describes something that actually ships -- no aspirational
+// copy. The steps mirror the real onboarding order (verify email -> fund and
+// budget -> send/share/track) and the trust row names features that exist in
+// the backend today.
+const STEPS = [
+  {
+    icon: 'person-add-outline',
+    title: 'Create your account',
+    body: 'Sign up and verify your email. Sessions sit behind short-lived access tokens and rotating refresh tokens.',
+  },
+  {
+    icon: 'options-outline',
+    title: 'Fund it and set your limits',
+    body: 'Add money through a payment provider, then set monthly budget categories and earmark savings goals.',
+  },
+  {
+    icon: 'swap-horizontal-outline',
+    title: 'Send, share, and track',
+    body: 'Send in any currency you hold, add family as authorized spenders, and follow every movement in analytics.',
+  },
+];
+
+const TRUST = [
+  { icon: 'git-compare-outline', label: 'Double-entry ledger' },
+  { icon: 'refresh-outline', label: 'Rotating refresh tokens' },
+  { icon: 'finger-print-outline', label: 'Biometric unlock' },
+  { icon: 'pulse-outline', label: 'Fraud velocity checks' },
 ];
 
 // Three soft, slowly drifting glows behind the hero copy -- purely decorative,
@@ -124,6 +154,57 @@ function FeatureCard({ feature, colors, styles, index }) {
   );
 }
 
+// Numbered step. Hovering lifts the step and turns its number chip from a
+// flat tint into the live brand gradient, so the row responds to the pointer
+// rather than sitting inert.
+function StepCard({ step, index, colors, styles }) {
+  const enter = useRef(new Animated.Value(0)).current;
+  const [hovered, setHovered] = useState(false);
+
+  useEffect(() => {
+    Animated.timing(enter, {
+      toValue: 1,
+      duration: 420,
+      delay: 520 + index * 110,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: true,
+    }).start();
+  }, [enter, index]);
+
+  return (
+    <Animated.View
+      style={{
+        flexBasis: 260,
+        flexGrow: 1,
+        maxWidth: 320,
+        opacity: enter,
+        transform: [{ translateY: enter.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }],
+      }}
+    >
+      <Pressable
+        style={[styles.step, hovered && styles.stepHovered]}
+        onHoverIn={() => setHovered(true)}
+        onHoverOut={() => setHovered(false)}
+      >
+        <View style={styles.stepHead}>
+          {hovered ? (
+            <LinearGradient colors={colors.gradientPrimary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.stepNumber}>
+              <Text style={styles.stepNumberTextOn}>{index + 1}</Text>
+            </LinearGradient>
+          ) : (
+            <View style={styles.stepNumber}>
+              <Text style={styles.stepNumberText}>{index + 1}</Text>
+            </View>
+          )}
+          <Icon name={step.icon} size={18} color={hovered ? colors.primary : colors.textMuted} />
+        </View>
+        <Text style={styles.stepTitle}>{step.title}</Text>
+        <Text style={styles.stepBody}>{step.body}</Text>
+      </Pressable>
+    </Animated.View>
+  );
+}
+
 // Web-only marketing section shown above the sign-in panel: a hero, then a
 // grid of the product's actual features (nothing here is aspirational copy —
 // every line matches a shipped screen). Native skips straight to the form,
@@ -132,7 +213,6 @@ export default function LandingHero({ onGetStarted }) {
   const { colors } = useAppTheme();
   const themedStyles = useMemo(() => buildStyles(colors), [colors]);
   const heroEnter = useRef(new Animated.Value(0)).current;
-  const [pressed, setPressed] = useState(false);
 
   useEffect(() => {
     Animated.timing(heroEnter, {
@@ -143,10 +223,6 @@ export default function LandingHero({ onGetStarted }) {
     }).start();
   }, [heroEnter]);
 
-  function handleGetStarted() {
-    setPressed(true);
-    onGetStarted?.();
-  }
 
   return (
     <View style={themedStyles.wrap}>
@@ -166,16 +242,30 @@ export default function LandingHero({ onGetStarted }) {
           A digital wallet with a real double-entry ledger underneath — multi-currency,
           shared, and budgeted, not just a balance and a button.
         </Text>
-        <GradientButton
-          label={pressed ? 'Scrolling down…' : 'Get started'}
-          onPress={handleGetStarted}
-          style={themedStyles.cta}
-        />
+        <GradientButton label="Get started" onPress={onGetStarted} style={themedStyles.cta} />
       </Animated.View>
 
       <View style={themedStyles.grid}>
         {FEATURES.map((feature, index) => (
           <FeatureCard key={feature.title} feature={feature} colors={colors} styles={themedStyles} index={index} />
+        ))}
+      </View>
+
+      <View style={themedStyles.section}>
+        <Text style={themedStyles.sectionHeading}>How it works</Text>
+        <View style={themedStyles.stepsRow}>
+          {STEPS.map((step, index) => (
+            <StepCard key={step.title} step={step} index={index} colors={colors} styles={themedStyles} />
+          ))}
+        </View>
+      </View>
+
+      <View style={themedStyles.trustRow}>
+        {TRUST.map((item) => (
+          <View key={item.label} style={themedStyles.trustItem}>
+            <Icon name={item.icon} size={15} color={colors.primary} />
+            <Text style={themedStyles.trustLabel}>{item.label}</Text>
+          </View>
         ))}
       </View>
     </View>
@@ -238,5 +328,59 @@ function buildStyles(colors) {
     },
     cardTitle: { color: colors.text, fontWeight: '700', fontSize: 14.5 },
     cardBody: { color: colors.textMuted, fontSize: 12.5, lineHeight: 18 },
+
+    section: { marginTop: 44 },
+    sectionHeading: {
+      color: colors.text,
+      fontSize: 20,
+      fontWeight: '800',
+      letterSpacing: -0.3,
+      textAlign: 'center',
+      marginBottom: 20,
+    },
+    stepsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, justifyContent: 'center' },
+    step: {
+      backgroundColor: colors.surface,
+      borderWidth: 1,
+      borderColor: colors.glassBorder,
+      borderRadius: radii.lg,
+      padding: 18,
+      gap: 10,
+      minHeight: 172,
+    },
+    stepHovered: { borderColor: colors.borderStrong },
+    stepHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    stepNumber: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primarySoft,
+    },
+    stepNumberText: { color: colors.primary, fontWeight: '800', fontSize: 13 },
+    stepNumberTextOn: { color: '#FFFFFF', fontWeight: '800', fontSize: 13 },
+    stepTitle: { color: colors.text, fontWeight: '700', fontSize: 14.5 },
+    stepBody: { color: colors.textMuted, fontSize: 12.5, lineHeight: 18 },
+
+    trustRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
+      justifyContent: 'center',
+      marginTop: 34,
+    },
+    trustItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 7,
+      paddingVertical: 8,
+      paddingHorizontal: 13,
+      borderRadius: radii.pill,
+      backgroundColor: colors.surfaceMuted,
+      borderWidth: 1,
+      borderColor: colors.glassBorder,
+    },
+    trustLabel: { color: colors.textMuted, fontSize: 12, fontWeight: '600' },
   });
 }

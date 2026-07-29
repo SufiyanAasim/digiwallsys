@@ -9,6 +9,19 @@ import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';
 import { screenBackground } from '../theme';
 
+// Section headings used to lead with an emoji (👨‍💻 / ⚡ / 🛡️), which renders as
+// whatever the OS font decides and sits at odds with the Ionicons used
+// everywhere else in the app. A themed icon keeps the same scannability
+// without the mismatch.
+function SectionTitle({ icon, children, colors, styles }) {
+  return (
+    <View style={styles.sectionTitleRow}>
+      <Icon name={icon} size={17} color={colors.primary} />
+      <Text style={styles.sectionTitle}>{children}</Text>
+    </View>
+  );
+}
+
 export default function CreditsScreen() {
   const { colors } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
@@ -33,7 +46,7 @@ export default function CreditsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>👨‍💻 System Architect & Creator</Text>
+          <SectionTitle icon="person-circle-outline" colors={colors} styles={styles}>System Architect &amp; Creator</SectionTitle>
           <View style={styles.card}>
             <View style={styles.architectRow}>
               <Image
@@ -54,7 +67,7 @@ export default function CreditsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>⚡ Technology Stack</Text>
+          <SectionTitle icon="layers-outline" colors={colors} styles={styles}>Technology Stack</SectionTitle>
           <View style={styles.card}>
             <View style={styles.techRow}>
               <Text style={styles.techKey}>Backend Engine</Text>
@@ -80,7 +93,7 @@ export default function CreditsScreen() {
         </View>
 
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🛡️ Core Features</Text>
+          <SectionTitle icon="shield-checkmark-outline" colors={colors} styles={styles}>Core Features</SectionTitle>
           <View style={styles.card}>
             <Text style={styles.bullet}>• Double-Entry Immutable Ledger Accounting</Text>
             <Text style={styles.bullet}>• Provider-Verified Webhooks & Idempotent Transactions</Text>
@@ -118,7 +131,8 @@ function buildStyles(colors) {
     badgeSuccess: { backgroundColor: 'rgba(16, 185, 129, 0.15)', borderColor: colors.success, borderWidth: 1 },
     badgeText: { fontSize: 13, fontWeight: '700', color: colors.text },
     section: { marginBottom: 20 },
-    sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.text, marginBottom: 10 },
+    sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 10 },
+    sectionTitle: { fontSize: 17, fontWeight: '700', color: colors.text },
     card: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderColor: colors.border, borderWidth: 1 },
     nameText: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 },
     roleText: { fontSize: 13, color: colors.textMuted },

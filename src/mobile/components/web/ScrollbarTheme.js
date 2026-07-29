@@ -25,23 +25,32 @@ export default function ScrollbarTheme() {
       document.head.appendChild(style);
     }
 
-    // A transparent track with a content-box-clipped thumb gives the bar an
-    // inset pill instead of a full-width slab, so it reads as part of the
-    // surface rather than a browser control bolted onto the edge.
+    // The thumb carries the actual Ember Glass gradient rather than a flat
+    // tint, so the bar reads as part of the brand instead of a browser
+    // control bolted onto the edge. An earlier pass inset it by 3px on a
+    // 10px bar, which left ~4px of visible thumb and looked like a thin
+    // broken line -- keep the bar wide enough and the inset to 2px so the
+    // pill stays legible against the surface.
+    const [from, to] = colors.gradientPrimary;
     style.textContent = `
       * {
         scrollbar-width: thin;
-        scrollbar-color: ${colors.borderStrong} transparent;
+        scrollbar-color: ${colors.primary} ${colors.surfaceMuted};
       }
-      ::-webkit-scrollbar { width: 10px; height: 10px; }
-      ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb {
-        background-color: ${colors.borderStrong};
+      ::-webkit-scrollbar { width: 12px; height: 12px; }
+      ::-webkit-scrollbar-track {
+        background: ${colors.surfaceMuted};
         border-radius: 999px;
-        border: 3px solid transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background-image: linear-gradient(180deg, ${from}, ${to});
+        border-radius: 999px;
+        border: 2px solid transparent;
         background-clip: content-box;
       }
-      ::-webkit-scrollbar-thumb:hover { background-color: ${colors.primary}; }
+      ::-webkit-scrollbar-thumb:hover {
+        background-image: linear-gradient(180deg, ${to}, ${from});
+      }
       ::-webkit-scrollbar-corner { background: transparent; }
     `;
   }, [colors]);

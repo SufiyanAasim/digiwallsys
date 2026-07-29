@@ -8,6 +8,32 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- The landing page gained a "How it works" section (three numbered steps whose
+  number chip fills with the brand gradient on hover) and a row of capability
+  chips. Every line describes something that already ships.
+- Analytics charts draw from a new `chartSeries` palette stepping along the
+  rose-to-amber gradient. They previously used `success` green, which read as a
+  different product's palette dropped into an Ember Glass screen.
+- The web sidebar carries the same ambient rose wash as every other surface —
+  it sits outside the content area's `AmbientLayer` and so had none — and the
+  active nav item gained a gradient rail on its leading edge.
+- Section headings on Credits use themed Ionicons instead of emoji
+  (👨‍💻 / ⚡ / 🛡️), which rendered in whatever the OS font chose and clashed
+  with the Ionicons used everywhere else. Also dropped a stray 🎉 from
+  Savings.
+- The web scrollbar thumb now carries the Ember Glass gradient on a visible
+  track. The first pass inset it 3px on a 10px bar, leaving ~4px of thumb that
+  looked like a thin broken line.
+
+### Fixed
+
+- `react/jsx-no-undef` is now enabled. Core `no-undef` does not treat a JSX
+  element name as an identifier reference, so a component used without being
+  imported passed lint and only failed at runtime — which is exactly how a
+  missing `LinearGradient` import in `LandingHero.js` reached the browser
+  during this change. Verified the rule catches it by removing the import
+  again and watching lint fail.
+
 - On web, the marketing page and the sign-in form are now two states of the
   same screen rather than one long scroll. The form used to sit permanently
   below the hero, so it peeked into the bottom of the landing viewport and

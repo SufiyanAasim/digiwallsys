@@ -112,15 +112,15 @@ export default function AnalyticsScreen({ navigation }) {
                   centerValue={formatMoney(summary.balance, summary.currency)}
                   centerLabel="In your account"
                   segments={[
-                    { value: summary.totalOut, color: colors.primary },
-                    { value: summary.balance, color: colors.success },
+                    { value: summary.totalOut, color: colors.chartSeries[0] },
+                    { value: summary.balance, color: colors.chartSeries[2] },
                   ]}
                 />
                 <ChartLegend
                   segments={[
-                    { label: 'Spent this month', color: colors.primary, valueLabel: formatMoney(summary.totalOut, summary.currency) },
-                    { label: 'In your account', color: colors.success, valueLabel: formatMoney(summary.balance, summary.currency) },
-                    { label: 'Received this month', color: colors.accent, valueLabel: formatMoney(summary.totalIn, summary.currency) },
+                    { label: 'Spent this month', color: colors.chartSeries[0], valueLabel: formatMoney(summary.totalOut, summary.currency) },
+                    { label: 'In your account', color: colors.chartSeries[2], valueLabel: formatMoney(summary.balance, summary.currency) },
+                    { label: 'Received this month', color: colors.chartSeries[1], valueLabel: formatMoney(summary.totalIn, summary.currency) },
                   ]}
                 />
               </View>
@@ -134,14 +134,14 @@ export default function AnalyticsScreen({ navigation }) {
                     centerValue={formatMoney(summary.totalOut, summary.currency)}
                     centerLabel="Total spent"
                     segments={[
-                      { value: summary.directSpend, color: colors.primary },
-                      { value: summary.requestSpend, color: colors.accent },
+                      { value: summary.directSpend, color: colors.chartSeries[0] },
+                      { value: summary.requestSpend, color: colors.chartSeries[1] },
                     ]}
                   />
                   <ChartLegend
                     segments={[
-                      { label: 'Direct transfers', color: colors.primary, valueLabel: formatMoney(summary.directSpend, summary.currency) },
-                      { label: 'Requests & QR payments', color: colors.accent, valueLabel: formatMoney(summary.requestSpend, summary.currency) },
+                      { label: 'Direct transfers', color: colors.chartSeries[0], valueLabel: formatMoney(summary.directSpend, summary.currency) },
+                      { label: 'Requests & QR payments', color: colors.chartSeries[1], valueLabel: formatMoney(summary.requestSpend, summary.currency) },
                     ]}
                   />
                 </View>

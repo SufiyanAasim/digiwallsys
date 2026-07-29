@@ -25,6 +25,10 @@ export const darkColors = {
   gradientPrimary: ['#FF5470', '#FFA45B'],
   gradientAmbientTop: 'rgba(255,84,112,0.20)',
   gradientAmbientBottom: 'rgba(255,164,91,0.12)',
+  // Chart series step along the rose -> amber gradient instead of reaching for
+  // `success` green, which read as a different product's palette sitting in
+  // the middle of an Ember Glass screen. Ordered most to least emphatic.
+  chartSeries: ['#FF5470', '#FFA45B', '#FFD08A', '#C2708A'],
 };
 
 // "Ember Glass Light": the same rose/amber accent and glass materiality, on a warm
@@ -54,6 +58,7 @@ export const lightColors = {
   gradientPrimary: ['#E11D48', '#C6533C'],
   gradientAmbientTop: 'rgba(225,29,72,0.10)',
   gradientAmbientBottom: 'rgba(198,83,60,0.08)',
+  chartSeries: ['#E11D48', '#C6533C', '#D98324', '#8E4257'],
 };
 
 export function buildNavigationTheme(colors) {

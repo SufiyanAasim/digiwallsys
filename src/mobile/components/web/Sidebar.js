@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../Logo';
 import { useLogout } from '../ConfirmProvider';
 import ThemedSwitch from '../ThemedSwitch';
@@ -35,6 +36,16 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
 
   return (
     <View style={styles.sidebar}>
+      {/* The sidebar sits outside the content area's AmbientLayer, so it had
+          none of the rose glow every other surface picks up and read as a flat
+          slab beside them. This gives it the same wash on its own. */}
+      <LinearGradient
+        colors={[colors.gradientAmbientTop, 'transparent']}
+        start={{ x: 0.2, y: 0 }}
+        end={{ x: 0.8, y: 0.45 }}
+        style={StyleSheet.absoluteFill}
+        pointerEvents="none"
+      />
       <View style={styles.brandRow}>
         <Logo size={32} />
         <Wordmark size={17} />
@@ -59,6 +70,15 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
               accessibilityRole="button"
               accessibilityLabel={item.label}
             >
+              {active && (
+                <LinearGradient
+                  colors={colors.gradientPrimary}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 0, y: 1 }}
+                  style={styles.activeBar}
+                  pointerEvents="none"
+                />
+              )}
               <Icon name={item.icon} size={18} color={active ? colors.primary : colors.textMuted} />
               <Text style={[styles.navLabel, active && styles.navLabelActive]}>{item.label}</Text>
             </TouchableOpacity>
@@ -92,6 +112,7 @@ function buildStyles(colors) {
       width: 248,
       minWidth: 248,
       height: '100%',
+      overflow: 'hidden',
       backgroundColor: colors.backgroundElevated,
       borderRightWidth: 1,
       borderRightColor: colors.glassBorder,
@@ -112,7 +133,10 @@ function buildStyles(colors) {
     nav: { flex: 1 },
     // Tightened so the full nav fits without clipping on a ~1000px-tall window.
     navItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 9, paddingHorizontal: 10, borderRadius: radii.sm, marginBottom: 1 },
-    navItemActive: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border },
+    navItemActive: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
+    // Gradient rail on the active item's leading edge, so the selection is the
+    // brand's own rose-to-amber rather than a plain tinted rectangle.
+    activeBar: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 3 },
     navLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 13.5 },
     navLabelActive: { color: colors.text },
     footer: { borderTopWidth: 1, borderTopColor: colors.glassBorder, paddingTop: 12, marginTop: 8 },
