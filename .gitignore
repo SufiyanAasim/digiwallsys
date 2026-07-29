@@ -1,0 +1,27 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+dist-ios/
+dist-web/
+coverage/
+.expo/
+*.log
+.DS_Store
+Thumbs.db
+src/mobile/.git/
+src/mobile/android/
+src/mobile/ios/
+src/mobile/.eas/
+artifacts/
+
+# Track the shared launch profile while keeping personal editor settings local.
+.vscode/*
+!.vscode/launch.json
+
+# analytics/ (Python)
+analytics/.venv/
+analytics/**/__pycache__/
+analytics/.pytest_cache/
+analytics/output/
