@@ -7,10 +7,12 @@ async function createSchedule(req, res, next) {
   const amount = parseAmount(req.body.amount);
   const nextRunAt = new Date(req.body.nextRunAt);
   const frequency = String(req.body.frequency || 'once');
+  const currency = String(req.body.currency || 'USD').toUpperCase();
   const description = String(req.body.description || '').trim().slice(0, 255);
   if (!Number.isInteger(receiverId) || receiverId === req.user.userId || amount === null ||
       Number.isNaN(nextRunAt.getTime()) || nextRunAt <= new Date() ||
-      !['once', 'daily', 'weekly', 'monthly'].includes(frequency)) {
+      !['once', 'daily', 'weekly', 'monthly'].includes(frequency) ||
+      !/^[A-Z]{3}$/.test(currency)) {
     await req.idempotency.release();
     return res.status(400).json({ error: 'Provide a valid recipient, amount, schedule, and frequency' });
   }
@@ -18,18 +20,22 @@ async function createSchedule(req, res, next) {
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const recipient = await client.query('SELECT 1 FROM users WHERE userid = $1', [receiverId]);
-    if (!recipient.rowCount) {
+    const wallets = await client.query(
+      `SELECT userid FROM wallet
+       WHERE currency = $1 AND userid = ANY($2::int[])`,
+      [currency, [req.user.userId, receiverId]]
+    );
+    if (wallets.rowCount !== 2) {
       await client.query('ROLLBACK');
       await req.idempotency.release();
-      return res.status(404).json({ error: 'Recipient not found' });
+      return res.status(404).json({ error: `Both participants need a ${currency} wallet` });
     }
     const result = await client.query(
       `INSERT INTO scheduled_transfers
-         (sender_userid, receiver_userid, amount, description, frequency, next_run_at)
-       VALUES ($1, $2, $3, $4, $5, $6)
+         (sender_userid, receiver_userid, amount, currency, description, frequency, next_run_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
        RETURNING *`,
-      [req.user.userId, receiverId, amount, description, frequency, nextRunAt]
+      [req.user.userId, receiverId, amount, currency, description, frequency, nextRunAt]
     );
     await writeAudit(client, {
       actorUserId: req.user.userId,
@@ -39,9 +45,9 @@ async function createSchedule(req, res, next) {
       metadata: { receiverId, amount, frequency, nextRunAt },
       ipAddress: req.ip,
     });
-    await client.query('COMMIT');
     const body = { schedule: result.rows[0] };
-    await req.idempotency.complete(201, body);
+    await req.idempotency.complete(client, 201, body);
+    await client.query('COMMIT');
     return res.status(201).json(body);
   } catch (error) {
     await client.query('ROLLBACK');

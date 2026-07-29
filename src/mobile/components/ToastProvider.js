@@ -77,11 +77,16 @@ function buildStyles(colors) {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 12,
-      shadowColor: colors.primary,
-      shadowOpacity: 0.4,
-      shadowRadius: 18,
-      shadowOffset: { width: 0, height: 8 },
-      elevation: 10,
+      ...Platform.select({
+        web: { boxShadow: `0 8px 18px ${colors.primary}66` },
+        default: {
+          shadowColor: colors.primary,
+          shadowOpacity: 0.4,
+          shadowRadius: 18,
+          shadowOffset: { width: 0, height: 8 },
+          elevation: 10,
+        },
+      }),
       zIndex: 999,
     },
     iconWrap: {

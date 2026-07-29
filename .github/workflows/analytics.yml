@@ -5,7 +5,7 @@ on:
     paths:
       - analytics/**
   push:
-    branches: [main, backend, frontend, database]
+    branches: [main]
     paths:
       - analytics/**
 

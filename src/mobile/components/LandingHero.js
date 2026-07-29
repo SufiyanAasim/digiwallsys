@@ -26,7 +26,7 @@ const FEATURES = [
   {
     icon: 'bar-chart-outline',
     title: 'Real-time analytics',
-    body: 'See money in, money out, and the spending-lock progress for the current month.',
+    body: 'See money in, money out, and spending-alert progress for the current month.',
   },
 ];
 
@@ -77,8 +77,8 @@ function GlowOrbs({ colors }) {
       Animated.loop(
         Animated.sequence([
           Animated.delay(ORBS[index].delay),
-          Animated.timing(value, { toValue: 1, duration: ORBS[index].duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
-          Animated.timing(value, { toValue: 0, duration: ORBS[index].duration, easing: Easing.inOut(Easing.sin), useNativeDriver: true }),
+          Animated.timing(value, { toValue: 1, duration: ORBS[index].duration, easing: Easing.inOut(Easing.sin), useNativeDriver: Platform.OS !== 'web' }),
+          Animated.timing(value, { toValue: 0, duration: ORBS[index].duration, easing: Easing.inOut(Easing.sin), useNativeDriver: Platform.OS !== 'web' }),
         ])
       )
     );
@@ -87,7 +87,7 @@ function GlowOrbs({ colors }) {
   }, []);
 
   return (
-    <View style={decorativeStyles.orbLayer} pointerEvents="none">
+    <View style={[decorativeStyles.orbLayer, { pointerEvents: 'none' }]}>
       {ORBS.map((orb, index) => {
         const value = animsRef.current[index];
         return (
@@ -124,12 +124,12 @@ function FeatureCard({ feature, colors, styles, index }) {
       duration: 420,
       delay: 150 + index * 90,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, [enter, index]);
 
   function setHovered(hovered) {
-    Animated.timing(hover, { toValue: hovered ? 1 : 0, duration: 180, useNativeDriver: true }).start();
+    Animated.timing(hover, { toValue: hovered ? 1 : 0, duration: 180, useNativeDriver: Platform.OS !== 'web' }).start();
   }
 
   return (
@@ -167,7 +167,7 @@ function StepCard({ step, index, colors, styles }) {
       duration: 420,
       delay: 520 + index * 110,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, [enter, index]);
 
@@ -219,7 +219,7 @@ export default function LandingHero({ onGetStarted }) {
       toValue: 1,
       duration: 480,
       easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
+      useNativeDriver: Platform.OS !== 'web',
     }).start();
   }, [heroEnter]);
 

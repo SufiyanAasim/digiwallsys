@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -37,6 +37,7 @@ import Sidebar from './components/web/Sidebar';
 
 const NativeStack = createNativeStackNavigator();
 const JSStack = createStackNavigator();
+const AuthContext = createContext({ ready: false, user: null });
 const PUBLIC_ROUTES = ['Login', 'Account Recovery'];
 // Credits needs a session for nothing -- it's static app/version info -- but
 // it isn't in PUBLIC_ROUTES because an authenticated visitor reaching it from
@@ -46,6 +47,21 @@ const PUBLIC_ROUTES = ['Login', 'Account Recovery'];
 // getCurrentUser() 401s with no session, and the redirect below didn't know
 // Credits was supposed to be viewable either way.
 const NO_REDIRECT_ROUTES = [...PUBLIC_ROUTES, 'Credits'];
+
+function ProtectedScreen({ screen: Screen, ...props }) {
+  const { ready, user } = useContext(AuthContext);
+  useEffect(() => {
+    if (ready && !user) resetToLogin();
+  }, [ready, user]);
+  if (!ready || !user) {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <ActivityIndicator accessibilityLabel="Checking account session" />
+      </View>
+    );
+  }
+  return <Screen {...props} />;
+}
 
 // Without this the address bar stays on "/" no matter which screen is open, so
 // nothing can be bookmarked or shared, the browser's Back button does nothing,
@@ -86,6 +102,7 @@ function AppShell() {
   const Stack = isWeb ? JSStack : NativeStack;
   const [activeRoute, setActiveRoute] = useState('Login');
   const [user, setUser] = useState(null);
+  const [sessionReady, setSessionReady] = useState(false);
   const { colors, navigationTheme } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
 
@@ -115,9 +132,35 @@ function AppShell() {
   }, []);
 
   useEffect(() => {
-    if (!PUBLIC_ROUTES.includes(activeRoute)) refreshUser();
-    else setUser(null);
-  }, [activeRoute, refreshUser]);
+    let active = true;
+    async function restoreSession() {
+      try {
+        if (await getRefreshToken()) {
+          const response = await getCurrentUser();
+          if (active) setUser(response.data);
+        }
+      } catch {
+        if (active) setUser(null);
+      } finally {
+        if (active) setSessionReady(true);
+      }
+    }
+    restoreSession();
+    return () => { active = false; };
+  }, []);
+
+  useEffect(() => {
+    if (!sessionReady) return;
+    if (!PUBLIC_ROUTES.includes(activeRoute)) {
+      refreshUser();
+      return;
+    }
+    if (activeRoute === 'Login') {
+      getRefreshToken().then((token) => {
+        if (!token) setUser(null);
+      });
+    }
+  }, [activeRoute, refreshUser, sessionReady]);
 
   const syncActiveRoute = useCallback(() => {
     setActiveRoute(currentRouteName());
@@ -142,6 +185,7 @@ function AppShell() {
       <View style={styles.webContentArea}>
         {isWeb && <AmbientLayer />}
         <View style={[styles.webContentColumn, !showSidebar && styles.fullWidthColumn]}>
+          <AuthContext.Provider value={{ ready: sessionReady, user }}>
           <NavigationContainer
             ref={navigationRef}
             theme={navigationTheme}
@@ -172,26 +216,29 @@ function AppShell() {
                   : { contentStyle: { backgroundColor: colors.background } }),
               }}
             >
-              <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+              <Stack.Screen name="Login" options={{ headerShown: false }}>
+                {(props) => <LoginScreen {...props} onAuthenticated={setUser} />}
+              </Stack.Screen>
               <Stack.Screen name="Account Recovery" component={AccountRecoveryScreen} />
-              <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
-              <Stack.Screen name="Analytics" component={AnalyticsScreen} />
-              <Stack.Screen name="Add Money" component={AddMoneyScreen} />
-              <Stack.Screen name="Send Money" component={SendMoneyScreen} />
-              <Stack.Screen name="Transactions" component={TransactionHistoryScreen} />
-              <Stack.Screen name="Payment Tools" component={PaymentToolsScreen} />
-              <Stack.Screen name="Payment Calendar" component={PaymentCalendarScreen} />
-              <Stack.Screen name="QR Payment" component={QrPaymentScreen} />
-              <Stack.Screen name="Savings" component={SavingsScreen} />
-              <Stack.Screen name="Budgets" component={BudgetsScreen} />
-              <Stack.Screen name="Wallets" component={WalletsScreen} />
-              <Stack.Screen name="Family" component={FamilyScreen} />
-              <Stack.Screen name="Notifications" component={NotificationsScreen} />
-              <Stack.Screen name="Security" component={SecurityScreen} />
-              <Stack.Screen name="Admin" component={AdminScreen} />
+              <Stack.Screen name="Home" options={{ headerShown: false }}>{(props) => <ProtectedScreen {...props} screen={HomeScreen} />}</Stack.Screen>
+              <Stack.Screen name="Analytics">{(props) => <ProtectedScreen {...props} screen={AnalyticsScreen} />}</Stack.Screen>
+              <Stack.Screen name="Add Money">{(props) => <ProtectedScreen {...props} screen={AddMoneyScreen} />}</Stack.Screen>
+              <Stack.Screen name="Send Money">{(props) => <ProtectedScreen {...props} screen={SendMoneyScreen} />}</Stack.Screen>
+              <Stack.Screen name="Transactions">{(props) => <ProtectedScreen {...props} screen={TransactionHistoryScreen} />}</Stack.Screen>
+              <Stack.Screen name="Payment Tools">{(props) => <ProtectedScreen {...props} screen={PaymentToolsScreen} />}</Stack.Screen>
+              <Stack.Screen name="Payment Calendar">{(props) => <ProtectedScreen {...props} screen={PaymentCalendarScreen} />}</Stack.Screen>
+              <Stack.Screen name="QR Payment">{(props) => <ProtectedScreen {...props} screen={QrPaymentScreen} />}</Stack.Screen>
+              <Stack.Screen name="Savings">{(props) => <ProtectedScreen {...props} screen={SavingsScreen} />}</Stack.Screen>
+              <Stack.Screen name="Budgets">{(props) => <ProtectedScreen {...props} screen={BudgetsScreen} />}</Stack.Screen>
+              <Stack.Screen name="Wallets">{(props) => <ProtectedScreen {...props} screen={WalletsScreen} />}</Stack.Screen>
+              <Stack.Screen name="Family">{(props) => <ProtectedScreen {...props} screen={FamilyScreen} />}</Stack.Screen>
+              <Stack.Screen name="Notifications">{(props) => <ProtectedScreen {...props} screen={NotificationsScreen} />}</Stack.Screen>
+              <Stack.Screen name="Security">{(props) => <ProtectedScreen {...props} screen={SecurityScreen} />}</Stack.Screen>
+              <Stack.Screen name="Admin">{(props) => <ProtectedScreen {...props} screen={AdminScreen} />}</Stack.Screen>
               <Stack.Screen name="Credits" component={CreditsScreen} />
             </Stack.Navigator>
           </NavigationContainer>
+          </AuthContext.Provider>
         </View>
       </View>
     </View>

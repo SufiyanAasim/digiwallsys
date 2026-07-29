@@ -1,8 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 import TouchableOpacity from '../components/TouchableOpacity';
-import { createBudgetCategory, deleteBudgetCategory, getBudgetCategories } from '../api';
+import { createBudgetCategory, deleteBudgetCategory, getBudgetCategories, getWallets } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
@@ -17,6 +18,8 @@ export default function BudgetsScreen() {
   const [busy, setBusy] = useState('');
   const [name, setName] = useState('');
   const [limit, setLimit] = useState('');
+  const [currencies, setCurrencies] = useState([]);
+  const [currency, setCurrency] = useState('USD');
   const { colors, commonStyles } = useAppTheme();
   const confirm = useConfirm();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
@@ -24,10 +27,16 @@ export default function BudgetsScreen() {
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
-    try { setCategories((await getBudgetCategories()).data); }
+    try {
+      const [categoriesResponse, walletsResponse] = await Promise.all([getBudgetCategories(), getWallets()]);
+      const availableCurrencies = walletsResponse.data.map((wallet) => wallet.currency);
+      setCategories(categoriesResponse.data);
+      setCurrencies(availableCurrencies);
+      if (!availableCurrencies.includes(currency) && availableCurrencies[0]) setCurrency(availableCurrencies[0]);
+    }
     catch (loadError) { setError(getErrorMessage(loadError, 'Budget categories could not be loaded.')); }
     finally { setLoading(false); }
-  }, []);
+  }, [currency]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
@@ -39,7 +48,7 @@ export default function BudgetsScreen() {
     }
     setBusy('create');
     try {
-      await createBudgetCategory(name.trim(), monthlyLimit);
+      await createBudgetCategory(name.trim(), monthlyLimit, currency);
       setName(''); setLimit('');
       await load();
     } catch (createError) { Alert.alert('Could not create category', getErrorMessage(createError)); }
@@ -79,6 +88,11 @@ export default function BudgetsScreen() {
           <Text style={styles.cardTitle}>New category</Text>
           <TextInput style={styles.input} placeholder="Category name (e.g. Groceries)" placeholderTextColor={colors.textFaint} value={name} onChangeText={setName} maxLength={60} />
           <TextInput style={styles.input} placeholder="Monthly limit" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={limit} onChangeText={setLimit} />
+          <View style={styles.pickerWrap}>
+            <Picker selectedValue={currency} onValueChange={setCurrency} style={styles.picker} dropdownIconColor={colors.text}>
+              {currencies.map((item) => <Picker.Item key={item} label={`${item} wallet`} value={item} />)}
+            </Picker>
+          </View>
           <GradientButton label={busy === 'create' ? 'Creating…' : 'Create category'} disabled={busy === 'create'} onPress={create} />
         </View>
 
@@ -122,6 +136,8 @@ function buildStyles(colors, commonStyles) {
     formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18, gap: 12 },
     cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
     input: commonStyles.input,
+    pickerWrap: { backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm, overflow: 'hidden' },
+    picker: { color: colors.text, minHeight: 48 },
     card: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16, gap: 10 },
     cardHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     categoryName: { color: colors.text, fontWeight: '800', fontSize: 15 },

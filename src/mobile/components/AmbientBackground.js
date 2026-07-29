@@ -27,7 +27,7 @@ export function AmbientLayer() {
   const bottomSize = isWeb ? Math.max(width * 0.7, height * 0.8, 460) : 380;
 
   return (
-    <View style={[styles.wrap, { backgroundColor: colors.background }]} pointerEvents="none">
+    <View style={[styles.wrap, { backgroundColor: colors.background, pointerEvents: 'none' }]}>
       <LinearGradient colors={[colors.background, colors.background]} style={StyleSheet.absoluteFill} />
       <LinearGradient
         colors={[colors.gradientAmbientTop, 'transparent']}

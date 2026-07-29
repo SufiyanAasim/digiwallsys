@@ -9,18 +9,20 @@
 5. Restrict `CORS_ORIGIN` and expose the API only over HTTPS.
 6. Verify `/api/health` and test registration, login, and a rollback-safe transfer.
 
-### Render, Supabase, and Vercel
+### Supported provider shape
 
-This is the provider combination the project actually deploys to: Render runs
-the API, Supabase hosts PostgreSQL, Vercel serves the exported web build.
+No live provider deployment is currently claimed. One supported shape uses
+Render for the API and dedicated worker, managed PostgreSQL for data, and
+Vercel for the exported web build.
 `examples/render.env.example`, `examples/supabase.env.example`, and
 `examples/vercel.env.example` are ready-to-fill templates for each — none of
 these three read a `.env` file from the repo, so every variable has to be set
 in that provider's own dashboard. See the README's "Deployment target env
 files" section for which file goes where.
 
-Render auto-injects `PORT`; do not set it. Point Render at either the root
-`Dockerfile` or a native Node runtime running `npm run start:api` — both work.
+Render auto-injects `PORT`; do not set it. Point the web service at the root
+`Dockerfile` or `npm run start:api`. Create a separate background worker
+service using `npm run start:worker`; do not run workers in every API instance.
 
 ## Mobile
 
@@ -58,23 +60,10 @@ the Android signing keystore. An Apple Developer account is required for the iOS
 distribution certificate and provisioning profile. Use the package/bundle ID
 `com.sufiyanaasim.digiwallsys` in both stores.
 
-### Building an APK locally (no EAS account)
-
-`src/mobile/android` is a committed-ignored Expo prebuild whose `release`
-buildType is still wired to the **debug** keystore, so it produces an
-installable — but not store-signable — APK:
-
-```bash
-cd src/mobile/android && ./gradlew assembleRelease
-```
-
-Output: `src/mobile/android/app/build/outputs/apk/release/app-release.apk`.
-
-This path needs the Android SDK on the machine — set `ANDROID_HOME` or create
-`src/mobile/android/local.properties` with `sdk.dir=/path/to/Android/Sdk`.
-Without it Gradle fails at configuration time with `SDK location not found`.
-Use the EAS `production` profile (which manages a real upload keystore) for
-anything you intend to publish.
+No checked-in or current APK is claimed. Generate native projects with Expo
+prebuild only when local native debugging is needed; use the EAS preview
+profile for an installable test APK and the production profiles for store
+artifacts. Always set the final `EXPO_PUBLIC_API_URL` before building.
 
 ## Production gates
 

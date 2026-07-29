@@ -27,7 +27,7 @@ def clean_transactions(frame):
     return frame.reset_index(drop=True)
 
 
-def monthly_spend(frame, user_id):
+def monthly_spend(frame, user_id, currency="USD"):
     """Returns a Series indexed by month-start Timestamp, summed spend for one user.
 
     Months with no transactions are NOT filled in here -- callers that need a
@@ -35,7 +35,10 @@ def monthly_spend(frame, user_id):
     since "no data" and "spent zero" are different things worth keeping apart
     until a caller decides which one it means.
     """
-    user_rows = frame[frame["userid"] == user_id]
+    user_rows = frame[
+        (frame["userid"] == user_id)
+        & (frame["currency"].str.upper() == currency.upper())
+    ]
     if user_rows.empty:
         return pd.Series(dtype="float64")
     monthly = user_rows.set_index("timestamp")["amount"].resample("MS").sum()

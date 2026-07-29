@@ -9,15 +9,19 @@ function startOfMonth() {
 async function createCategory(req, res, next) {
   const name = String(req.body.name || '').trim().slice(0, 60);
   const monthlyLimit = parseAmount(req.body.monthlyLimit);
-  if (!name || monthlyLimit === null) {
+  const currency = String(req.body.currency || 'USD').toUpperCase();
+  if (!name || monthlyLimit === null || !/^[A-Z]{3}$/.test(currency)) {
     return res.status(400).json({ error: 'Provide a category name and a positive monthly limit' });
   }
   try {
     const result = await pool.query(
-      `INSERT INTO budget_categories(userid, name, monthly_limit) VALUES ($1, $2, $3)
+      `INSERT INTO budget_categories(userid, name, monthly_limit, currency)
+       SELECT $1, $2, $3, $4
+       WHERE EXISTS (SELECT 1 FROM wallet WHERE userid = $1 AND currency = $4)
        RETURNING *`,
-      [req.user.userId, name, monthlyLimit]
+      [req.user.userId, name, monthlyLimit, currency]
     );
+    if (!result.rowCount) return res.status(404).json({ error: `You do not have a ${currency} wallet` });
     return res.status(201).json(result.rows[0]);
   } catch (error) {
     if (error.code === '23505') return res.status(409).json({ error: 'A category with this name already exists' });
@@ -31,12 +35,12 @@ async function listCategories(req, res, next) {
       `SELECT bc.*, COALESCE(spend.total, 0) AS spent_this_month
        FROM budget_categories bc
        LEFT JOIN (
-         SELECT t.category, SUM(t.amount) AS total
+         SELECT t.category, w.currency, SUM(t.amount) AS total
          FROM transactions t
          JOIN wallet w ON w.walletid = t.senderwalletid
          WHERE w.userid = $1 AND t.timestamp >= $2
-         GROUP BY t.category
-       ) spend ON spend.category = bc.name
+         GROUP BY t.category, w.currency
+       ) spend ON spend.category = bc.name AND spend.currency = bc.currency
        WHERE bc.userid = $1
        ORDER BY bc.created_at DESC`,
       [req.user.userId, startOfMonth()]

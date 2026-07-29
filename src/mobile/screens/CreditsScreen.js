@@ -26,7 +26,7 @@ export default function CreditsScreen() {
   const { colors } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
   const openGitHub = () => {
-    Linking.openURL('https://github.com/SufiyanAasim/digiwallsys');
+    Linking.openURL('https://github.com/SufiyanAasim');
   };
 
   return (
@@ -41,7 +41,7 @@ export default function CreditsScreen() {
           <View style={styles.badgeRow}>
             <View style={styles.badge}><Text style={styles.badgeText}>v1.8.0</Text></View>
             <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Estuary"</Text></View>
-            <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Code-complete</Text></View>
+            <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Local candidate</Text></View>
           </View>
         </View>
 
@@ -52,16 +52,16 @@ export default function CreditsScreen() {
               <Image
                 source={{ uri: 'https://github.com/SufiyanAasim.png' }}
                 style={styles.avatar}
-                accessibilityLabel="GitHub profile picture of Mohammad Sufiyan Aasim"
+                accessibilityLabel="GitHub profile picture of Sufiyan Aasim"
               />
               <View style={styles.architectText}>
-                <Text style={styles.nameText}>Mohammad Sufiyan Aasim</Text>
+                <Text style={styles.nameText}>Sufiyan Aasim</Text>
                 <Text style={styles.roleText}>System Architecture · Financial Core · Mobile & Web Release</Text>
               </View>
             </View>
             <TouchableOpacity style={styles.githubButton} onPress={openGitHub} accessibilityRole="button">
               <Icon name="logo-github" size={20} color="#FFFFFF" />
-              <Text style={styles.githubButtonText}>@SufiyanAasim/digiwallsys</Text>
+              <Text style={styles.githubButtonText}>@SufiyanAasim</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -75,19 +75,19 @@ export default function CreditsScreen() {
             </View>
             <View style={styles.techRow}>
               <Text style={styles.techKey}>Database & Ledger</Text>
-              <Text style={styles.techVal}>Managed Supabase PostgreSQL 16</Text>
+              <Text style={styles.techVal}>PostgreSQL 14+ · Immutable ledger</Text>
             </View>
             <View style={styles.techRow}>
               <Text style={styles.techKey}>Web & Mobile Client</Text>
-              <Text style={styles.techVal}>React Native · Expo SDK 53 · Metro Web</Text>
+              <Text style={styles.techVal}>React Native · Expo SDK 57 · Metro Web</Text>
             </View>
             <View style={styles.techRow}>
               <Text style={styles.techKey}>Containerization</Text>
-              <Text style={styles.techVal}>Docker · Multi-stage Alpine Production Build</Text>
+              <Text style={styles.techVal}>Docker · Reproducible Alpine build</Text>
             </View>
             <View style={styles.techRow}>
               <Text style={styles.techKey}>Cloud Hosting</Text>
-              <Text style={styles.techVal}>Render.com (API) · Vercel (Dashboard)</Text>
+              <Text style={styles.techVal}>Provider-neutral · Not currently deployed</Text>
             </View>
           </View>
         </View>
@@ -105,7 +105,7 @@ export default function CreditsScreen() {
         </View>
 
         <View style={styles.footer}>
-          <Text style={styles.footerText}>MIT License © 2026 Mohammad Sufiyan Aasim</Text>
+          <Text style={styles.footerText}>MIT License © 2026 Sufiyan Aasim</Text>
         </View>
         </View>
       </ScrollView>

@@ -36,8 +36,11 @@ test('Expo uses the generated digiwallsys logo and deep-link scheme', () => {
 
 test('every mobile icon slot resolves to an existing, consistent asset', () => {
   const appConfig = JSON.parse(readFileSync(join(__dirname, '../../src/mobile/app.json'), 'utf8'));
+  const splashPlugin = appConfig.expo.plugins.find(
+    (plugin) => Array.isArray(plugin) && plugin[0] === 'expo-splash-screen'
+  );
   // The launcher icon and splash share the badged square mark.
-  assert.equal(appConfig.expo.splash.image, appConfig.expo.icon);
+  assert.equal(splashPlugin?.[1]?.image, appConfig.expo.icon);
   // The favicon deliberately does NOT: a browser tab renders it at ~16px, where
   // a gradient-filled badge collapses into a coloured blob. It is the bare "di"
   // monogram on transparency instead.

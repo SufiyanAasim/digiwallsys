@@ -1,8 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 import TouchableOpacity from '../components/TouchableOpacity';
-import { getBalance, getCurrentUser, getNotificationPreferences, getPaymentRequests, getTransactions } from '../api';
+import {
+  getBalance,
+  getCurrentUser,
+  getNotificationPreferences,
+  getPaymentRequests,
+  getTransactions,
+  getWallets,
+} from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { ChartLegend } from '../components/DonutChart';
 import DonutChart from '../components/DonutChart';
@@ -17,11 +25,11 @@ function startOfMonth() {
   return new Date(now.getFullYear(), now.getMonth(), 1);
 }
 
-async function fetchMonthTransactions(from) {
+async function fetchMonthTransactions(from, currency) {
   const items = [];
   let cursor;
   for (let page = 0; page < MAX_PAGES; page += 1) {
-    const response = await getTransactions({ from, limit: 100, ...(cursor ? { cursor } : {}) });
+    const response = await getTransactions({ from, currency, limit: 100, ...(cursor ? { cursor } : {}) });
     const batch = response.data.items || [];
     items.push(...batch);
     if (!response.data.nextCursor || batch.length < 100) break;
@@ -34,6 +42,8 @@ export default function AnalyticsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [summary, setSummary] = useState(null);
+  const [currencies, setCurrencies] = useState([]);
+  const [selectedCurrency, setSelectedCurrency] = useState('');
   const { colors } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
 
@@ -43,23 +53,33 @@ export default function AnalyticsScreen({ navigation }) {
     try {
       const monthStart = startOfMonth();
       const from = monthStart.toISOString();
+      const walletsResponse = await getWallets();
+      const walletCurrencies = walletsResponse.data.map((wallet) => wallet.currency);
+      const currency = walletCurrencies.includes(selectedCurrency)
+        ? selectedCurrency
+        : walletCurrencies[0];
+      if (!currency) throw new Error('Create a wallet before opening analytics.');
+      setCurrencies(walletCurrencies);
+      if (currency !== selectedCurrency) setSelectedCurrency(currency);
       const [balanceResponse, preferenceResponse, currentUserResponse, requestResponse, transactions] = await Promise.all([
-        getBalance(),
+        getBalance(currency),
         getNotificationPreferences(),
         getCurrentUser(),
         getPaymentRequests(),
-        fetchMonthTransactions(from),
+        fetchMonthTransactions(from, currency),
       ]);
 
       const totalIn = transactions.filter((t) => t.direction === 'credit').reduce((sum, t) => sum + Number(t.amount), 0);
       const totalOut = transactions.filter((t) => t.direction === 'debit').reduce((sum, t) => sum + Number(t.amount), 0);
-      const currency = balanceResponse.data.currency;
-      const alertAmount = Number(preferenceResponse.data.spending_alert_amount) || 0;
+      const alertAmount = preferenceResponse.data.spending_alert_currency === currency
+        ? Number(preferenceResponse.data.spending_alert_amount) || 0
+        : 0;
       const balance = Number(balanceResponse.data.balance) || 0;
       const myId = currentUserResponse.data.id;
 
       const requestSpend = requestResponse.data
-        .filter((r) => r.status === 'paid' && r.payer_userid === myId && new Date(r.updated_at) >= monthStart)
+        .filter((r) => r.status === 'paid' && r.currency === currency
+          && r.payer_userid === myId && new Date(r.updated_at) >= monthStart)
         .reduce((sum, r) => sum + Number(r.amount), 0);
       const directSpend = Math.max(totalOut - requestSpend, 0);
 
@@ -80,12 +100,12 @@ export default function AnalyticsScreen({ navigation }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [selectedCurrency]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
-  const lockRatio = summary?.alertAmount ? Math.min(summary.totalOut / summary.alertAmount, 1) : 0;
-  const overLock = !!summary?.alertAmount && summary.totalOut > summary.alertAmount;
+  const alertRatio = summary?.alertAmount ? Math.min(summary.totalOut / summary.alertAmount, 1) : 0;
+  const overAlert = !!summary?.alertAmount && summary.totalOut > summary.alertAmount;
   const monthLabel = new Date().toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 
   return (
@@ -94,6 +114,20 @@ export default function AnalyticsScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>Analytics</Text>
         <Text style={styles.subtitle}>{monthLabel}</Text>
+        {currencies.length > 1 && (
+          <View style={styles.currencyPicker}>
+            <Picker
+              selectedValue={selectedCurrency}
+              onValueChange={setSelectedCurrency}
+              dropdownIconColor={colors.text}
+              style={styles.picker}
+            >
+              {currencies.map((currency) => (
+                <Picker.Item key={currency} label={`${currency} wallet`} value={currency} />
+              ))}
+            </Picker>
+          </View>
+        )}
 
         {!!error && (
           <View style={styles.errorBox}>
@@ -155,8 +189,8 @@ export default function AnalyticsScreen({ navigation }) {
 
             <View style={styles.lockCard}>
               <View style={styles.lockHeader}>
-                <Text style={styles.lockTitle}>Monthly spending lock</Text>
-                {overLock && <View style={styles.overBadge}><Text style={styles.overBadgeText}>Over limit</Text></View>}
+                <Text style={styles.lockTitle}>Monthly spending alert</Text>
+                {overAlert && <View style={styles.overBadge}><Text style={styles.overBadgeText}>Above alert</Text></View>}
               </View>
               {summary.alertAmount ? (
                 <>
@@ -164,12 +198,12 @@ export default function AnalyticsScreen({ navigation }) {
                     {formatMoney(summary.totalOut, summary.currency)} spent of {formatMoney(summary.alertAmount, summary.currency)} limit
                   </Text>
                   <View style={styles.track}>
-                    <View style={[styles.fill, { width: `${lockRatio * 100}%` }, overLock && styles.fillOver]} />
+                    <View style={[styles.fill, { width: `${alertRatio * 100}%` }, overAlert && styles.fillOver]} />
                   </View>
                 </>
               ) : (
                 <>
-                  <Text style={styles.lockMeta}>No monthly spending limit set yet.</Text>
+                  <Text style={styles.lockMeta}>No monthly spending alert set yet.</Text>
                   <TouchableOpacity style={styles.lockLink} onPress={() => navigation.navigate('Notifications')}>
                     <Text style={styles.lockLinkText}>Set a spending alert amount</Text>
                   </TouchableOpacity>
@@ -193,6 +227,8 @@ function buildStyles(colors) {
     content: { padding: 20, paddingBottom: 40, gap: 14, ...contentColumn(layout.page) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
+    currencyPicker: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm, overflow: 'hidden' },
+    picker: { color: colors.text, minHeight: 48 },
     meta: { color: colors.textMuted },
     chartCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18 },
     cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15, marginBottom: 14 },

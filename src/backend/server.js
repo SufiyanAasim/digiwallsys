@@ -7,16 +7,13 @@ for (const key of ['DATABASE_URL', 'JWT_SECRET']) {
 }
 
 const app = require('./app');
-const { startEmailWorker } = require('./workers/emailWorker');
-const { startNotificationWorker } = require('./workers/notificationWorker');
-const { startScheduleWorker } = require('./workers/scheduleWorker');
 const port = process.env.PORT || 5000;
 
-const stopWorkers = [
-  startEmailWorker(),
-  startNotificationWorker(),
-  startScheduleWorker(),
-];
+let stopWorkers = [];
+if (process.env.RUN_INLINE_WORKERS === 'true') {
+  const { startWorkers } = require('./worker');
+  stopWorkers = startWorkers();
+}
 
 const server = app.listen(port, '0.0.0.0', () => {
   console.log(`digiwallsys API listening on http://localhost:${port}`);

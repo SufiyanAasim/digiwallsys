@@ -24,6 +24,9 @@ test('ledger service inserts one journal and balanced entries', async () => {
       if (sql.includes('INSERT INTO ledger_journals')) {
         return { rows: [{ journalid: 'journal', reference: 'reference', created_at: new Date() }] };
       }
+      if (sql.includes('UPDATE ledger_journals')) {
+        return { rows: [{ journalid: 'journal', reference: 'reference', created_at: new Date(), posted_at: new Date() }] };
+      }
       return { rows: [] };
     },
   };
@@ -36,5 +39,5 @@ test('ledger service inserts one journal and balanced entries', async () => {
     ],
   });
   assert.equal(journal.journalid, 'journal');
-  assert.equal(calls.length, 3);
+  assert.equal(calls.length, 4);
 });

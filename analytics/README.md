@@ -55,14 +55,15 @@ pip install -r requirements.txt
 
 # Against the real database (read-only):
 export DATABASE_URL=postgresql://user:pass@host:5432/digiwallsys
-python run_pipeline.py --user-id 1
+python run_pipeline.py --user-id 1 --currency USD
 
 # Against the bundled fixture, no database needed:
-python run_pipeline.py --fixture --user-id 1
+python run_pipeline.py --fixture --user-id 1 --currency USD
 ```
 
 Output lands in `analytics/output/<userid>/`: `monthly_spend.csv`,
 `category_breakdown.csv`, `forecast.csv`, and two PNG charts.
+Each run is restricted to one currency so unlike units are never summed.
 
 ## Tests
 

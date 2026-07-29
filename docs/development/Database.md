@@ -1,7 +1,7 @@
 # Database
 
 `config/database.sql` loads ordered migrations for identity, wallets, provider
-funding, immutable double-entry journals, idempotency, fraud, audit,
+funding, finalized immutable double-entry journals, idempotency, fraud, audit,
 notifications, requests, schedules, and reconciliation. Monetary values use
 `NUMERIC(14,2)`; JavaScript values are validated before queries.
 
@@ -16,12 +16,14 @@ core `ledger_journals`/`ledger_entries` balance invariant is untouched.
 | Table / column | Purpose |
 | --- | --- |
 | `savings_goals` | Per-user earmark against the existing wallet balance; not a separate money-movement path |
-| `budget_categories` | Per-user monthly spending limit by category name |
+| `budget_categories` | Per-user, per-currency monthly spending limit by category name |
 | `transactions.category` | Nullable tag linking a transaction to a `budget_categories` row |
 | `transactions.spender_userid` | The user who actually initiated the transfer — distinct from the sending wallet's owner when spending from a shared wallet |
 | `wallet_members` | Authorizes a user other than the wallet owner to spend from it, with an optional monthly `spending_limit` |
 | `fx_rates` | Append-only exchange-rate history; never updated in place, so a past conversion stays auditable against the rate in effect at the time |
 | `currency_conversions` | User-facing log of self-service conversions between a user's own wallets |
+| `ledger_journals.posted_at` | Finalization boundary; posted journals reject new entries and all later mutation |
+| Outbox lease columns | Prevent duplicate email/push delivery across concurrent worker instances |
 
 `wallet` dropped its `UNIQUE(userid)` constraint in favor of
 `UNIQUE(userid, currency)`, so a user may now hold one wallet per currency

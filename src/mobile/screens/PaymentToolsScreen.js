@@ -12,6 +12,7 @@ import {
   getPaymentRequests,
   getSchedules,
   getUsers,
+  getWallets,
   updatePaymentRequest,
 } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
@@ -33,6 +34,8 @@ export default function PaymentToolsScreen() {
   const [scheduleNote, setScheduleNote] = useState('');
   const [nextRunAt, setNextRunAt] = useState('');
   const [frequency, setFrequency] = useState('once');
+  const [currencies, setCurrencies] = useState([]);
+  const [currency, setCurrency] = useState('USD');
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
@@ -44,13 +47,16 @@ export default function PaymentToolsScreen() {
     setLoading(true);
     setError('');
     try {
-      const [userResponse, requestResponse, scheduleResponse, currentUserResponse] = await Promise.all([
-        getUsers(), getPaymentRequests(), getSchedules(), getCurrentUser(),
+      const [userResponse, requestResponse, scheduleResponse, currentUserResponse, walletsResponse] = await Promise.all([
+        getUsers(), getPaymentRequests(), getSchedules(), getCurrentUser(), getWallets(),
       ]);
       setUsers(userResponse.data);
       setRequests(requestResponse.data);
       setSchedules(scheduleResponse.data);
       setCurrentUser(currentUserResponse.data);
+      const walletCurrencies = walletsResponse.data.map((wallet) => wallet.currency);
+      setCurrencies(walletCurrencies);
+      if (!walletCurrencies.includes(currency) && walletCurrencies[0]) setCurrency(walletCurrencies[0]);
     } catch (loadError) {
       setError(getErrorMessage(loadError, 'Payment tools could not be loaded.'));
     } finally {
@@ -86,7 +92,7 @@ export default function PaymentToolsScreen() {
       Alert.alert('Check request details', 'Choose a person and enter a positive amount with up to two decimal places.');
       return;
     }
-    act('create-request', () => createPaymentRequest(Number(userId), amount, requestNote.trim()), 'Payment request created.');
+    act('create-request', () => createPaymentRequest(Number(userId), amount, requestNote.trim(), currency), 'Payment request created.');
   }
 
   function schedulePayment() {
@@ -98,7 +104,14 @@ export default function PaymentToolsScreen() {
     }
     act(
       'create-schedule',
-      () => createSchedule({ receiverId: Number(userId), amount, description: scheduleNote.trim(), nextRunAt: date.toISOString(), frequency }),
+      () => createSchedule({
+        receiverId: Number(userId),
+        amount,
+        currency,
+        description: scheduleNote.trim(),
+        nextRunAt: date.toISOString(),
+        frequency,
+      }),
       'Transfer scheduled.'
     );
   }
@@ -115,6 +128,10 @@ export default function PaymentToolsScreen() {
         <Picker selectedValue={userId} onValueChange={setUserId} style={styles.picker} enabled={!loading && !busy} accessibilityLabel="Person">
           <Picker.Item label={loading ? 'Loading people…' : 'Select person'} value="" />
           {users.map((user) => <Picker.Item key={user.userid} label={user.name} value={user.userid} />)}
+        </Picker>
+        <Text style={styles.label}>Currency</Text>
+        <Picker selectedValue={currency} onValueChange={setCurrency} style={styles.picker} enabled={!loading && !busy}>
+          {currencies.map((item) => <Picker.Item key={item} label={`${item} wallet`} value={item} />)}
         </Picker>
 
         <Text style={styles.sectionLabel}>Request a payment</Text>

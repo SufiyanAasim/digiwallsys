@@ -4,7 +4,7 @@ export function getErrorMessage(error, fallback = 'Something went wrong. Please 
     return 'Unable to reach digiwallsys. Check your connection and try again.';
   }
   // The API answers unknown paths with a bare "Route not found". That surfaces
-  // when this build is newer than the deployed API, so explain it rather than
+  // when this build is newer than the connected API, so explain it rather than
   // showing a router-level string the user cannot act on.
   if (error.response?.status === 404 && error.response?.data?.error === 'Route not found') {
     return 'This feature is not available on the connected server yet. It needs the latest API release.';

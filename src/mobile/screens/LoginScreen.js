@@ -27,7 +27,7 @@ import { getErrorMessage, isValidEmail } from '../utils';
 // Matches the API's registration/reset rule in authController.js.
 const MIN_PASSWORD_LENGTH = 10;
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation, onAuthenticated }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -70,8 +70,11 @@ export default function LoginScreen({ navigation }) {
         const biometricEnabled = await isBiometricEnabled();
         if (active) setBiometricAvailable(biometricEnabled);
         if (await getRefreshToken() && !biometricEnabled) {
-          await refreshUserSession();
-          if (active) navigation.replace('Home');
+          if (active) {
+            const current = await refreshUserSession();
+            onAuthenticated?.(current.user);
+            navigation.replace('Home');
+          }
         }
       } catch {
         await clearSession();
@@ -115,6 +118,7 @@ export default function LoginScreen({ navigation }) {
       } else {
         const response = await loginUser(normalizedEmail, password);
         await saveSession(response.data, { remember: isWeb ? remember : true });
+        onAuthenticated?.(response.data.user);
         navigation.replace('Home', { justLoggedIn: true, name: response.data.user?.name });
       }
     } catch (error) {
@@ -130,7 +134,8 @@ export default function LoginScreen({ navigation }) {
     try {
       if (!(await authenticateBiometric())) return;
       const response = await refreshUserSession();
-      navigation.replace('Home', { justLoggedIn: true, name: response?.data?.user?.name });
+      onAuthenticated?.(response?.user);
+      navigation.replace('Home', { justLoggedIn: true, name: response?.user?.name });
     } catch (error) {
       Alert.alert('Biometric login failed', getErrorMessage(error));
     }

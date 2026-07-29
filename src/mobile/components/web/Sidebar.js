@@ -43,8 +43,7 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
         colors={[colors.gradientAmbientTop, 'transparent']}
         start={{ x: 0.2, y: 0 }}
         end={{ x: 0.8, y: 0.45 }}
-        style={StyleSheet.absoluteFill}
-        pointerEvents="none"
+        style={[StyleSheet.absoluteFill, { pointerEvents: 'none' }]}
       />
       <View style={styles.brandRow}>
         <Logo size={32} />
@@ -75,8 +74,7 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
                   colors={colors.gradientPrimary}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 0, y: 1 }}
-                  style={styles.activeBar}
-                  pointerEvents="none"
+                  style={[styles.activeBar, { pointerEvents: 'none' }]}
                 />
               )}
               <Icon name={item.icon} size={18} color={active ? colors.primary : colors.textMuted} />

@@ -1,10 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { Picker } from '@react-native-picker/picker';
 import QRCode from 'react-native-qrcode-svg';
-import { acceptPaymentRequest, createPaymentRequest, getPaymentRequest } from '../api';
+import { acceptPaymentRequest, createPaymentRequest, getPaymentRequest, getWallets } from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { useConfirm } from '../components/ConfirmProvider';
 import { useToast } from '../components/ToastProvider';
@@ -21,10 +22,20 @@ export default function QrPaymentScreen({ navigation }) {
   const [payload, setPayload] = useState('');
   const [scanned, setScanned] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [currencies, setCurrencies] = useState([]);
+  const [currency, setCurrency] = useState('USD');
   const { colors, commonStyles } = useAppTheme();
   const confirm = useConfirm();
   const { showToast } = useToast();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
+
+  useEffect(() => {
+    getWallets().then((response) => {
+      const items = response.data.map((wallet) => wallet.currency);
+      setCurrencies(items);
+      if (!items.includes(currency) && items[0]) setCurrency(items[0]);
+    }).catch(() => {});
+  }, [currency]);
 
   async function generate() {
     const parsedAmount = parsePositiveAmount(amount);
@@ -34,7 +45,7 @@ export default function QrPaymentScreen({ navigation }) {
     }
     setBusy(true);
     try {
-      const response = await createPaymentRequest(null, parsedAmount, note.trim());
+      const response = await createPaymentRequest(null, parsedAmount, note.trim(), currency);
       setPayload(response.data.qrPayload);
       setMode('generate');
     } catch (error) { Alert.alert('QR request failed', getErrorMessage(error)); }
@@ -74,8 +85,11 @@ export default function QrPaymentScreen({ navigation }) {
       <AmbientBackground />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>QR payments</Text>
-        {payload ? <View style={styles.qr}><QRCode value={payload} size={220} /><Text style={styles.meta}>Scan to pay {formatMoney(amount)}</Text><TouchableOpacity style={styles.linkButton} onPress={() => { setPayload(''); setAmount(''); setNote(''); }}><Text style={styles.secondaryText}>Create another request</Text></TouchableOpacity></View> : <>
+        {payload ? <View style={styles.qr}><QRCode value={payload} size={220} /><Text style={styles.meta}>Scan to pay {formatMoney(amount, currency)}</Text><TouchableOpacity style={styles.linkButton} onPress={() => { setPayload(''); setAmount(''); setNote(''); }}><Text style={styles.secondaryText}>Create another request</Text></TouchableOpacity></View> : <>
           <TextInput style={styles.input} placeholder="Amount to request" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={amount} onChangeText={setAmount} />
+          <Picker selectedValue={currency} onValueChange={setCurrency} style={styles.picker} enabled={!busy}>
+            {currencies.map((item) => <Picker.Item key={item} label={`${item} wallet`} value={item} />)}
+          </Picker>
           <TextInput style={styles.input} placeholder="Note" placeholderTextColor={colors.textFaint} value={note} onChangeText={setNote} />
           <GradientButton label={busy ? 'Generating…' : 'Generate request QR'} disabled={busy} onPress={generate} />
         </>}
@@ -90,6 +104,7 @@ function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: screenBackground(colors) }, center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 24, backgroundColor: screenBackground(colors) }, content: { flex: 1, padding: 24, gap: 14, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text }, input: commonStyles.input,
+    picker: { backgroundColor: colors.surface, color: colors.text },
     secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 22, padding: 15, alignItems: 'center' },
     secondaryText: { color: colors.text, fontWeight: '700' }, qr: { alignItems: 'center', gap: 12, marginVertical: 20 }, meta: { color: colors.textMuted }, permissionText: { color: colors.text, textAlign: 'center', lineHeight: 21 }, linkButton: { minHeight: 48, justifyContent: 'center' },
     camera: { flex: 1 }, back: { alignItems: 'center', padding: 18 }, backText: { color: colors.textMuted, fontWeight: '600' },

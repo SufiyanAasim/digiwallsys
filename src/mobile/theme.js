@@ -114,13 +114,16 @@ export function screenBackground(colors) {
 }
 
 export function buildGlow(colors) {
-  return {
-    shadowColor: colors.primary,
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    shadowOffset: { width: 0, height: 10 },
-    elevation: 6,
-  };
+  return Platform.select({
+    web: { boxShadow: `0 10px 20px ${colors.primary}59` },
+    default: {
+      shadowColor: colors.primary,
+      shadowOpacity: 0.35,
+      shadowRadius: 20,
+      shadowOffset: { width: 0, height: 10 },
+      elevation: 6,
+    },
+  });
 }
 
 export function buildCommonStyles(colors) {

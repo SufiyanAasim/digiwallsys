@@ -80,7 +80,12 @@ async function executeTransfer(client, {
 
   // The sender wallet lock serializes risk evaluation for concurrent transfers.
   // This keeps daily totals and velocity checks from evaluating stale activity.
-  const fraud = await assessTransfer(client, { userId: senderId, receiverId, amount });
+  const fraud = await assessTransfer(client, {
+    userId: senderId,
+    receiverId,
+    amount,
+    currency: senderWallet.currency,
+  });
   if (fraud.blocked) return { blocked: true, fraud };
 
   if (Number(senderWallet.balance) < Number(amount)) {

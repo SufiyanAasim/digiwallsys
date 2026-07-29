@@ -1,5 +1,6 @@
 const express = require('express');
 const authenticate = require('../middleware/authenticate');
+const idempotency = require('../middleware/idempotency');
 const {
   addCurrencyWallet,
   convertCurrency,
@@ -13,7 +14,7 @@ router.use(authenticate);
 router.get('/balance', getBalance);
 router.get('/', listWallets);
 router.post('/currencies', addCurrencyWallet);
-router.post('/convert', convertCurrency);
+router.post('/convert', idempotency('wallet.convert'), convertCurrency);
 router.get('/conversions', listConversions);
 
 module.exports = router;

@@ -1,8 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { Picker } from '@react-native-picker/picker';
 import TouchableOpacity from '../components/TouchableOpacity';
-import { archiveSavingsGoal, contributeToSavingsGoal, createSavingsGoal, getSavingsGoals, withdrawFromSavingsGoal } from '../api';
+import {
+  archiveSavingsGoal,
+  contributeToSavingsGoal,
+  createSavingsGoal,
+  getSavingsGoals,
+  getWallets,
+  withdrawFromSavingsGoal,
+} from '../api';
 import AmbientBackground from '../components/AmbientBackground';
 import { useConfirm } from '../components/ConfirmProvider';
 import GradientButton from '../components/GradientButton';
@@ -20,6 +28,8 @@ export default function SavingsScreen() {
   const [target, setTarget] = useState('');
   const [roundUp, setRoundUp] = useState(false);
   const [amounts, setAmounts] = useState({});
+  const [currencies, setCurrencies] = useState([]);
+  const [currency, setCurrency] = useState('USD');
   const { colors, commonStyles } = useAppTheme();
   const confirm = useConfirm();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
@@ -27,10 +37,16 @@ export default function SavingsScreen() {
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
-    try { setGoals((await getSavingsGoals()).data); }
+    try {
+      const [goalsResponse, walletsResponse] = await Promise.all([getSavingsGoals(), getWallets()]);
+      const availableCurrencies = walletsResponse.data.map((wallet) => wallet.currency);
+      setGoals(goalsResponse.data);
+      setCurrencies(availableCurrencies);
+      if (!availableCurrencies.includes(currency) && availableCurrencies[0]) setCurrency(availableCurrencies[0]);
+    }
     catch (loadError) { setError(getErrorMessage(loadError, 'Savings goals could not be loaded.')); }
     finally { setLoading(false); }
-  }, []);
+  }, [currency]);
 
   useFocusEffect(useCallback(() => { load(); }, [load]));
 
@@ -42,7 +58,7 @@ export default function SavingsScreen() {
     }
     setBusy('create');
     try {
-      await createSavingsGoal(name.trim(), targetAmount, roundUp);
+      await createSavingsGoal(name.trim(), targetAmount, roundUp, currency);
       setName(''); setTarget(''); setRoundUp(false);
       await load();
     } catch (createError) { Alert.alert('Could not create goal', getErrorMessage(createError)); }
@@ -95,6 +111,11 @@ export default function SavingsScreen() {
           <Text style={styles.cardTitle}>New goal</Text>
           <TextInput style={styles.input} placeholder="Goal name (e.g. New laptop)" placeholderTextColor={colors.textFaint} value={name} onChangeText={setName} maxLength={80} />
           <TextInput style={styles.input} placeholder="Target amount" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={target} onChangeText={setTarget} />
+          <View style={styles.pickerWrap}>
+            <Picker selectedValue={currency} onValueChange={setCurrency} style={styles.picker} dropdownIconColor={colors.text}>
+              {currencies.map((item) => <Picker.Item key={item} label={`${item} wallet`} value={item} />)}
+            </Picker>
+          </View>
           <View style={styles.switchRow}>
             <Text style={styles.switchLabel}>Round up direct transfers into this goal</Text>
             <ThemedSwitch value={roundUp} onValueChange={setRoundUp} />
@@ -155,6 +176,8 @@ function buildStyles(colors, commonStyles) {
     formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18, gap: 12 },
     cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
     input: commonStyles.input,
+    pickerWrap: { backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm, overflow: 'hidden' },
+    picker: { color: colors.text, minHeight: 48 },
     switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
     switchLabel: { color: colors.textMuted, flex: 1, fontSize: 12.5 },
     goalCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 16, gap: 10 },

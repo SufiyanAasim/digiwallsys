@@ -45,18 +45,25 @@ async function updatePreferences(req, res, next) {
   const alertAmount = req.body.spendingAlertAmount === null || req.body.spendingAlertAmount === ''
     ? null
     : Number(req.body.spendingAlertAmount);
+  const alertCurrency = String(req.body.spendingAlertCurrency || 'USD').toUpperCase();
   if (alertAmount !== null && (!Number.isFinite(alertAmount) || alertAmount <= 0)) {
     return res.status(400).json({ error: 'Spending alert amount must be positive or null' });
+  }
+  if (!/^[A-Z]{3}$/.test(alertCurrency)) {
+    return res.status(400).json({ error: 'Spending alert currency must be a 3-letter currency code' });
   }
   try {
     const result = await pool.query(
       `INSERT INTO notification_preferences
-         (userid, money_movement, security_events, spending_alert_amount, push_enabled)
-       VALUES ($1, $2, $3, $4, $5)
+         (userid, money_movement, security_events, spending_alert_amount,
+          spending_alert_currency, push_enabled)
+       SELECT $1, $2, $3, $4, $5, $6
+       WHERE EXISTS (SELECT 1 FROM wallet WHERE userid = $1 AND currency = $5)
        ON CONFLICT (userid) DO UPDATE SET
          money_movement = EXCLUDED.money_movement,
          security_events = EXCLUDED.security_events,
          spending_alert_amount = EXCLUDED.spending_alert_amount,
+         spending_alert_currency = EXCLUDED.spending_alert_currency,
          push_enabled = EXCLUDED.push_enabled,
          updated_at = CURRENT_TIMESTAMP
        RETURNING *`,
@@ -65,9 +72,13 @@ async function updatePreferences(req, res, next) {
         req.body.moneyMovement !== false,
         req.body.securityEvents !== false,
         alertAmount,
+        alertCurrency,
         req.body.pushEnabled !== false,
       ]
     );
+    if (!result.rowCount) {
+      return res.status(404).json({ error: `You do not have a ${alertCurrency} wallet` });
+    }
     return res.json(result.rows[0]);
   } catch (error) {
     return next(error);

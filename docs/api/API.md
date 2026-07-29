@@ -100,7 +100,7 @@ posting a second credit.
 
 - Endpoint: `/api/transactions/history`
 - Method: `GET`
-- Query: `q`, `direction`, `from`, `to`, `min`, `max`, `cursor`, `limit`.
+- Query: `q`, `direction`, `currency`, `from`, `to`, `min`, `max`, `cursor`, `limit`.
 - Response: `items` and `nextCursor`.
 
 ### Receipt, export, and tagging
@@ -109,7 +109,7 @@ posting a second credit.
 | --- | --- | --- |
 | `GET` | `/api/transactions/receipt/:reference` | Authorized transaction receipt |
 | `GET` | `/api/transactions/export` | Up to 10,000 authorized rows as safe CSV |
-| `GET` | `/api/transactions/statement` | Formatted PDF statement (same filters as history) with received/sent/net totals |
+| `GET` | `/api/transactions/statement` | Single-currency PDF statement (`currency` is required; other history filters are supported) |
 | `PATCH` | `/api/transactions/:reference/category` | Tag a transaction you sent with a budget category. Body: `category` (or `null` to clear) |
 
 ## Payment requests and QR
@@ -118,7 +118,7 @@ posting a second credit.
 | --- | --- | --- | --- |
 | `GET` | `/api/payment-requests` | Bearer | Incoming and outgoing requests |
 | `GET` | `/api/payment-requests/:requestId` | Bearer | Authorized/open QR request |
-| `POST` | `/api/payment-requests` | Bearer + idempotency | Create targeted or open request |
+| `POST` | `/api/payment-requests` | Bearer + idempotency | Create targeted or open request. Body includes `currency` (default `USD`) |
 | `POST` | `/api/payment-requests/:requestId/accept` | Bearer + idempotency | Pay request |
 | `POST` | `/api/payment-requests/:requestId/decline` | Bearer | Decline assigned request |
 | `POST` | `/api/payment-requests/:requestId/cancel` | Bearer | Cancel owned request |
@@ -135,7 +135,7 @@ current request before payment.
 | `POST` | `/api/schedules` | Bearer + idempotency | Create schedule |
 | `POST` | `/api/schedules/:scheduleId/cancel` | Bearer | Cancel active schedule |
 
-Create body: `receiverId`, `amount`, `description`, ISO `nextRunAt`, and
+Create body: `receiverId`, `amount`, `currency`, `description`, ISO `nextRunAt`, and
 `frequency` (`once`, `daily`, `weekly`, or `monthly`). Due transfers use the same
 ledger, fraud, notification, and audit service as direct payments.
 
@@ -146,7 +146,7 @@ ledger, fraud, notification, and audit service as direct payments.
 | `GET` | `/api/notifications` | In-app inbox |
 | `POST` | `/api/notifications/:notificationId/read` | Mark read |
 | `GET` | `/api/notifications/preferences/current` | Read preferences |
-| `PUT` | `/api/notifications/preferences/current` | Update preferences/threshold |
+| `PUT` | `/api/notifications/preferences/current` | Update preferences and a currency-scoped spending threshold |
 | `POST` | `/api/notifications/devices` | Register Expo push token |
 
 All notification endpoints require bearer authentication.
@@ -179,18 +179,18 @@ role read directly from PostgreSQL.
 A goal is an earmark against the user's existing wallet balance, not a separate
 account — contribute/withdraw never touch the ledger. At most one goal per user
 may have `roundUpEnabled`; after a direct transfer, the rounded-up remainder is
-credited to it automatically (best-effort — it can never fail the transfer).
+earmarked atomically and is capped by the same-currency available balance.
 
 ## Budget categories
 
 | Method | Endpoint | Authentication | Purpose |
 | --- | --- | --- | --- |
 | `GET` | `/api/budget-categories` | Bearer | List categories with this month's spend |
-| `POST` | `/api/budget-categories` | Bearer | Create. Body: `name`, `monthlyLimit` |
+| `POST` | `/api/budget-categories` | Bearer | Create. Body: `name`, `monthlyLimit`, `currency` |
 | `PUT` | `/api/budget-categories/:categoryId` | Bearer | Update `monthlyLimit` |
 | `DELETE` | `/api/budget-categories/:categoryId` | Bearer | Remove a category |
 
-Spend-per-category is computed live from `transactions.category` for the
+Spend-per-category is computed live from same-currency transactions for the
 current calendar month — see [tagging](#receipt-export-and-tagging) above.
 
 ## Security alerts

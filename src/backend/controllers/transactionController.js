@@ -5,26 +5,50 @@ const { executeTransfer } = require('../services/transferService');
 
 const VALID_CATEGORY = /^[\w\s&/'-]{1,40}$/;
 
-// Best-effort tagging/round-up after a transfer commits. Neither step touches the
-// wallet balance or ledger — a failure here must never surface as a failed transfer.
-async function afterDirectTransfer({ senderId, transactionId, amount, category }) {
-  try {
-    if (category) {
-      await pool.query('UPDATE transactions SET category = $1 WHERE transactionid = $2', [category, transactionId]);
-    }
-    const roundUp = Math.ceil(amount) - amount;
-    if (roundUp > 0) {
-      await pool.query(
-        `UPDATE savings_goals SET
-           current_amount = LEAST(current_amount + $1, target_amount),
-           status = CASE WHEN current_amount + $1 >= target_amount THEN 'completed' ELSE status END,
-           updated_at = CURRENT_TIMESTAMP
-         WHERE userid = $2 AND round_up_enabled AND status = 'active'`,
-        [roundUp, senderId]
-      );
-    }
-  } catch (error) {
-    console.error('Post-transfer tagging/round-up failed (non-fatal):', error.message);
+async function applyTransferMetadata(client, {
+  senderId,
+  transactionId,
+  amount,
+  currency,
+  category,
+  isSharedWallet,
+}) {
+  if (category) {
+    await client.query('UPDATE transactions SET category = $1 WHERE transactionid = $2', [category, transactionId]);
+  }
+  if (isSharedWallet) return;
+
+  const requestedRoundUp = Math.ceil(amount) - amount;
+  if (requestedRoundUp <= 0) return;
+
+  const goals = await client.query(
+    `SELECT goalid, current_amount, target_amount, round_up_enabled, status
+     FROM savings_goals
+     WHERE userid = $1 AND currency = $2 AND status != 'archived'
+     ORDER BY round_up_enabled DESC, created_at
+     FOR UPDATE`,
+    [senderId, currency]
+  );
+  const goal = goals.rows.find((item) => item.round_up_enabled && item.status === 'active');
+  if (!goal) return;
+
+  const wallet = await client.query(
+    'SELECT balance FROM wallet WHERE userid = $1 AND currency = $2 FOR UPDATE',
+    [senderId, currency]
+  );
+  const earmarked = goals.rows.reduce((sum, item) => sum + Number(item.current_amount), 0);
+  const available = Math.max(Number(wallet.rows[0]?.balance || 0) - earmarked, 0);
+  const remainingTarget = Math.max(Number(goal.target_amount) - Number(goal.current_amount), 0);
+  const roundUp = Math.min(requestedRoundUp, available, remainingTarget);
+  if (roundUp > 0) {
+    await client.query(
+      `UPDATE savings_goals SET
+         current_amount = current_amount + $1,
+         status = CASE WHEN current_amount + $1 >= target_amount THEN 'completed' ELSE status END,
+         updated_at = CURRENT_TIMESTAMP
+       WHERE goalid = $2`,
+      [roundUp, goal.goalid]
+    );
   }
 }
 
@@ -33,6 +57,9 @@ function validateHistoryQuery(query) {
     return 'Direction must be debit or credit';
   }
   if (query.q && String(query.q).length > 200) return 'Search text must not exceed 200 characters';
+  if (query.currency && !/^[A-Za-z]{3}$/.test(String(query.currency))) {
+    return 'Currency must be a 3-letter code';
+  }
 
   const dates = {};
   for (const key of ['from', 'to', 'cursor']) {
@@ -95,21 +122,23 @@ async function sendMoney(req, res, next) {
       ipAddress: req.ip,
     });
     if (result.blocked) {
-      await client.query('COMMIT');
       const body = { error: 'Transfer blocked by risk controls', reasons: result.fraud.reasons };
-      await req.idempotency.complete(403, body);
+      await req.idempotency.complete(client, 403, body);
+      await client.query('COMMIT');
       return res.status(403).json(body);
     }
-    await client.query('COMMIT');
-    await afterDirectTransfer({
+    await applyTransferMetadata(client, {
       senderId,
       transactionId: result.transaction.transactionid,
       amount,
+      currency,
       category,
+      isSharedWallet: senderOwnerId !== null,
     });
     if (category) result.transaction.category = category;
     const body = { message: 'Transaction successful', transaction: result.transaction };
-    await req.idempotency.complete(200, body);
+    await req.idempotency.complete(client, 200, body);
+    await client.query('COMMIT');
     return res.json(body);
   } catch (error) {
     await client.query('ROLLBACK');
@@ -130,22 +159,22 @@ function historyQuery(userId, query, singleReference = null) {
   };
 
   if (singleReference) add('t.reference = ?::uuid', singleReference);
-  if (query.q) add('(t.description ILIKE ? OR sender.name ILIKE ? OR receiver.name ILIKE ? OR t.reference::text ILIKE ?)', `%${query.q}%`);
+  if (query.q) {
+    values.push(`%${query.q}%`);
+    const searchParameter = `$${values.length}`;
+    where.push(
+      `(t.description ILIKE ${searchParameter} OR sender.name ILIKE ${searchParameter} `
+      + `OR receiver.name ILIKE ${searchParameter} OR t.reference::text ILIKE ${searchParameter})`
+    );
+  }
   if (query.direction === 'debit') where.push('t.senderwalletid = mine.walletid');
   if (query.direction === 'credit') where.push('t.receiverwalletid = mine.walletid');
+  if (query.currency) add('mine.currency = ?', String(query.currency).toUpperCase());
   if (query.from) add('t.timestamp >= ?::timestamptz', query.from);
   if (query.to) add('t.timestamp <= ?::timestamptz', query.to);
   if (query.min) add('t.amount >= ?::numeric', query.min);
   if (query.max) add('t.amount <= ?::numeric', query.max);
   if (query.cursor) add('t.timestamp < ?::timestamptz', query.cursor);
-
-  // Search has four placeholders and therefore needs duplicated parameters.
-  if (query.q) {
-    const searchIndex = where.findIndex((clause) => clause.includes('ILIKE'));
-    const first = values.length - (['from', 'to', 'min', 'max', 'cursor'].filter((key) => query[key]).length);
-    const placeholder = `$${first}`;
-    where[searchIndex] = where[searchIndex].replaceAll('?', placeholder);
-  }
 
   const limit = singleReference
     ? 1
@@ -258,6 +287,11 @@ async function exportHistory(req, res, next) {
 async function exportStatement(req, res, next) {
   const validationError = validateHistoryQuery(req.query);
   if (validationError) return res.status(400).json({ error: validationError });
+  if (!req.query.currency) {
+    return res.status(400).json({
+      error: 'Currency is required for a statement so totals are not combined across currencies',
+    });
+  }
   try {
     const { sql, values } = historyQuery(req.user.userId, { ...req.query, exportAll: true });
     const result = await pool.query(sql, values);
@@ -273,6 +307,7 @@ async function exportStatement(req, res, next) {
     doc.fontSize(20).text('digiwallsys — Account statement', { align: 'left' });
     doc.moveDown(0.3);
     doc.fontSize(11).fillColor('#555').text(`Account holder: ${accountName}`);
+    doc.text(`Currency: ${String(req.query.currency).toUpperCase()}`);
     doc.text(`Generated: ${new Date().toLocaleString()}`);
     if (req.query.from || req.query.to) {
       doc.text(`Period: ${req.query.from ? new Date(req.query.from).toLocaleDateString() : 'inception'} – ${req.query.to ? new Date(req.query.to).toLocaleDateString() : 'now'}`);
@@ -318,9 +353,10 @@ async function exportStatement(req, res, next) {
 
     doc.moveDown(2);
     doc.fontSize(10).font('Helvetica-Bold');
-    doc.text(`Total received: +${totalIn.toFixed(2)}`);
-    doc.text(`Total sent: -${totalOut.toFixed(2)}`);
-    doc.text(`Net: ${(totalIn - totalOut).toFixed(2)}`);
+    const currency = String(req.query.currency).toUpperCase();
+    doc.text(`Total received: +${currency} ${totalIn.toFixed(2)}`);
+    doc.text(`Total sent: -${currency} ${totalOut.toFixed(2)}`);
+    doc.text(`Net: ${currency} ${(totalIn - totalOut).toFixed(2)}`);
 
     doc.end();
   } catch (error) {
@@ -336,4 +372,5 @@ module.exports = {
   exportStatement,
   updateCategory,
   validateHistoryQuery,
+  historyQuery,
 };

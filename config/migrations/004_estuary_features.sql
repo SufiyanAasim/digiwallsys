@@ -32,7 +32,14 @@ BEGIN
     CHECK (account_type IN ('wallet_liability', 'provider_clearing', 'fx_suspense'));
 END $$;
 
-ALTER TABLE wallet ADD CONSTRAINT wallet_userid_currency_key UNIQUE (userid, currency);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint WHERE conname = 'wallet_userid_currency_key'
+  ) THEN
+    ALTER TABLE wallet ADD CONSTRAINT wallet_userid_currency_key UNIQUE (userid, currency);
+  END IF;
+END $$;
 
 CREATE TABLE IF NOT EXISTS wallet_members (
   walletid INTEGER NOT NULL REFERENCES wallet(walletid) ON DELETE CASCADE,

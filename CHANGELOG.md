@@ -6,6 +6,17 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- Dedicated background-worker entrypoint and environment template for scheduled
+  transfers, email delivery, and push delivery.
+- Operational-hardening migration finalizes ledger journals, leases outbox rows,
+  and makes currency-conversion idempotency durable.
+- Currency selection for analytics, budgets, savings goals, and the offline
+  Python reporting pipeline.
+- Currency-scoped spending alerts and single-currency PDF statements, preventing
+  unrelated monetary units from being combined in thresholds or totals.
+
 ### Changed
 
 - The landing page gained a "How it works" section (three numbered steps whose
@@ -34,6 +45,16 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- Protected web routes now wait for session restoration before rendering, and
+  logging out clears the in-memory account state as well as stored tokens.
+- Transaction search now binds one stable PostgreSQL parameter across every
+  searchable field, including when date, amount, direction, and currency filters
+  are combined.
+- Savings round-ups now select the enabled goal correctly, include completed
+  non-archived goals in earmarked balances, and cannot exceed the remaining
+  goal target or available wallet balance.
+- iOS and Android build identifiers advanced to build 4 for the next signed
+  `v1.8.0` binary while the public app version remains `1.8.0`.
 - `react/jsx-no-undef` is now enabled. Core `no-undef` does not treat a JSX
   element name as an identifier reference, so a component used without being
   imported passed lint and only failed at runtime — which is exactly how a
@@ -50,8 +71,6 @@ All notable changes to this project are documented here. The format follows
   the landing, since the swap is local state and browser Back would otherwise
   leave the route entirely. Native is unchanged — it has no landing and opens
   straight on the form.
-
-### Fixed
 
 - Visiting Credits without signing in rendered the full authenticated sidebar
   (Send money, Wallets, Log out) to a visitor with no session. Besides being
@@ -109,7 +128,7 @@ All notable changes to this project are documented here. The format follows
   real value, so a closing (or opening) dialog always shows the dialog that
   was actually asked for.
 
-### Added
+### Earlier interface additions
 
 - A marketing hero section above the sign-in form on web only: headline,
   product description, and four feature cards for capabilities that already
@@ -133,32 +152,30 @@ All notable changes to this project are documented here. The format follows
   backend set, production-shaped, for Render's dashboard),
   `examples/supabase.env.example` (connection-string format and pooler-vs-
   direct guidance), and `examples/vercel.env.example` (the `EXPO_PUBLIC_*`
-  subset Vercel needs). These are the three providers this project actually
-  deploys to; see the README's "Deployment target env files" section.
+  subset Vercel needs). These are supported examples and do not claim a current
+  deployment; see the README's "Deployment target env files" section.
 
-### Fixed
+### Accessibility fixes
 
 - The "Create an account" / "Back to login" toggle, the "Verify email or
   reset password" link, and "Use biometric login" on the sign-in screen had
   no `accessibilityRole`, so they read as plain, unlabeled text to a screen
   reader or this repo's accessibility-tree tooling instead of as buttons.
 
-### Security
+### Dependency security
 
 - Pinned build-tooling transitive dependencies flagged by Dependabot to
   same-major patched versions via `package.json` `overrides`: `flatted`,
-  `tar`, and the specific vulnerable `minimatch`/`brace-expansion` instances
-  nested under ESLint and EAS CLI. None of these ship in the deployed API or
-  the exported app; `npm audit --omit=dev` in `src/backend` was and remains 0
-  vulnerabilities. `postcss` (needs Expo SDK 57) and `uuid` (needs a major
-  bump inside EAS CLI's own `xcode`/telemetry dependencies, unverifiable here
-  without macOS/Xcode) are intentionally left — see `SECURITY.md`.
+  `tar`, and the specific vulnerable `minimatch`/`brace-expansion` instances.
+  The mobile client was subsequently aligned to Expo SDK 57 and the build-service
+  CLI was removed from application dependencies. High-severity audits now block CI.
 
-### Fixed
+### Platform fixes
 
 - `config/database.sql` still stopped at migration `002`, so every fresh
   database — including the Docker stack, which initializes from it — came up
-  without the Convoy and Estuary tables. It now includes `003` and `004`.
+  without the Convoy, Estuary, and operational-hardening tables. It now includes
+  every migration through `005`.
 - The Docker stack inherited `NODE_ENV=production` from the image, which makes
   `emailService` withhold the verification token. With no mail provider wired up
   locally, no account could be verified and nobody could sign in; compose now
@@ -167,7 +184,7 @@ All notable changes to this project are documented here. The format follows
   enforces 10 on registration only, so pre-existing accounts can still sign in.
 - Sidebar navigation no longer clips its last item on a ~1000px-tall window.
 - `formatMoney` used an unused catch binding that failed the widened lint scope.
-- A 404 from an endpoint the deployed API does not have yet now explains that
+- A 404 from an endpoint the connected API does not have yet now explains that
   the server needs the latest release, instead of surfacing "Route not found".
 - Transaction category tagging was unusable on web: it passed an option list to
   `Alert`, which the web polyfill collapses to `window.confirm()`, so it always
@@ -184,7 +201,7 @@ All notable changes to this project are documented here. The format follows
   glyphs themselves, stays sharp at any size, and follows the active theme. The
   unused `src/mobile/assets/wordmark.png` was deleted.
 
-### Security
+### Session security
 
 - The web client kept refresh tokens in `localStorage`, so opening the site
   silently restored the previous session — on a shared or public browser that
@@ -195,7 +212,7 @@ All notable changes to this project are documented here. The format follows
   this browser**, and logging out clears that choice. Native is unchanged and
   keeps SecureStore with optional biometric unlock.
 
-### Added
+### Navigation additions
 
 - Real URLs on the web. `NavigationContainer` had no `linking` config, so the
   address bar sat on `/` on every screen: nothing could be bookmarked or shared,
@@ -206,7 +223,7 @@ All notable changes to this project are documented here. The format follows
 - An auth guard for those URLs: reaching a protected path without a session now
   redirects to sign-in instead of rendering a screen that can only show errors.
 
-### Changed
+### Repository and interface changes
 
 - The browser tab now reads `digiwallsys · <screen>` instead of just the route
   name, which read as an unrelated page in a crowded tab bar.
@@ -245,7 +262,7 @@ All notable changes to this project are documented here. The format follows
 - Standardized the project identity as `digiwallsys`.
 - Consolidated application code under `src/backend` and `src/mobile`.
 
-### Added
+### Platform capabilities
 
 - Professional repository structure, documentation, Docker environment, and
   automated checks.
@@ -321,7 +338,7 @@ All notable changes to this project are documented here. The format follows
 
 - Analytics screen with money in/out, balance, and net change for the current month.
 - Spend breakdown between direct transfers and paid payment requests/QR payments.
-- Monthly spending lock progress bar built on the existing spending-alert preference.
+- Monthly spending-alert progress bar built on the existing notification preference.
 - `DonutChart` and `ChartLegend` components (`react-native-svg`, no new dependency).
 
 ## [1.6.5] — Marina

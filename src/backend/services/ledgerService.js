@@ -68,7 +68,14 @@ async function postJournal(client, {
       [journal.rows[0].journalid, entry.accountId, entry.entryType, entry.amount]
     );
   }
-  return journal.rows[0];
+  const posted = await client.query(
+    `UPDATE ledger_journals
+     SET posted_at = CURRENT_TIMESTAMP
+     WHERE journalid = $1 AND posted_at IS NULL
+     RETURNING journalid, reference, created_at, posted_at`,
+    [journal.rows[0].journalid]
+  );
+  return posted.rows[0];
 }
 
 async function reconcileWallets(client) {

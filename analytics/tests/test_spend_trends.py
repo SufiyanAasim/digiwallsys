@@ -47,3 +47,13 @@ def test_summarize_reports_total_and_highest_month(user1_monthly):
     stats = summarize(user1_monthly)
     assert stats["total_spend"] == pytest.approx(float(user1_monthly.sum()))
     assert stats["highest_month"] == user1_monthly.idxmax().strftime("%Y-%m")
+
+
+def test_monthly_spend_never_combines_currencies():
+    frame = clean_transactions(load_fixture(FIXTURE_PATH))
+    expected = monthly_spend(frame, 1, "USD").sum()
+    extra = frame.iloc[[0]].copy()
+    extra["currency"] = "EUR"
+    extra["amount"] = 9999
+    mixed = pd.concat([frame, extra], ignore_index=True)
+    assert monthly_spend(mixed, 1, "USD").sum() == pytest.approx(expected)

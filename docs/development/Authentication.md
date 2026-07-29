@@ -34,7 +34,7 @@ are queued into the `email_outbox` table; the email worker drains that table.
 | --- | --- |
 | `NODE_ENV` ≠ `production` | The token is also returned in the API response (`verificationToken` / `resetToken`) so flows can be exercised without a mail provider, and the worker logs a masked recipient. |
 | `NODE_ENV` = `production`, `EMAIL_WEBHOOK_URL` set | The worker POSTs each queued message to that URL with `EMAIL_DELIVERY_TOKEN` as a bearer token, then marks it sent. |
-| `NODE_ENV` = `production`, `EMAIL_WEBHOOK_URL` unset | **Nothing is delivered.** Rows stay unsent in `email_outbox` — configure a provider before relying on verification in production. |
+| Dedicated production worker, either delivery variable unset | Worker startup fails so queued verification/recovery mail is never silently abandoned. |
 
 To test end to end without a provider: register, copy the `verificationToken`
 from the registration response, then submit it under **Account security →

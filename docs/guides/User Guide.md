@@ -63,7 +63,7 @@ any unusual-activity alerts the fraud engine has raised on your account.
 **Analytics** shows this month's money in, money out, and balance as a donut
 chart, plus a breakdown of spending between direct transfers and requests/QR
 payments. If you've set a spending-alert amount in **Notifications**, it also
-shows a monthly spending-lock progress bar.
+shows monthly spending-alert progress.
 
 ## Savings goals
 

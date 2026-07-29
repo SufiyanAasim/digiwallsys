@@ -2,7 +2,7 @@ import axios from 'axios';
 import { clearSession, getAccessToken, getRefreshToken, saveSession } from './session';
 
 export const API_BASE_URL = (
-  process.env.EXPO_PUBLIC_API_URL || 'https://digiwallsys-api.onrender.com'
+  process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5000'
 ).replace(/\/$/, '');
 
 const api = axios.create({ baseURL: API_BASE_URL, timeout: 15000 });
@@ -63,7 +63,11 @@ export const getCurrentUser = () => api.get('/api/users/me');
 export const getBalance = (currency) => api.get('/api/wallet/balance', { params: currency ? { currency } : undefined });
 export const getWallets = () => api.get('/api/wallet');
 export const addCurrencyWallet = (currency) => api.post('/api/wallet/currencies', { currency });
-export const convertCurrency = (fromCurrency, toCurrency, amount) => api.post('/api/wallet/convert', { fromCurrency, toCurrency, amount });
+export const convertCurrency = (fromCurrency, toCurrency, amount) => api.post(
+  '/api/wallet/convert',
+  { fromCurrency, toCurrency, amount },
+  { headers: { 'Idempotency-Key': idempotencyKey('conversion') } }
+);
 export const getConversions = () => api.get('/api/wallet/conversions');
 export const getUsers = () => api.get('/api/users');
 export const getTransactions = (params = {}) => api.get('/api/transactions/history', { params });
@@ -85,9 +89,9 @@ export const createFundingIntent = (amount) => api.post(
 );
 export const getFundingIntents = () => api.get('/api/funding/intents');
 
-export const createPaymentRequest = (payerId, amount, note) => api.post(
+export const createPaymentRequest = (payerId, amount, note, currency = 'USD') => api.post(
   '/api/payment-requests',
-  { payerId: payerId || null, amount, note },
+  { payerId: payerId || null, amount, note, currency },
   { headers: { 'Idempotency-Key': idempotencyKey('request') } }
 );
 export const getPaymentRequests = () => api.get('/api/payment-requests');
@@ -135,16 +139,19 @@ export function transactionStatementUrl() {
 }
 
 export const getSavingsGoals = () => api.get('/api/savings-goals');
-export const createSavingsGoal = (name, targetAmount, roundUpEnabled) => api.post(
+export const createSavingsGoal = (name, targetAmount, roundUpEnabled, currency = 'USD') => api.post(
   '/api/savings-goals',
-  { name, targetAmount, roundUpEnabled }
+  { name, targetAmount, roundUpEnabled, currency }
 );
 export const contributeToSavingsGoal = (goalId, amount) => api.post(`/api/savings-goals/${goalId}/contribute`, { amount });
 export const withdrawFromSavingsGoal = (goalId, amount) => api.post(`/api/savings-goals/${goalId}/withdraw`, { amount });
 export const archiveSavingsGoal = (goalId) => api.post(`/api/savings-goals/${goalId}/archive`);
 
 export const getBudgetCategories = () => api.get('/api/budget-categories');
-export const createBudgetCategory = (name, monthlyLimit) => api.post('/api/budget-categories', { name, monthlyLimit });
+export const createBudgetCategory = (name, monthlyLimit, currency = 'USD') => api.post(
+  '/api/budget-categories',
+  { name, monthlyLimit, currency }
+);
 export const updateBudgetCategory = (categoryId, monthlyLimit) => api.put(`/api/budget-categories/${categoryId}`, { monthlyLimit });
 export const deleteBudgetCategory = (categoryId) => api.delete(`/api/budget-categories/${categoryId}`);
 

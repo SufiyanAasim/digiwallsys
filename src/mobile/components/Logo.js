@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../ThemeContext';
 
@@ -43,7 +43,7 @@ export default function Logo({ size = 40, radius }) {
       >
         d
       </Text>
-      <View style={[styles.border, { borderRadius: cornerRadius }]} pointerEvents="none" />
+      <View style={[styles.border, { borderRadius: cornerRadius, pointerEvents: 'none' }]} />
     </LinearGradient>
   );
 }
@@ -55,17 +55,27 @@ const styles = StyleSheet.create({
   glyphBackDark: { color: 'rgba(255,255,255,0.32)' },
   glyphFrontDark: {
     color: 'rgba(255,255,255,0.92)',
-    textShadowColor: 'rgba(26,10,14,0.35)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    ...Platform.select({
+      web: { textShadow: '0 1px 3px rgba(26,10,14,0.35)' },
+      default: {
+        textShadowColor: 'rgba(26,10,14,0.35)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 3,
+      },
+    }),
   },
   // Light mode: dark/smoked-glass glyphs on the same gradient.
   glyphBackLight: { color: 'rgba(26,10,14,0.22)' },
   glyphFrontLight: {
     color: 'rgba(26,10,14,0.85)',
-    textShadowColor: 'rgba(255,255,255,0.45)',
-    textShadowOffset: { width: 0, height: 1 },
-    textShadowRadius: 3,
+    ...Platform.select({
+      web: { textShadow: '0 1px 3px rgba(255,255,255,0.45)' },
+      default: {
+        textShadowColor: 'rgba(255,255,255,0.45)',
+        textShadowOffset: { width: 0, height: 1 },
+        textShadowRadius: 3,
+      },
+    }),
   },
   border: { ...StyleSheet.absoluteFillObject, borderWidth: 1, borderColor: 'rgba(255,255,255,0.4)' },
 });

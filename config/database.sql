@@ -5,3 +5,4 @@
 \ir migrations/002_platform_features.sql
 \ir migrations/003_convoy_features.sql
 \ir migrations/004_estuary_features.sql
+\ir migrations/005_operational_hardening.sql

@@ -45,13 +45,25 @@ services:
       HOURLY_TRANSFER_COUNT: 20
       FUNDING_PROVIDER: sandbox
       FUNDING_WEBHOOK_SECRET: local-funding-webhook-secret-change-me
-      # Workers read "false" to opt out; scheduler and email stay on to match the
-      # default runtime, push is off because there are no device tokens locally.
+      RUN_INLINE_WORKERS: "false"
+    ports:
+      - "5000:5000"
+
+  worker:
+    build: .
+    command: ["node", "worker.js"]
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      JWT_SECRET: local-development-secret-change-before-deployment
+      DATABASE_URL: postgresql://digiwallsys:digiwallsys@database:5432/digiwallsys
+      DATABASE_SSL: "false"
+      DATABASE_POOL_SIZE: 10
       ENABLE_SCHEDULER: "true"
       ENABLE_EMAIL_WORKER: "true"
       ENABLE_PUSH_WORKER: "false"
-    ports:
-      - "5000:5000"
 
 volumes:
   digiwallsys-data:

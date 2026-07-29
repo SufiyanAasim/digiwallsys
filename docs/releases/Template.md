@@ -45,15 +45,15 @@ Describe architectural changes, invariants, tradeoffs, and known limitations.
 | Android | Not tested |
 | iOS | Not tested |
 
-**Requires:** Node.js 20+ · Expo SDK 53 · PostgreSQL 14+
+**Requires:** Node.js 20+ · Expo SDK 57 · PostgreSQL 14+
 
 ---
 
-## 👥 Contributor
+## 👤 Owner and author
 
 | Name | Role |
 | --- | --- |
-| Contributor | Role |
+| Owner and author | Role |
 
 ---
 

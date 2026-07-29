@@ -11,5 +11,5 @@ subtitle, version suffix, or release-name prefix.
 it does not change the tag or version string.
 
 Every release document follows `Template.md`: overview, objectives, feature
-groups, changes, architecture progress, compatibility, contributors, and release
+groups, changes, architecture progress, compatibility, ownership, and release
 summary. Planned releases describe assigned scope without claiming publication.

@@ -5,20 +5,30 @@
     "scheme": "digiwallsys",
     "version": "1.8.0",
     "plugins": [
-      "./plugins/withAndroidMonorepoRoot"
+      "./plugins/withAndroidMonorepoRoot",
+      "expo-secure-store",
+      "expo-sharing",
+      "expo-status-bar",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/icon-app.png",
+          "imageWidth": 200,
+          "resizeMode": "contain",
+          "backgroundColor": "#0B0A10",
+          "dark": {
+            "image": "./assets/icon-app.png",
+            "backgroundColor": "#0B0A10"
+          }
+        }
+      ]
     ],
     "orientation": "portrait",
     "icon": "./assets/icon-app.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/icon-app.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#0B0A10"
-    },
     "ios": {
       "bundleIdentifier": "com.sufiyanaasim.digiwallsys",
-      "buildNumber": "3",
+      "buildNumber": "4",
       "supportsTablet": true,
       "infoPlist": {
         "NSFaceIDUsageDescription": "Use Face ID to unlock your digiwallsys session.",
@@ -27,13 +37,15 @@
     },
     "android": {
       "package": "com.sufiyanaasim.digiwallsys",
-      "versionCode": 3,
+      "versionCode": 4,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-adaptive-foreground.png",
         "backgroundColor": "#0B0A10"
       },
-      "edgeToEdgeEnabled": true,
-      "permissions": ["CAMERA", "USE_BIOMETRIC"]
+      "permissions": [
+        "CAMERA",
+        "USE_BIOMETRIC"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png",

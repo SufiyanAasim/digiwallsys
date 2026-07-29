@@ -1,11 +1,14 @@
 """Spend share by category for one user."""
 
 
-def category_breakdown(frame, user_id):
+def category_breakdown(frame, user_id, currency="USD"):
     """Returns a DataFrame with total and share-of-spend per category,
     sorted highest spend first. Empty if the user has no transactions.
     """
-    user_rows = frame[frame["userid"] == user_id]
+    user_rows = frame[
+        (frame["userid"] == user_id)
+        & (frame["currency"].str.upper() == currency.upper())
+    ]
     if user_rows.empty:
         return user_rows.assign(total=[], share_pct=[])[["category", "total", "share_pct"]]
 

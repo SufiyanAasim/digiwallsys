@@ -9,7 +9,7 @@
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
 [![Version](https://img.shields.io/badge/version-v1.8.0-713b49?style=flat)](docs/releases/v1.8.0.md)
 [![Release](https://img.shields.io/badge/name-Estuary-c6533c?style=flat)](docs/releases/v1.8.0.md)
-[![Status](https://img.shields.io/badge/status-code--complete-e9a23b?style=flat)](docs/releases/v1.8.0.md)
+[![Status](https://img.shields.io/badge/status-local--candidate-e9a23b?style=flat)](docs/releases/v1.8.0.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-64748b?style=flat)]()
 [![Build](https://img.shields.io/badge/build-passing-16a34a?style=flat)](.github/workflows/build.yml)
@@ -154,12 +154,12 @@ and shared-wallet sequence diagrams, are in
 
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
-| [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Code-complete | Multi-currency wallets and shared/family wallets |
-| [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Code-complete | Savings goals, budgets, calendar, tagging, statements, alerts |
-| [v1.7.0](docs/releases/v1.7.0.md) | **Compass** | Completed | Real-data analytics, spend breakdown, spending lock |
+| [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Local candidate | Multi-currency wallets and shared/family wallets |
+| [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Implemented | Savings goals, budgets, calendar, tagging, statements, alerts |
+| [v1.7.0](docs/releases/v1.7.0.md) | **Compass** | Implemented | Real-data analytics, spend breakdown, spending alerts |
 | [v1.6.5](docs/releases/v1.6.5.md) | **Marina** | Completed | Web dashboard sidebar shell |
 | [v1.6.0](docs/releases/v1.6.0.md) | **Lantern** | Completed | Mobile "Ember Glass" design system and brand identity |
-| [v1.5.5](docs/releases/v1.5.5.md) | **Armada** | Completed | Full-scale ecosystem, ready for wide release |
+| [v1.5.5](docs/releases/v1.5.5.md) | **Armada** | Implemented | Full application-layer integration milestone |
 | [v1.5.0](docs/releases/v1.5.0.md) | **Meridian** | Completed | Reconciliation and currency precision |
 | [v1.4.5](docs/releases/v1.4.5.md) | **Trade** | Completed | Payment requests and scheduled transfers |
 | [v1.4.0](docs/releases/v1.4.0.md) | **Voyage** | Completed | QR, biometrics, and broader-market foundations |
@@ -173,10 +173,10 @@ and shared-wallet sequence diagrams, are in
 | [v1.0.0](docs/releases/v1.0.0.md) | **Anchor** | Base Release | Secure wallet foundation and PostgreSQL acceptance gates |
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
-prerelease identifiers. `v1.7.0` (`Compass`) is the latest release actually deployed
-to production. `v1.7.5` (`Convoy`) and `v1.8.0` (`Estuary`) are both code-complete
-but not yet deployed or migrated — see their release notes:
-[Convoy](docs/releases/v1.7.5.md) · [Estuary](docs/releases/v1.8.0.md).
+prerelease identifiers. The current checkout is the local `v1.8.0` (`Estuary`)
+candidate. No remote repository or production deployment is currently claimed;
+publish and deploy only after the production gates in
+[Deployment.md](docs/deployment/Deployment.md) pass.
 
 ---
 
@@ -191,7 +191,8 @@ but not yet deployed or migrated — see their release notes:
 ### Clone and install
 
 ```bash
-git clone https://github.com/SufiyanAasim/digiwallsys.git
+# After publishing the new repository:
+git clone https://github.com/YOUR-ACCOUNT/digiwallsys.git
 cd digiwallsys
 npm install
 ```
@@ -206,7 +207,7 @@ PowerShell users can replace `cp` with `Copy-Item`.
 ### Start with Docker
 
 ```bash
-docker compose up --build database api
+docker compose up --build database api worker
 ```
 
 In a second terminal:
@@ -276,6 +277,7 @@ Developer membership and signing access are required for a device IPA.
 | `ENABLE_SCHEDULER` | No | `true` | Runs scheduled-transfer worker |
 | `ENABLE_PUSH_WORKER` | No | `true` | Runs Expo push dispatcher |
 | `ENABLE_EMAIL_WORKER` | No | `true` | Runs email-outbox dispatcher |
+| `RUN_INLINE_WORKERS` | No | `false` | Runs workers inside the API process; use only for local single-process development |
 | `API_BASE_URL` | No | `http://localhost:$PORT` | Target for `scripts/simulate-funding-webhook.js` |
 | `EXPO_PUBLIC_API_URL` | No | `http://localhost:5000` | Mobile API base URL |
 | `EXPO_PUBLIC_EAS_PROJECT_ID` | Push | None | Expo project ID for push tokens |
@@ -285,12 +287,10 @@ tokens in Expo public variables.
 
 ### Deployment target env files
 
-`digiwallsys-api.onrender.com` (Render), a Vercel web deployment, and a
-Supabase-hosted PostgreSQL database are the providers this project actually
-deploys to. Each has its own environment surface — a Render dashboard, a
-Vercel dashboard, and a Supabase connection string are three different places
-to set variables, none of which read a `.env` file from the repo. `examples/`
-has a template for each:
+No provider is currently recorded as a live deployment. The templates below
+show supported deployment shapes; dashboard variables and database credentials
+must be configured in the chosen provider and are never read from these
+example files automatically:
 
 | File | Set it in | Covers |
 | --- | --- | --- |
@@ -298,6 +298,8 @@ has a template for each:
 | `examples/supabase.env.example` | N/A — feeds `DATABASE_URL` on Render | Connection string format, pooler-vs-direct guidance, SSL |
 | `examples/vercel.env.example` | Vercel project → Environment Variables | Only the `EXPO_PUBLIC_*` variables Expo inlines into the web bundle |
 | `examples/mobile.env.example` | `src/mobile/.env` (local dev) | Same `EXPO_PUBLIC_*` variables, for running on a physical device |
+| `examples/worker.env.example` | Dedicated worker service | Database, mail delivery, scheduling, and push worker configuration |
+| `analytics/.env.example` | `analytics/.env` (local, read-only) | Offline analytics database and currency selection |
 
 Each file documents its own variables inline; `.env.example` at the repo root
 remains the canonical description of what every variable does.
@@ -391,14 +393,14 @@ Report vulnerabilities privately using [SECURITY.md](SECURITY.md).
 
 ---
 
-## 🤝 Contributor
+## 👤 Owner and author
 
 <table>
   <tr>
     <td align="center">
       <a href="https://github.com/SufiyanAasim">
         <img src="https://github.com/SufiyanAasim.png" width="72" alt="SufiyanAasim"/><br/>
-        <sub><b>Mohammad Sufiyan Aasim</b></sub>
+        <sub><b>Sufiyan Aasim</b></sub>
       </a><br/>
       <sub>System Architecture · Financial Core · Mobile · Build & Release</sub>
     </td>
@@ -411,7 +413,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) to get involved.
 
 ## 📄 License
 
-[MIT License](LICENSE) © 2026 Mohammad Sufiyan Aasim (@SufiyanAasim).
+[MIT License](LICENSE) © 2026 Sufiyan Aasim.
 
 ---
 

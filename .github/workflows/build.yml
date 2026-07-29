@@ -3,7 +3,7 @@ name: Build
 on:
   pull_request:
   push:
-    branches: [main, backend, frontend, database]
+    branches: [main]
 
 permissions:
   contents: read
@@ -19,3 +19,4 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - run: npm run build:web

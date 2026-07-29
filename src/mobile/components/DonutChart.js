@@ -42,7 +42,7 @@ export default function DonutChart({ segments, size = 168, strokeWidth = 20, cen
           />
         ))}
       </Svg>
-      <View style={styles.centerWrap} pointerEvents="none">
+      <View style={[styles.centerWrap, { pointerEvents: 'none' }]}>
         <Text style={styles.centerValue} numberOfLines={1}>{centerValue}</Text>
         {!!centerLabel && <Text style={styles.centerLabel} numberOfLines={1}>{centerLabel}</Text>}
       </View>

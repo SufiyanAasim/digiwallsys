@@ -36,6 +36,8 @@ async function processSchedules() {
           description: schedule.description || 'Scheduled transfer',
           idempotencyKey: key,
           source: 'schedule',
+          senderCurrency: schedule.currency,
+          receiverCurrency: schedule.currency,
         });
         if (transfer.blocked) {
           const message = `Risk controls: ${transfer.fraud.reasons.join(', ')}`;
@@ -93,7 +95,6 @@ async function processSchedules() {
 function startScheduleWorker() {
   if (process.env.ENABLE_SCHEDULER === 'false') return () => {};
   const timer = setInterval(processSchedules, 60_000);
-  timer.unref();
   processSchedules();
   return () => clearInterval(timer);
 }

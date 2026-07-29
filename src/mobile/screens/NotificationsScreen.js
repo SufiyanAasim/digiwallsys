@@ -2,11 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, Platform, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import * as Device from 'expo-device';
-import * as Notifications from 'expo-notifications';
 import {
   getNotificationPreferences,
   getNotifications,
+  getWallets,
   markNotificationRead,
   registerPushDevice,
   updateNotificationPreferences,
@@ -22,7 +23,14 @@ const preferenceLabels = { moneyMovement: 'Money movement', securityEvents: 'Sec
 
 export default function NotificationsScreen() {
   const [items, setItems] = useState([]);
-  const [preferences, setPreferences] = useState({ moneyMovement: true, securityEvents: true, pushEnabled: true, spendingAlertAmount: '' });
+  const [currencies, setCurrencies] = useState([]);
+  const [preferences, setPreferences] = useState({
+    moneyMovement: true,
+    securityEvents: true,
+    pushEnabled: true,
+    spendingAlertAmount: '',
+    spendingAlertCurrency: 'USD',
+  });
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState('');
   const [error, setError] = useState('');
@@ -33,14 +41,23 @@ export default function NotificationsScreen() {
     setLoading(true);
     setError('');
     try {
-      const [notificationResponse, preferenceResponse] = await Promise.all([getNotifications(), getNotificationPreferences()]);
+      const [notificationResponse, preferenceResponse, walletsResponse] = await Promise.all([
+        getNotifications(),
+        getNotificationPreferences(),
+        getWallets(),
+      ]);
       setItems(notificationResponse.data);
       const value = preferenceResponse.data;
+      const walletCurrencies = walletsResponse.data.map((wallet) => wallet.currency);
+      setCurrencies(walletCurrencies);
       setPreferences({
         moneyMovement: value.money_movement,
         securityEvents: value.security_events,
         pushEnabled: value.push_enabled,
         spendingAlertAmount: value.spending_alert_amount || '',
+        spendingAlertCurrency: walletCurrencies.includes(value.spending_alert_currency)
+          ? value.spending_alert_currency
+          : walletCurrencies[0] || 'USD',
       });
     } catch (loadError) { setError(getErrorMessage(loadError, 'Notifications could not be loaded.')); }
     finally { setLoading(false); }
@@ -62,6 +79,7 @@ export default function NotificationsScreen() {
     setBusy('push');
     try {
       if (!Device.isDevice) throw new Error('Push registration requires a physical device.');
+      const Notifications = await import('expo-notifications');
       const current = await Notifications.getPermissionsAsync();
       const permission = current.status === 'granted' ? current : await Notifications.requestPermissionsAsync();
       if (permission.status !== 'granted') throw new Error('Notification permission was not granted.');
@@ -91,6 +109,18 @@ export default function NotificationsScreen() {
           <View style={styles.row} key={key}><Text style={styles.rowLabel}>{preferenceLabels[key]}</Text><ThemedSwitch value={preferences[key]} onValueChange={(value) => setPreferences({ ...preferences, [key]: value })} /></View>
         ))}
         <TextInput style={styles.input} placeholder="Spending alert amount" placeholderTextColor={colors.textFaint} keyboardType="decimal-pad" value={String(preferences.spendingAlertAmount)} onChangeText={(value) => setPreferences({ ...preferences, spendingAlertAmount: value })} />
+        <View style={styles.pickerWrap}>
+          <Picker
+            selectedValue={preferences.spendingAlertCurrency}
+            onValueChange={(value) => setPreferences({ ...preferences, spendingAlertCurrency: value })}
+            dropdownIconColor={colors.text}
+            style={styles.picker}
+          >
+            {currencies.map((currency) => (
+              <Picker.Item key={currency} label={`${currency} alert`} value={currency} />
+            ))}
+          </Picker>
+        </View>
         <View style={styles.buttonRow}><GradientButton label={busy === 'save' ? 'Saving…' : 'Save preferences'} disabled={!!busy} onPress={save} /><TouchableOpacity style={styles.secondary} disabled={!!busy} onPress={enablePush}><Text style={styles.secondaryText}>{busy === 'push' ? 'Registering…' : 'Register push'}</Text></TouchableOpacity></View>
         <Text style={styles.heading}>Inbox</Text>
         {!loading && !error && items.length === 0 && <Text style={styles.meta}>You have no notifications yet.</Text>}
@@ -109,6 +139,8 @@ function buildStyles(colors, commonStyles) {
     container: { flex: 1, backgroundColor: screenBackground(colors) }, content: { padding: 20, gap: 10, ...contentColumn(layout.form) },
     title: { fontSize: 25, fontWeight: '800', color: colors.text }, row: { minHeight: 52, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, padding: 12 }, rowLabel: { color: colors.text },
     input: commonStyles.input, buttonRow: { gap: 8 },
+    pickerWrap: { backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1, borderRadius: 12, overflow: 'hidden' },
+    picker: { color: colors.text, minHeight: 48 },
     secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, padding: 13, borderRadius: 20, alignItems: 'center' }, secondaryText: { color: colors.text, fontWeight: '700' },
     heading: { fontSize: 20, fontWeight: '800', color: colors.text, marginTop: 14 }, card: { borderRadius: 14, padding: 14, backgroundColor: colors.surface, borderColor: colors.border, borderWidth: 1 }, unread: { backgroundColor: colors.surfaceMuted, borderLeftColor: colors.primary, borderLeftWidth: 4 }, cardTitle: { fontWeight: '800', color: colors.text },
     meta: { color: colors.textMuted, marginTop: 4 }, date: { color: colors.textMuted, fontSize: 11, marginTop: 6 },

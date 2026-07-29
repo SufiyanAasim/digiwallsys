@@ -66,9 +66,11 @@ async function convertCurrency(req, res, next) {
   const toCurrency = String(req.body.toCurrency || '').toUpperCase();
   const amount = parseAmount(req.body.amount);
   if (!CURRENCY_PATTERN.test(fromCurrency) || !CURRENCY_PATTERN.test(toCurrency) || fromCurrency === toCurrency) {
+    await req.idempotency.release();
     return res.status(400).json({ error: 'Provide two distinct 3-letter currency codes' });
   }
   if (amount === null) {
+    await req.idempotency.release();
     return res.status(400).json({ error: 'Amount must be positive with at most two decimals' });
   }
 
@@ -78,6 +80,7 @@ async function convertCurrency(req, res, next) {
     const rate = await getLatestRate(client, fromCurrency, toCurrency);
     if (rate === null) {
       await client.query('ROLLBACK');
+      await req.idempotency.release();
       return res.status(422).json({ error: `No exchange rate is available for ${fromCurrency} to ${toCurrency}` });
     }
 
@@ -87,11 +90,13 @@ async function convertCurrency(req, res, next) {
     );
     if (!fromWalletResult.rowCount) {
       await client.query('ROLLBACK');
+      await req.idempotency.release();
       return res.status(404).json({ error: `You do not have a ${fromCurrency} wallet` });
     }
     const fromWallet = fromWalletResult.rows[0];
     if (Number(fromWallet.balance) < amount) {
       await client.query('ROLLBACK');
+      await req.idempotency.release();
       return res.status(400).json({ error: 'Insufficient balance' });
     }
 
@@ -143,9 +148,10 @@ async function convertCurrency(req, res, next) {
     await client.query('UPDATE wallet SET balance = balance + $1 WHERE walletid = $2', [convertedAmount, toWallet.walletid]);
 
     const conversionResult = await client.query(
-      `INSERT INTO currency_conversions(userid, from_currency, to_currency, from_amount, to_amount, rate)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [req.user.userId, fromCurrency, toCurrency, amount, convertedAmount, rate]
+      `INSERT INTO currency_conversions
+         (userid, from_currency, to_currency, from_amount, to_amount, rate, idempotency_key)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [req.user.userId, fromCurrency, toCurrency, amount, convertedAmount, rate, req.idempotency.key]
     );
 
     await writeAudit(client, {
@@ -157,10 +163,13 @@ async function convertCurrency(req, res, next) {
       ipAddress: req.ip,
     });
 
+    const body = conversionResult.rows[0];
+    await req.idempotency.complete(client, 200, body);
     await client.query('COMMIT');
-    return res.json(conversionResult.rows[0]);
+    return res.json(body);
   } catch (error) {
     await client.query('ROLLBACK');
+    await req.idempotency.release();
     return next(error);
   } finally {
     client.release();

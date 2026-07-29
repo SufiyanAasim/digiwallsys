@@ -8,7 +8,9 @@ async function createRequest(req, res, next) {
   const amount = parseAmount(req.body.amount);
   const payerId = req.body.payerId == null ? null : Number(req.body.payerId);
   const note = String(req.body.note || '').trim().slice(0, 255);
-  if (amount === null || (payerId !== null && (!Number.isInteger(payerId) || payerId === req.user.userId))) {
+  const currency = String(req.body.currency || 'USD').toUpperCase();
+  if (amount === null || !/^[A-Z]{3}$/.test(currency)
+      || (payerId !== null && (!Number.isInteger(payerId) || payerId === req.user.userId))) {
     await req.idempotency.release();
     return res.status(400).json({ error: 'Provide a valid payer and amount' });
   }
@@ -25,11 +27,17 @@ async function createRequest(req, res, next) {
       }
     }
     const result = await client.query(
-      `INSERT INTO payment_requests(requester_userid, payer_userid, amount, note)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO payment_requests(requester_userid, payer_userid, amount, currency, note)
+       SELECT $1, $2, $3, $4, $5
+       WHERE EXISTS (SELECT 1 FROM wallet WHERE userid = $1 AND currency = $4)
        RETURNING requestid, payer_userid, amount, currency, note, status, expires_at, created_at`,
-      [req.user.userId, payerId, amount, note]
+      [req.user.userId, payerId, amount, currency, note]
     );
+    if (!result.rowCount) {
+      await client.query('ROLLBACK');
+      await req.idempotency.release();
+      return res.status(404).json({ error: `You do not have a ${currency} wallet` });
+    }
     if (payerId !== null) {
       await createNotification(client, {
         userId: payerId,
@@ -47,12 +55,12 @@ async function createRequest(req, res, next) {
       metadata: { payerId, amount },
       ipAddress: req.ip,
     });
-    await client.query('COMMIT');
     const body = {
       request: result.rows[0],
       qrPayload: `digiwallsys://request/${result.rows[0].requestid}`,
     };
-    await req.idempotency.complete(201, body);
+    await req.idempotency.complete(client, 201, body);
+    await client.query('COMMIT');
     return res.status(201).json(body);
   } catch (error) {
     await client.query('ROLLBACK');
@@ -126,11 +134,13 @@ async function acceptRequest(req, res, next) {
       idempotencyKey: req.idempotency.key,
       source: 'payment_request',
       ipAddress: req.ip,
+      senderCurrency: request.currency,
+      receiverCurrency: request.currency,
     });
     if (transfer.blocked) {
-      await client.query('COMMIT');
       const body = { error: 'Payment blocked by risk controls', reasons: transfer.fraud.reasons };
-      await req.idempotency.complete(403, body);
+      await req.idempotency.complete(client, 403, body);
+      await client.query('COMMIT');
       return res.status(403).json(body);
     }
     await client.query(
@@ -139,9 +149,9 @@ async function acceptRequest(req, res, next) {
        WHERE requestid = $1`,
       [request.requestid, req.user.userId, transfer.transaction.transactionid]
     );
-    await client.query('COMMIT');
     const body = { requestId: request.requestid, transaction: transfer.transaction };
-    await req.idempotency.complete(200, body);
+    await req.idempotency.complete(client, 200, body);
+    await client.query('COMMIT');
     return res.json(body);
   } catch (error) {
     await client.query('ROLLBACK');

@@ -24,6 +24,7 @@ TRANSACTIONS_QUERY = """
     FROM transactions t
     JOIN wallet sw ON sw.walletid = t.senderwalletid
     WHERE (%(user_id)s IS NULL OR COALESCE(t.spender_userid, sw.userid) = %(user_id)s)
+      AND sw.currency = %(currency)s
     ORDER BY t.timestamp
 """
 
@@ -42,7 +43,7 @@ def get_connection(database_url=None):
     return conn
 
 
-def fetch_transactions(user_id=None, database_url=None):
+def fetch_transactions(user_id=None, currency="USD", database_url=None):
     """Returns every spend transaction as a DataFrame, optionally for one user.
 
     A "spend" here is any row from the sender's side: `senderwalletid` always
@@ -52,6 +53,10 @@ def fetch_transactions(user_id=None, database_url=None):
     """
     conn = get_connection(database_url)
     try:
-        return pd.read_sql(TRANSACTIONS_QUERY, conn, params={"user_id": user_id})
+        return pd.read_sql(
+            TRANSACTIONS_QUERY,
+            conn,
+            params={"user_id": user_id, "currency": currency.upper()},
+        )
     finally:
         conn.close()

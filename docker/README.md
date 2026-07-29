@@ -1,7 +1,8 @@
 # Docker assets
 
-The root `Dockerfile` builds the API, while `docker-compose.yml` starts the API
-and a PostgreSQL 16 database initialized from `config/database.sql`.
+The root `Dockerfile` builds the API image, while `docker-compose.yml` starts
+the API, a dedicated worker process, and PostgreSQL 16 initialized from
+`config/database.sql`.
 
 ```bash
 docker compose up --build

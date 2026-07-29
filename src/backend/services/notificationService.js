@@ -23,8 +23,9 @@ async function createNotification(client, {
 async function createSpendingAlert(client, userId, amount, reference, currency = 'USD') {
   const result = await client.query(
     `SELECT spending_alert_amount FROM notification_preferences
-     WHERE userid = $1 AND spending_alert_amount IS NOT NULL`,
-    [userId]
+     WHERE userid = $1 AND spending_alert_currency = $2
+       AND spending_alert_amount IS NOT NULL`,
+    [userId, currency]
   );
   const threshold = Number(result.rows[0]?.spending_alert_amount);
   if (threshold && Number(amount) >= threshold) {

@@ -54,8 +54,6 @@ async function createFundingIntent(req, res, next) {
       metadata: { amount, provider },
       ipAddress: req.ip,
     });
-    await client.query('COMMIT');
-
     const checkoutTemplate = process.env.FUNDING_PROVIDER_CHECKOUT_URL || '';
     const body = {
       intent: result.rows[0],
@@ -66,7 +64,8 @@ async function createFundingIntent(req, res, next) {
         ? 'Continue with the configured provider. Balance changes only after a signed webhook.'
         : 'Funding intent created. Configure a provider checkout URL and signed webhook to complete it.',
     };
-    await req.idempotency.complete(201, body);
+    await req.idempotency.complete(client, 201, body);
+    await client.query('COMMIT');
     return res.status(201).json(body);
   } catch (error) {
     await client.query('ROLLBACK');

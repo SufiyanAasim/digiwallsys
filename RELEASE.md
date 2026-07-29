@@ -16,10 +16,10 @@ name is not a codename and must not be extended with a subtitle.
 | `v1.4.0` | Voyage | Expanding to multi-currency or broader markets. |
 | `v1.4.5` | Trade | Refining business-to-business transaction logic. |
 | `v1.5.0` | Meridian | Global alignment and high-precision accuracy. |
-| `v1.5.5` | Armada | Full-scale ecosystem, ready for wide release. |
+| `v1.5.5` | Armada | Full application-layer integration milestone. |
 | `v1.6.0` | Lantern | Mobile "Ember Glass" design system and brand identity. |
 | `v1.6.5` | Marina | Web dashboard sidebar shell and navigation architecture. |
-| `v1.7.0` | Compass | Real-data analytics: spend breakdown and spending lock. |
+| `v1.7.0` | Compass | Real-data analytics: spend breakdown and spending alerts. |
 | `v1.7.5` | Convoy | Savings goals, budgets, calendar, tagging, statements, alerts. |
 | `v1.8.0` | Estuary | Multi-currency wallets and shared/family wallets. |
 

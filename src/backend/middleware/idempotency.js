@@ -12,6 +12,12 @@ module.exports = function idempotency(scope) {
       .update(JSON.stringify({ method: req.method, path: req.path, body: req.body }))
       .digest('hex');
     try {
+      await pool.query(
+        `DELETE FROM idempotency_records
+         WHERE userid = $1 AND scope = $2 AND idempotency_key = $3
+           AND expires_at <= CURRENT_TIMESTAMP`,
+        [req.user.userId, scope, key]
+      );
       const inserted = await pool.query(
         `INSERT INTO idempotency_records(userid, scope, idempotency_key, request_hash)
          VALUES ($1, $2, $3, $4)
@@ -38,7 +44,7 @@ module.exports = function idempotency(scope) {
 
       req.idempotency = {
         key,
-        complete: (status, body) => pool.query(
+        complete: (client, status, body) => client.query(
           `UPDATE idempotency_records
            SET status = 'completed', response_status = $4, response_body = $5
            WHERE userid = $1 AND scope = $2 AND idempotency_key = $3`,
