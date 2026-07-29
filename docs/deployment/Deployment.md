@@ -70,11 +70,13 @@ distribution certificate and provisioning profile. Use the package/bundle ID
 `com.sufiyanaasim.digiwallsys` in both stores.
 
 EAS Android build `9` produced an installable APK and a Play Store AAB for
-public version `1.8.0`. Build artifacts remain outside Git and are retained
-locally under the ignored `artifacts/` directory and in EAS. Generate native
-projects with Expo prebuild only when local native debugging is needed; use
-the EAS preview profile for an installable test APK and the production profiles
-for store artifacts. Always set the final `EXPO_PUBLIC_API_URL` before building.
+public version `1.8.0`. Build artifacts remain outside the source history and
+are distributed through the [Estuary GitHub Release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0);
+local copies remain under the ignored `artifacts/` directory and in EAS.
+Generate native projects with Expo prebuild only when local native debugging is
+needed; use the EAS preview profile for an installable test APK and the
+production profiles for store artifacts. Always set the final
+`EXPO_PUBLIC_API_URL` before building.
 
 ## Production gates
 

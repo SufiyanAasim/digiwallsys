@@ -19,7 +19,7 @@ Register securely, fund through a verified provider, send or request money,
 scan QR payments, schedule transfers, receive alerts, and reconcile every wallet
 against a balanced double-entry ledger.
 
-[**Web app**](https://digiwallsys.vercel.app) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Estuary release**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
+[**Web app**](https://digiwallsys.vercel.app) · [**Android APK**](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.apk) · [**Estuary release**](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Release notes**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
 
 </div>
 
@@ -175,8 +175,9 @@ and shared-wallet sequence diagrams, are in
 The exact tags and names never receive prefixes, suffixes, subtitles, or
 prerelease identifiers. `v1.8.0` (`Estuary`) is deployed as a Vercel web app
 with a Render API and Supabase PostgreSQL. Signed Android build `9` is available
-as an internal APK and Play Store AAB; the GitHub tag/release remains a separate
-publication step governed by [Deployment.md](docs/deployment/Deployment.md).
+as an [installable APK](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.apk)
+and [Google Play AAB](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.aab)
+in the exact `v1.8.0` [Estuary GitHub Release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0).
 
 ---
 
