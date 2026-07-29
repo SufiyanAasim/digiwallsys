@@ -31,11 +31,30 @@ export default function ScrollbarTheme() {
     // 10px bar, which left ~4px of visible thumb and looked like a thin
     // broken line -- keep the bar wide enough and the inset to 2px so the
     // pill stays legible against the surface.
+    // The two styling systems are mutually exclusive, not additive: per spec a
+    // browser that honours `scrollbar-width`/`scrollbar-color` ignores every
+    // `::-webkit-scrollbar` rule for that element. Setting both -- as an
+    // earlier pass did -- silently threw the gradient away in Chrome and left
+    // a plain thin overlay bar. So the standard properties are scoped to
+    // engines with no `::-webkit-scrollbar` support (Firefox), which also
+    // cannot render a gradient thumb and take a solid colour instead.
     const [from, to] = colors.gradientPrimary;
     style.textContent = `
-      * {
-        scrollbar-width: thin;
-        scrollbar-color: ${colors.primary} ${colors.surfaceMuted};
+      /* Expo's web reset ships \`body { overflow: hidden }\` for app-like
+         behaviour. The viewport takes its overflow from <html>, or from <body>
+         when <html> is \`visible\` -- which it is here -- so that one rule
+         suppressed the viewport scrollbar entirely: the document still
+         scrolled (<html> carries scrollTop) but nothing was drawn to drag.
+         Handing the propagation back \`visible\` restores the bar without
+         making <body> its own scroll container, which would stop the page
+         scrolling at all. */
+      body { overflow-y: visible; }
+
+      @supports not selector(::-webkit-scrollbar) {
+        * {
+          scrollbar-width: thin;
+          scrollbar-color: ${colors.primary} ${colors.surfaceMuted};
+        }
       }
       ::-webkit-scrollbar { width: 12px; height: 12px; }
       ::-webkit-scrollbar-track {

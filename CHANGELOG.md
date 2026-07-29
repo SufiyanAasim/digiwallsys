@@ -22,8 +22,15 @@ All notable changes to this project are documented here. The format follows
   with the Ionicons used everywhere else. Also dropped a stray 🎉 from
   Savings.
 - The web scrollbar thumb now carries the Ember Glass gradient on a visible
-  track. The first pass inset it 3px on a 10px bar, leaving ~4px of thumb that
-  looked like a thin broken line.
+  track. Two separate faults kept it from ever appearing:
+  `scrollbar-width`/`scrollbar-color` were set alongside the
+  `::-webkit-scrollbar` rules, and per spec a browser honouring the standard
+  properties ignores the WebKit pseudo-elements entirely — so Chrome threw the
+  gradient away and drew a plain thin overlay bar. The standard properties are
+  now scoped to engines without `::-webkit-scrollbar` support (Firefox). And
+  Expo's web reset ships `body { overflow: hidden }`, which propagates to the
+  viewport and suppressed the page scrollbar outright: the document still
+  scrolled (`<html>` carries `scrollTop`) but nothing was drawn to drag.
 
 ### Fixed
 
