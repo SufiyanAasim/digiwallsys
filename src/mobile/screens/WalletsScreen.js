@@ -141,7 +141,7 @@ function buildStyles(colors, commonStyles) {
     formCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18, gap: 10 },
     cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },
     label: { color: colors.textMuted, fontWeight: '600', fontSize: 12 },
-    picker: { backgroundColor: colors.surfaceMuted, color: colors.text },
+    picker: { backgroundColor: colors.surfaceMuted, color: colors.text, minHeight: 48 },
     input: commonStyles.input,
     hint: { color: colors.textFaint, fontSize: 11, lineHeight: 15 },
     heading: { fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 6 },

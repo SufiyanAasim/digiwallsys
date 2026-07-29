@@ -184,7 +184,7 @@ function buildStyles(colors, commonStyles) {
     container: { flex: 1, backgroundColor: screenBackground(colors) }, content: { padding: 20, gap: 10, ...contentColumn(layout.form) },
     title: { fontSize: 24, fontWeight: '800', color: colors.text }, label: { fontWeight: '700', color: colors.text },
     sectionLabel: { fontSize: 17, fontWeight: '800', color: colors.text, marginTop: 12 },
-    picker: { backgroundColor: colors.surface, color: colors.text }, input: commonStyles.input,
+    picker: { backgroundColor: colors.surface, color: colors.text, minHeight: 48 }, input: commonStyles.input,
     secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 20, padding: 14, alignItems: 'center' },
     disabled: { backgroundColor: colors.disabled }, secondaryText: { color: colors.text, fontWeight: '700' },
     hint: { color: colors.textMuted, fontSize: 12, lineHeight: 17 }, heading: { fontSize: 19, fontWeight: '800', color: colors.text, marginTop: 16 },

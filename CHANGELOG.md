@@ -19,6 +19,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- CI and release instructions again recognize the documented four-branch
+  workflow: `main`, `backend`, `frontend`, and `database`.
 - The landing page gained a "How it works" section (three numbered steps whose
   number chip fills with the brand gradient on hover) and a row of capability
   chips. Every line describes something that already ships.
@@ -45,6 +47,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- Pickers on Send money, Requests & schedules, QR payments, and Wallets now
+  keep a 48px minimum height on web instead of collapsing to a difficult-to-use
+  native-select row.
 - Protected web routes now wait for session restoration before rendering, and
   logging out clears the in-memory account state as well as stored tokens.
 - Transaction search now binds one stable PostgreSQL parameter across every
