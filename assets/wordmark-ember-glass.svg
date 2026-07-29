@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 160" width="720" height="160" role="img" aria-labelledby="title description">
+  <title id="title">digiwallsys</title>
+  <desc id="description">Lowercase digiwallsys wordmark in the rose-to-amber Ember Glass theme.</desc>
+
+  <defs>
+    <linearGradient id="ember" x1="8%" y1="20%" x2="92%" y2="80%">
+      <stop offset="0%" stop-color="#FF5470" />
+      <stop offset="52%" stop-color="#FF6B67" />
+      <stop offset="100%" stop-color="#FFA45B" />
+    </linearGradient>
+    <linearGradient id="glassSheen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.72" />
+      <stop offset="42%" stop-color="#FFFFFF" stop-opacity="0.18" />
+      <stop offset="72%" stop-color="#FFFFFF" stop-opacity="0" />
+    </linearGradient>
+    <filter id="glassShadow" x="-10%" y="-25%" width="120%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#2E2027" flood-opacity="0.42" />
+      <feDropShadow dx="0" dy="1" stdDeviation="1" flood-color="#FF9A73" flood-opacity="0.42" />
+    </filter>
+  </defs>
+
+  <g
+    font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
+    font-size="112"
+    font-weight="800"
+    letter-spacing="-5"
+    text-anchor="middle"
+  >
+    <text
+      x="360"
+      y="116"
+      fill="url(#ember)"
+      stroke="#FFF5F0"
+      stroke-opacity="0.46"
+      stroke-width="1.7"
+      paint-order="stroke fill"
+      filter="url(#glassShadow)"
+    >digiwallsys</text>
+    <text x="360" y="113" fill="url(#glassSheen)" opacity="0.56">digiwallsys</text>
+  </g>
+</svg>

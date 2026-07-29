@@ -8,6 +8,7 @@ images remain in `src/mobile/assets` so Expo can bundle them.
 | `logo-glass.png` | Square "d/i" monogram, README/social preview |
 | `logo-glass-alt-rounded.png`, `logo-glass-alt-square.png` | Darker smoked-glass monogram variants |
 | `logo.svg` | Scalable monogram for docs |
+| `wordmark-ember-glass.svg` | Transparent rose-to-amber wordmark for the README |
 | `wordmark-glass-alt.png` | Smoked-glass "digiwallsys" wordmark (brand use) |
 
 These are **marketing assets only** — nothing here is bundled into the app.

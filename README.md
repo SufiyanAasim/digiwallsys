@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="assets/logo-glass.png" alt="digiwallsys logo" width="110" />
-
-# digiwallsys
+<img src="assets/logo-glass.png" alt="digiwallsys app icon" width="110" height="110" />
+<br />
+<img src="assets/wordmark-ember-glass.svg" alt="digiwallsys" width="360" />
 
 **A secure digiwallsys digital wallet platform with verified funding, immutable ledger accounting, QR payments, automation, alerts, and audited operations**
 
