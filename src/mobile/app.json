@@ -37,7 +37,7 @@
     },
     "android": {
       "package": "com.sufiyanaasim.digiwallsys",
-      "versionCode": 4,
+      "versionCode": 9,
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-adaptive-foreground.png",
         "backgroundColor": "#0B0A10"
@@ -50,6 +50,12 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "7c79c661-f3ea-4c5d-b207-77b8de410ba1"
+      }
+    },
+    "owner": "sufiyanaasims-team"
   }
 }

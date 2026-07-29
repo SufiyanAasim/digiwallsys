@@ -17,6 +17,8 @@ test('mobile API URL is configurable', () => {
     'utf8'
   );
   assert.match(apiSource, /EXPO_PUBLIC_API_URL/);
+  assert.match(apiSource, /process\.env\.NODE_ENV === 'development'/);
+  assert.match(apiSource, /https:\/\/digiwallsys-api\.onrender\.com/);
   assert.doesNotMatch(apiSource, /192\.168\./);
   assert.doesNotMatch(apiSource, /api\/wallet\/add/);
 });
@@ -64,10 +66,29 @@ test('every mobile icon slot resolves to an existing, consistent asset', () => {
 test('native package identifiers and EAS store profiles are configured', () => {
   const appConfig = JSON.parse(readFileSync(join(__dirname, '../../src/mobile/app.json'), 'utf8'));
   const easConfig = JSON.parse(readFileSync(join(__dirname, '../../src/mobile/eas.json'), 'utf8'));
+  const projectId = '7c79c661-f3ea-4c5d-b207-77b8de410ba1';
+  const productionApiUrl = 'https://digiwallsys-api.onrender.com';
 
   assert.equal(appConfig.expo.android.package, 'com.sufiyanaasim.digiwallsys');
   assert.equal(appConfig.expo.ios.bundleIdentifier, 'com.sufiyanaasim.digiwallsys');
+  assert.equal(appConfig.expo.extra.eas.projectId, projectId);
   assert.equal(easConfig.build.preview.android.buildType, 'apk');
   assert.equal(easConfig.build.production.android.buildType, 'app-bundle');
   assert.equal(easConfig.build.production.ios.simulator, false);
+  for (const profile of ['preview', 'production']) {
+    assert.equal(easConfig.build[profile].env.EXPO_PUBLIC_API_URL, productionApiUrl);
+    assert.equal(easConfig.build[profile].env.EXPO_PUBLIC_EAS_PROJECT_ID, projectId);
+  }
+});
+
+test('Android monorepo build delegates release bundling to Expo CLI', () => {
+  const pluginSource = readFileSync(
+    join(__dirname, '../../src/mobile/plugins/withAndroidMonorepoRoot.js'),
+    'utf8'
+  );
+
+  assert.match(pluginSource, /node_modules\/expo\/bin\/cli/);
+  assert.doesNotMatch(pluginSource, /node_modules\/@expo\/cli/);
+  assert.match(pluginSource, /node_modules\/hermes-compiler\/hermesc/);
+  assert.doesNotMatch(pluginSource, /react-native\/sdks\/hermesc/);
 });

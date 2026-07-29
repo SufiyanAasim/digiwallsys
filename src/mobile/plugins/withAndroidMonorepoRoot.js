@@ -23,11 +23,11 @@ module.exports = function withAndroidMonorepoRoot(config) {
     );
     androidConfig.modResults.contents = androidConfig.modResults.contents.replace(
       /^    hermesCommand = .*$/m,
-      '    hermesCommand = "${projectRoot}/../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"',
+      '    hermesCommand = "${projectRoot}/../../node_modules/hermes-compiler/hermesc/%OS-BIN%/hermesc"',
     );
     androidConfig.modResults.contents = androidConfig.modResults.contents.replace(
       /^    cliFile = .*$/m,
-      '    cliFile = new File("${projectRoot}/../../node_modules/@expo/cli/build/bin/cli")',
+      '    cliFile = new File("${projectRoot}/../../node_modules/expo/bin/cli")',
     );
 
     return androidConfig;

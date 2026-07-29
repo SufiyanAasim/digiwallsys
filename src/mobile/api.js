@@ -1,8 +1,12 @@
 import axios from 'axios';
 import { clearSession, getAccessToken, getRefreshToken, saveSession } from './session';
 
+const DEFAULT_API_URL = process.env.NODE_ENV === 'development'
+  ? 'http://localhost:5000'
+  : 'https://digiwallsys-api.onrender.com';
+
 export const API_BASE_URL = (
-  process.env.EXPO_PUBLIC_API_URL || 'https://digiwallsys-api.onrender.com'
+  process.env.EXPO_PUBLIC_API_URL || DEFAULT_API_URL
 ).replace(/\/$/, '');
 
 const api = axios.create({ baseURL: API_BASE_URL, timeout: 15000 });
