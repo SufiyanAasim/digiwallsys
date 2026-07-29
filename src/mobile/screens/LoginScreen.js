@@ -41,46 +41,27 @@ export default function LoginScreen({ navigation }) {
   const [remember, setRemember] = useState(false);
   const { colors, commonStyles } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
-  const scrollRef = useRef(null);
   const emailRef = useRef(null);
-  const panelY = useRef(0);
   const isWeb = Platform.OS === 'web';
+  // Web only: the marketing page and the sign-in form are two states of this
+  // screen rather than one long scroll. The form used to sit permanently below
+  // the hero, so it peeked into the bottom of the landing viewport and
+  // "Get started" merely scrolled to it. Now the landing stands on its own and
+  // the form replaces it. Native has no landing at all, so it starts here.
+  const [authOpen, setAuthOpen] = useState(!isWeb);
+  const showLanding = isWeb && !authOpen;
 
-  function scrollToPanel() {
-    const target = Math.max(panelY.current - 24, 0);
-    // On web the page itself scrolls (the ScrollView's own node ends up sized
-    // to its content, not clipped to the viewport, so its imperative scrollTo
-    // has nothing to scroll) -- the DOM's own scrolling element is the one
-    // that actually moves. Native never calls this: LandingHero, and the
-    // button that triggers it, only render on web.
-    if (!(isWeb && typeof document !== 'undefined')) {
-      scrollRef.current?.scrollTo({ y: target, animated: true });
-      return;
+  useEffect(() => {
+    if (!authOpen || !isWeb) return;
+    // The visitor may have scrolled down the landing before pressing
+    // "Get started"; the form that replaces it must start from the top.
+    if (typeof document !== 'undefined') {
+      (document.scrollingElement || document.documentElement).scrollTo({ top: 0 });
     }
-    const scroller = document.scrollingElement || document.documentElement;
-    const reduceMotion = typeof window !== 'undefined'
-      && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
-    scroller.scrollTo({ top: target, behavior: reduceMotion ? 'auto' : 'smooth' });
-
-    // Land the cursor in the email field once the scroll settles, so "Get
-    // started" hands off straight into typing rather than leaving the click
-    // as the only thing that happened. `scrollend` fires exactly when the
-    // animation finishes, but a synthetic/interrupted scroll can fail to
-    // raise it at all -- keep a timeout running regardless as a backstop, and
-    // let whichever fires first win.
-    let focused = false;
-    const focusEmail = () => {
-      if (focused) return;
-      focused = true;
-      emailRef.current?.focus();
-    };
-    if (reduceMotion) {
-      focusEmail();
-    } else {
-      scroller.addEventListener('scrollend', focusEmail, { once: true });
-      setTimeout(focusEmail, 500);
-    }
-  }
+    // Hand off straight into typing rather than leaving the click as the only
+    // thing that happened.
+    emailRef.current?.focus();
+  }, [authOpen, isWeb]);
 
   useEffect(() => {
     let active = true;
@@ -159,24 +140,25 @@ export default function LoginScreen({ navigation }) {
     <SafeAreaView style={styles.safeArea}>
       <AmbientBackground />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
-        <ScrollView ref={scrollRef} contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
-          {isWeb && !registering && <LandingHero onGetStarted={scrollToPanel} />}
-          <View
-            style={styles.formColumn}
-            onLayout={(event) => { panelY.current = event.nativeEvent.layout.y; }}
-          >
-          {/* LandingHero already carries the wordmark and tagline right above
-              this panel, so repeating them here would just be the same brand
-              mark twice in one scroll -- and exactly what "Get started"
-              scrolled past to land on before this. Only show it where the
-              hero isn't rendered: native (no hero there at all) and the web
-              "Create an account" state (hero hides itself while registering). */}
-          {(!isWeb || registering) && (
-            <View style={styles.brandBlock}>
-              <Wordmark size={42} />
-              <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
-            </View>
+        <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
+          {showLanding ? <LandingHero onGetStarted={() => setAuthOpen(true)} /> : (
+          <View style={styles.formColumn}>
+          {isWeb && (
+            <TouchableOpacity
+              style={styles.backLink}
+              onPress={() => { setRegistering(false); setAuthOpen(false); }}
+              accessibilityRole="button"
+              accessibilityLabel="Back to overview"
+            >
+              <Text style={styles.backLinkText}>← Back to overview</Text>
+            </TouchableOpacity>
           )}
+          {/* The hero carries the wordmark on the landing state, so this only
+              renders once the form has replaced it -- never both at once. */}
+          <View style={styles.brandBlock}>
+            <Wordmark size={42} />
+            <Text style={styles.subheading}>Secure payments, clearly managed.</Text>
+          </View>
           <View style={styles.panel}>
             {Boolean(errorMsg) && (
               <View style={styles.errorBox}>
@@ -265,6 +247,7 @@ export default function LoginScreen({ navigation }) {
           </View>
           <AppFooter navigation={navigation} />
           </View>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
       <PublicWebFooter navigation={navigation} />
@@ -293,6 +276,10 @@ function buildStyles(colors, commonStyles) {
     // gradient baked in as an opaque rectangle, so it always read as a coloured
     // box sitting on the page. Text also stays sharp at any size and re-reads
     // the palette when the theme is toggled.
+    // Without this the marketing page is unreachable again once the form
+    // opens: the swap is local state, so browser Back leaves the route too.
+    backLink: { alignSelf: 'flex-start', minHeight: 40, justifyContent: 'center', marginBottom: 4 },
+    backLinkText: { color: colors.textMuted, fontWeight: '600', fontSize: 13 },
     brandBlock: { alignItems: 'center', marginBottom: 26 },
     subheading: { color: colors.textMuted, marginTop: 10, fontSize: 12.5, textAlign: 'center' },
     panel: {

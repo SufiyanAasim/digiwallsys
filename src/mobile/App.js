@@ -32,6 +32,7 @@ import { AmbientLayer } from './components/AmbientBackground';
 import ErrorBoundary from './components/ErrorBoundary';
 import { ConfirmProvider } from './components/ConfirmProvider';
 import { ToastProvider } from './components/ToastProvider';
+import ScrollbarTheme from './components/web/ScrollbarTheme';
 import Sidebar from './components/web/Sidebar';
 
 const NativeStack = createNativeStackNavigator();
@@ -122,10 +123,19 @@ function AppShell() {
     setActiveRoute(currentRouteName());
   }, []);
 
-  const showSidebar = isWeb && !PUBLIC_ROUTES.includes(activeRoute);
+  // Credits is reachable without signing in (the public sign-in footer links to
+  // it), so the authenticated sidebar must not appear there for a visitor with
+  // no session: it offered Send money / Wallets / Log out to someone who isn't
+  // signed in, and its 248px column pushed the page off-centre and added its own
+  // nav scrollbar. Every other non-public route sits behind the redirect guard,
+  // so a sidebar is always correct there.
+  const showSidebar = isWeb
+    && !PUBLIC_ROUTES.includes(activeRoute)
+    && (activeRoute !== 'Credits' || !!user);
 
   return (
     <View style={styles.webRoot}>
+      <ScrollbarTheme />
       {showSidebar && (
         <Sidebar activeRoute={activeRoute} user={user} onNavigate={navigate} />
       )}

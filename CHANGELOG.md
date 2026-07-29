@@ -6,7 +6,31 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- On web, the marketing page and the sign-in form are now two states of the
+  same screen rather than one long scroll. The form used to sit permanently
+  below the hero, so it peeked into the bottom of the landing viewport and
+  "Get started" merely scrolled down to it; now the landing stands alone and
+  the form replaces it, carrying the same wordmark-and-tagline branding the
+  "Create an account" state already used. A "Back to overview" link returns to
+  the landing, since the swap is local state and browser Back would otherwise
+  leave the route entirely. Native is unchanged — it has no landing and opens
+  straight on the form.
+
 ### Fixed
+
+- Visiting Credits without signing in rendered the full authenticated sidebar
+  (Send money, Wallets, Log out) to a visitor with no session. Besides being
+  wrong, its 248px column pushed the page off-centre and its scrollable nav
+  added a second scrollbar next to the page's own. The sidebar is now hidden on
+  Credits until a user is actually loaded, which centres the page and removes
+  that scrollbar; reaching Credits from the sidebar while signed in is
+  unchanged.
+- Scrollbars on web used the browser default, which painted a stark light bar
+  down the edge of the dark Ember Glass surfaces. `components/web/ScrollbarTheme.js`
+  injects themed scrollbar CSS and rewrites it when the palette changes, so it
+  follows the light/dark toggle.
 
 - Clicking "Credits" from the public sign-in footer opened the Credits screen
   and immediately bounced back to Login. Credits needs no session — it's
