@@ -185,6 +185,7 @@ test('native package identifiers and EAS store profiles are configured', () => {
   assert.equal(appConfig.expo.version, '1.9.0');
   assert.equal(appConfig.expo.android.versionCode, 12);
   assert.equal(appConfig.expo.ios.buildNumber, '7');
+  assert.equal(appConfig.expo.ios.infoPlist.ITSAppUsesNonExemptEncryption, false);
   assert.equal(appConfig.expo.extra.eas.projectId, projectId);
   assert.equal(easConfig.build.preview.android.buildType, 'apk');
   assert.equal(easConfig.build.production.android.buildType, 'app-bundle');

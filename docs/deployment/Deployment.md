@@ -24,6 +24,12 @@ files" section for which file goes where.
 Render auto-injects `PORT`; do not set it. Point the web service at the root
 `Dockerfile` or `npm run start:api`. Create a separate background worker
 service using `npm run start:worker`; do not run workers in every API instance.
+Until a real email-delivery adapter is connected, keep the worker on
+`ENABLE_SCHEDULER=true`, `ENABLE_PUSH_WORKER=true`, and
+`ENABLE_EMAIL_WORKER=false`, with `EMAIL_WEBHOOK_URL` and
+`EMAIL_DELIVERY_TOKEN` unset. When email delivery is introduced, set both
+adapter values before changing `ENABLE_EMAIL_WORKER` to `true`; production
+startup deliberately rejects an enabled email worker with missing credentials.
 
 ### One-time administrator bootstrap
 

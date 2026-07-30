@@ -49,6 +49,10 @@ All notable changes to this project are documented here. The format follows
   push to `refs/heads/main` may move that tag.
 - Expo SDK 57 dependencies now use the supported AsyncStorage, React,
   React DOM, safe-area, and SVG versions without duplicate native modules.
+- iOS declares that the app does not use non-exempt encryption, avoiding
+  manual export-compliance configuration for standard HTTPS-only networking.
+- The production worker template keeps email delivery disabled until both a
+  real delivery webhook and bearer token are configured.
 
 ## [1.8.5] — Trench
 

@@ -31,6 +31,7 @@
       "buildNumber": "7",
       "supportsTablet": true,
       "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
         "NSFaceIDUsageDescription": "Use Face ID to unlock your digiwallsys session.",
         "NSCameraUsageDescription": "Scan digiwallsys payment QR codes."
       }

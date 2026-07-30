@@ -21,6 +21,7 @@ artifacts/*
 !artifacts/digiwallsys-v1.8.0-build10.aab
 !artifacts/digiwallsys-v1.9.0-build12.apk
 !artifacts/digiwallsys-v1.9.0-build12.aab
+!artifacts/SHA256SUMS-v1.9.0.txt
 
 # Track the shared launch profile while keeping personal editor settings local.
 .vscode/*
