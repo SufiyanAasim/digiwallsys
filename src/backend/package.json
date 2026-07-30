@@ -1,6 +1,6 @@
 {
   "name": "@digiwallsys/api",
-  "version": "1.8.5",
+  "version": "1.9.0",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

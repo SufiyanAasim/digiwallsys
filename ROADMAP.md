@@ -178,10 +178,30 @@ container distribution.
 - [x] Add reduced-motion-aware screen, control, ambient, landing, login, and
       Credits animations for web and native.
 - [x] Add secure, idempotent provisioning for two verified transfer-test users.
-- [x] Seed opening funds through balanced demo-funding journals.
+- [x] Seed opening funds through balanced funding journals tagged as demo bootstrap.
 - [x] Publish the production API image through GitHub Container Registry.
 - [ ] Provision the two demo users against the deployed Supabase database.
 - [ ] Verify transfers in both directions through the deployed API.
+
+## v1.9.0 — Crest
+
+**Context:** A complete Aurora Glass interface and brand refinement across the
+shared Expo web and native clients.
+
+- [x] Replace the active rose/amber palette with deep teal, mint, cyan, and
+      high-contrast ink tokens.
+- [x] Refine the landing hero, dashboard header, balance status, action grid,
+      sidebar, scrollbar, footer, and shared glass surfaces.
+- [x] Preserve the earlier Ember Glass logo family under explicit historical
+      filenames and generate new Aurora Glass runtime assets.
+- [x] Keep all motion reduced-motion-aware and restricted to transform/opacity
+      so responsive geometry and touch targets remain stable.
+- [x] Add audited display-name, verified-email, and password editing with
+      automatic initials/avatar updates and cross-device session revocation.
+- [x] Align public, Android, iOS, API, documentation, and release metadata.
+- [ ] Publish signed Android build `12` APK/AAB artifacts and the `v1.9.0`
+      container tag.
+- [ ] Complete deployed desktop, mobile-web, and device acceptance.
 
 No release may be marked complete until its tests, documentation, migration,
 security, and operational acceptance criteria pass.

@@ -1,43 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="digiwallsys logo">
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220" role="img" aria-labelledby="title description">
+  <title id="title">digiwallsys Aurora Glass logo</title>
+  <desc id="description">Lowercase di monogram on a deep teal glass badge with a mint-to-cyan glow.</desc>
   <defs>
-    <linearGradient id="emberGlass" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF5470" />
-      <stop offset="100%" stop-color="#FFA45B" />
+    <linearGradient id="aurora" x1="8%" y1="4%" x2="94%" y2="100%">
+      <stop offset="0%" stop-color="#31D1A7"/>
+      <stop offset="55%" stop-color="#20B8B3"/>
+      <stop offset="100%" stop-color="#2CA7D3"/>
     </linearGradient>
-    <linearGradient id="glassFront" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.92)" />
-      <stop offset="55%" stop-color="rgba(255,255,255,0.55)" />
-      <stop offset="100%" stop-color="rgba(255,255,255,0.28)" />
+    <linearGradient id="glass" x1="50%" y1="0%" x2="50%" y2="75%">
+      <stop offset="0%" stop-color="#E8F8F4" stop-opacity=".44"/>
+      <stop offset="58%" stop-color="#E8F8F4" stop-opacity=".07"/>
+      <stop offset="100%" stop-color="#E8F8F4" stop-opacity="0"/>
     </linearGradient>
-    <linearGradient id="glassBack" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.5)" />
-      <stop offset="100%" stop-color="rgba(255,255,255,0.08)" />
-    </linearGradient>
-    <linearGradient id="sheen" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="rgba(255,255,255,0.35)" />
-      <stop offset="100%" stop-color="rgba(255,255,255,0)" />
-    </linearGradient>
-    <filter id="softBlur" x="-40%" y="-40%" width="180%" height="180%">
-      <feGaussianBlur stdDeviation="2.4" />
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="12" stdDeviation="13" flood-color="#001A15" flood-opacity=".36"/>
     </filter>
-    <clipPath id="badgeClip">
-      <rect x="4" y="4" width="212" height="212" rx="56" />
-    </clipPath>
   </defs>
-
-  <rect x="4" y="4" width="212" height="212" rx="56" fill="url(#emberGlass)" />
-
-  <g clip-path="url(#badgeClip)">
-    <path d="M4 60 Q110 4 216 60 L216 4 L4 4 Z" fill="url(#sheen)" />
-
-    <text x="132" y="150" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-          font-weight="800" font-size="128" fill="url(#glassBack)"
-          stroke="rgba(255,255,255,0.35)" stroke-width="1" filter="url(#softBlur)">i</text>
-
-    <text x="52" y="148" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
-          font-weight="800" font-size="128" fill="url(#glassFront)"
-          stroke="rgba(255,255,255,0.65)" stroke-width="1.5">d</text>
+  <rect x="5" y="5" width="210" height="210" rx="58" fill="#06251F" filter="url(#shadow)"/>
+  <rect x="8" y="8" width="204" height="204" rx="55" fill="url(#aurora)"/>
+  <path d="M8 63Q8 8 63 8h94q55 0 55 55v18c-50-23-119-31-204 8z" fill="url(#glass)"/>
+  <rect x="8.5" y="8.5" width="203" height="203" rx="54.5" fill="none" stroke="#C4FFF0" stroke-opacity=".44"/>
+  <g fill="#E8F8F4">
+    <circle cx="83" cy="143" r="40" fill="none" stroke="#E8F8F4" stroke-width="21"/>
+    <rect x="111" y="45" width="22" height="139" rx="11"/>
+    <rect x="154" y="100" width="22" height="84" rx="11" fill-opacity=".50"/>
+    <circle cx="165" cy="73" r="12" fill-opacity=".50"/>
   </g>
-
-  <rect x="4" y="4" width="212" height="212" rx="56" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
 </svg>

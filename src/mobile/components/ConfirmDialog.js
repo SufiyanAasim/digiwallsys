@@ -4,7 +4,7 @@ import TouchableOpacity from './TouchableOpacity';
 import { useAppTheme } from '../ThemeContext';
 import { radii } from '../theme';
 
-// Shared confirmation dialog built from the existing Ember Glass tokens, so
+// Shared confirmation dialog built from the Aurora Glass tokens, so
 // destructive actions confirm in place instead of navigating to a dedicated
 // screen. Works identically on mobile and web.
 export default function ConfirmDialog({

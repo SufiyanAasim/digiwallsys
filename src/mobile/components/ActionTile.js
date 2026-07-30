@@ -33,7 +33,7 @@ function buildStyles(colors) {
         ? { flexBasis: 168, flexGrow: 0, minWidth: 168 }
         : { flexBasis: '31%', flexGrow: 1, minWidth: 92 }),
       minHeight: 78,
-      backgroundColor: colors.surfaceMuted,
+      backgroundColor: colors.surface,
       borderWidth: 1,
       borderColor: colors.glassBorder,
       borderRadius: radii.md,
@@ -42,6 +42,15 @@ function buildStyles(colors) {
       paddingVertical: 12,
       paddingHorizontal: 6,
       gap: 8,
+      ...Platform.select({
+        web: {
+          backdropFilter: 'blur(14px) saturate(120%)',
+          transitionProperty: 'border-color, box-shadow',
+          transitionDuration: '180ms',
+          boxShadow: '0 10px 28px rgba(0,36,29,0.14)',
+        },
+        default: { elevation: 1 },
+      }),
     },
     iconWrap: {
       width: 34,

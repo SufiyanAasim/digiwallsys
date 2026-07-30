@@ -24,6 +24,7 @@ outcome, while Git tags and GitHub release titles remain exact.
 | `v1.7.5` | Convoy | Savings goals, budgets, calendar, tagging, statements, alerts. |
 | `v1.8.0` | Estuary | Multi-currency wallets and shared/family wallets. |
 | `v1.8.5` | Trench | Coordinated motion, demo accounts, and container packaging. |
+| `v1.9.0` | Crest | Aurora Glass interface, responsive refinement, and renewed brand assets. |
 
 ## Exact naming rules
 

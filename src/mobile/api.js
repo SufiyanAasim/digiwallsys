@@ -99,6 +99,14 @@ export async function logoutUser() {
 }
 
 export const getCurrentUser = () => api.get('/api/users/me');
+export const updateCurrentUser = (name, email, currentPassword) => api.patch(
+  '/api/users/me',
+  { name, email, currentPassword: currentPassword || undefined }
+);
+export const changeCurrentPassword = (currentPassword, newPassword) => api.patch(
+  '/api/users/me/password',
+  { currentPassword, newPassword }
+);
 export const getBalance = (currency) => api.get('/api/wallet/balance', { params: currency ? { currency } : undefined });
 export const getWallets = () => api.get('/api/wallet');
 export const addCurrencyWallet = (currency) => api.post('/api/wallet/currencies', { currency });

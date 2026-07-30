@@ -121,7 +121,7 @@ function buildStyles(colors, commonStyles) {
     container: { flex: 1, backgroundColor: screenBackground(colors) }, header: { padding: 20, paddingBottom: 12 },
     title: { fontSize: 25, fontWeight: '800', color: colors.text }, searchRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8 },
     search: { ...commonStyles.input, flex: 1 }, searchButton: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.primary, borderRadius: 12, paddingHorizontal: 14 },
-    white: { color: colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E', fontWeight: '700' },
+    white: { color: colors.mode === 'light' ? '#FFFFFF' : colors.primaryDark, fontWeight: '700' },
     exportRow: { flexDirection: 'row', paddingHorizontal: 20, gap: 8, marginTop: 4 },
     export: { flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center' }, exportText: { color: colors.primary, fontWeight: '700', fontSize: 12.5 },
     content: { padding: 20, ...contentColumn(layout.page) }, card: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderColor: colors.border },

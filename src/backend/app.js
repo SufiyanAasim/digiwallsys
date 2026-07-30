@@ -41,7 +41,7 @@ app.get('/', (_req, res) => {
 });
 
 app.get('/api/health', (_req, res) => {
-  res.json({ name: 'digiwallsys', status: 'ok', version: '1.8.5' });
+  res.json({ name: 'digiwallsys', status: 'ok', version: '1.9.0' });
 });
 
 app.get('/api/ready', async (_req, res) => {

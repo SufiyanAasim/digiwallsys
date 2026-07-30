@@ -37,8 +37,8 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
 
   return (
     <MotionSection style={styles.sidebar} horizontal distance={-12}>
-      {/* The sidebar sits outside the content area's AmbientLayer, so it had
-          none of the rose glow every other surface picks up and read as a flat
+      {/* The sidebar sits outside the content area's AmbientLayer, so it needs
+          the same Aurora glow every other surface picks up instead of reading as a flat
           slab beside them. This gives it the same wash on its own. */}
       <LinearGradient
         colors={[colors.gradientAmbientTop, 'transparent']}
@@ -48,17 +48,30 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
       />
       <View style={styles.brandRow}>
         <Logo size={32} />
-        <Wordmark size={17} />
+        <View style={styles.brandCopy}>
+          <Wordmark size={17} />
+          <Text style={styles.brandTheme}>AURORA GLASS</Text>
+        </View>
+        <View style={styles.livePill}>
+          <View style={styles.liveDot} />
+          <Text style={styles.liveText}>LIVE</Text>
+        </View>
       </View>
 
-      <View style={styles.profileCard}>
+      <LinearGradient
+        colors={[colors.primarySoft, colors.accentSoft]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.profileCard}
+      >
         <View style={styles.avatar}><Text style={styles.avatarText}>{initials}</Text></View>
         <View style={styles.profileText}>
           <Text style={styles.profileName} numberOfLines={1}>{user?.name || 'Welcome'}</Text>
           <Text style={styles.profileRole} numberOfLines={1}>{user?.role === 'admin' ? 'Administrator' : 'Member'}</Text>
         </View>
-      </View>
+      </LinearGradient>
 
+      <Text style={styles.navSection}>WORKSPACE</Text>
       <ScrollView style={styles.nav} showsVerticalScrollIndicator={false}>
         {items.map((item) => {
           const active = activeRoute === item.route;
@@ -99,7 +112,7 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
           <Icon name="log-out-outline" size={18} color={colors.primary} />
           <Text style={styles.logoutLabel}>Log out</Text>
         </TouchableOpacity>
-        <Text style={styles.version}>v1.8.5 "Trench"</Text>
+        <Text style={styles.version}>v1.9.0 "Crest" · Aurora Glass</Text>
       </View>
     </MotionSection>
   );
@@ -120,13 +133,21 @@ function buildStyles(colors) {
       backgroundColor: colors.backgroundElevated,
       borderRightWidth: 1,
       borderRightColor: colors.glassBorder,
-      paddingVertical: 22,
+      paddingVertical: 20,
       paddingHorizontal: 16,
     },
-    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 6, marginBottom: 16 },
+    brandRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 4, marginBottom: 16 },
+    brandCopy: { flex: 1 },
+    brandTheme: { color: colors.textFaint, fontSize: 8.5, fontWeight: '800', letterSpacing: 1.2, marginTop: 1 },
+    livePill: {
+      flexDirection: 'row', alignItems: 'center', gap: 5, paddingVertical: 5, paddingHorizontal: 7,
+      borderRadius: radii.pill, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border,
+    },
+    liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success },
+    liveText: { color: colors.primary, fontSize: 8.5, fontWeight: '900', letterSpacing: 0.7 },
     profileCard: {
       flexDirection: 'row', alignItems: 'center', gap: 10,
-      backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder,
+      borderWidth: 1, borderColor: colors.glassBorder,
       borderRadius: radii.md, padding: 12, marginBottom: 14,
     },
     avatar: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
@@ -134,16 +155,19 @@ function buildStyles(colors) {
     profileText: { flex: 1 },
     profileName: { color: colors.text, fontWeight: '700', fontSize: 13 },
     profileRole: { color: colors.textMuted, fontSize: 11, marginTop: 1 },
+    navSection: { color: colors.textFaint, fontSize: 9, fontWeight: '800', letterSpacing: 1.3, marginHorizontal: 10, marginBottom: 5 },
     nav: { flex: 1 },
-    // Tightened so the full nav fits without clipping on a ~1000px-tall window.
-    navItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 9, paddingHorizontal: 10, borderRadius: radii.sm, marginBottom: 1 },
-    navItemActive: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border, overflow: 'hidden' },
-    // Gradient rail on the active item's leading edge, so the selection is the
-    // brand's own rose-to-amber rather than a plain tinted rectangle.
+    // The workspace has fourteen destinations. A 31px rhythm keeps every item
+    // visible at the supported 800px desktop height without shrinking its
+    // touch width or forcing the footer off-screen.
+    navItem: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6, paddingHorizontal: 10, borderRadius: radii.sm, marginBottom: 1 },
+    navItemActive: { backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.borderStrong, overflow: 'hidden' },
+    // Gradient rail on the active item's leading edge keeps selection aligned
+    // with the mint-to-cyan Aurora identity.
     activeBar: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 3 },
-    navLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 13.5 },
+    navLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 12.5 },
     navLabelActive: { color: colors.text },
-    footer: { borderTopWidth: 1, borderTopColor: colors.glassBorder, paddingTop: 12, marginTop: 8 },
+    footer: { borderTopWidth: 1, borderTopColor: colors.glassBorder, paddingTop: 10, marginTop: 8 },
     themeRow: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 10, paddingVertical: 8, marginBottom: 4 },
     themeLabel: { color: colors.textMuted, fontWeight: '600', fontSize: 12.5, flex: 1 },
     logoutItem: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 11, paddingHorizontal: 10, borderRadius: radii.sm },

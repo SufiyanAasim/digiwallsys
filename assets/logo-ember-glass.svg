@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 220" width="220" height="220" role="img" aria-label="digiwallsys logo">
+  <defs>
+    <linearGradient id="emberGlass" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF5470" />
+      <stop offset="100%" stop-color="#FFA45B" />
+    </linearGradient>
+    <linearGradient id="glassFront" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.92)" />
+      <stop offset="55%" stop-color="rgba(255,255,255,0.55)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0.28)" />
+    </linearGradient>
+    <linearGradient id="glassBack" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.5)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0.08)" />
+    </linearGradient>
+    <linearGradient id="sheen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.35)" />
+      <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+    </linearGradient>
+    <filter id="softBlur" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.4" />
+    </filter>
+    <clipPath id="badgeClip">
+      <rect x="4" y="4" width="212" height="212" rx="56" />
+    </clipPath>
+  </defs>
+
+  <rect x="4" y="4" width="212" height="212" rx="56" fill="url(#emberGlass)" />
+
+  <g clip-path="url(#badgeClip)">
+    <path d="M4 60 Q110 4 216 60 L216 4 L4 4 Z" fill="url(#sheen)" />
+
+    <text x="132" y="150" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+          font-weight="800" font-size="128" fill="url(#glassBack)"
+          stroke="rgba(255,255,255,0.35)" stroke-width="1" filter="url(#softBlur)">i</text>
+
+    <text x="52" y="148" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif"
+          font-weight="800" font-size="128" fill="url(#glassFront)"
+          stroke="rgba(255,255,255,0.65)" stroke-width="1.5">d</text>
+  </g>
+
+  <rect x="4" y="4" width="212" height="212" rx="56" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
+</svg>

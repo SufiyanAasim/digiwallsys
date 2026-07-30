@@ -29,7 +29,7 @@ export default function PublicWebFooter({ navigation }) {
         <Text style={styles.link}>Credits</Text>
       </TouchableOpacity>
       <Text style={styles.dot}>·</Text>
-      <Text style={styles.version}>v1.8.5 &quot;Trench&quot;</Text>
+      <Text style={styles.version}>v1.9.0 &quot;Crest&quot;</Text>
       <Text style={styles.dot}>·</Text>
       <Text style={styles.tagline}>digiwallsys digital wallet</Text>
     </MotionSection>
@@ -57,10 +57,12 @@ function buildStyles(colors) {
       alignContent: 'center',
       gap: 6,
       paddingHorizontal: 12,
-      backgroundColor: colors.backgroundElevated,
+      backgroundColor: colors.mode === 'dark' ? 'rgba(0,26,21,0.90)' : 'rgba(239,250,247,0.92)',
       borderTopWidth: 1,
-      borderTopColor: colors.glassBorder,
+      borderTopColor: colors.borderStrong,
       zIndex: 20,
+      backdropFilter: 'blur(20px) saturate(130%)',
+      WebkitBackdropFilter: 'blur(20px) saturate(130%)',
     },
     link: { color: colors.primary, fontWeight: '700', fontSize: 12.5, textDecorationLine: 'underline' },
     dot: { color: colors.textMuted, fontSize: 12.5 },

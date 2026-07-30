@@ -191,7 +191,7 @@ function buildStyles(colors, commonStyles) {
     goalActions: { flexDirection: 'row', gap: 8, alignItems: 'center' },
     goalInput: { flex: 1, minHeight: 42, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm, paddingHorizontal: 12, color: colors.text },
     smallButton: { minHeight: 42, justifyContent: 'center', paddingHorizontal: 14, backgroundColor: colors.primary, borderRadius: radii.sm },
-    smallButtonText: { color: colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E', fontWeight: '800', fontSize: 12.5 },
+    smallButtonText: { color: colors.mode === 'light' ? '#FFFFFF' : colors.primaryDark, fontWeight: '800', fontSize: 12.5 },
     smallButtonMuted: { minHeight: 42, justifyContent: 'center', paddingHorizontal: 14, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm },
     smallButtonMutedText: { color: colors.text, fontWeight: '700', fontSize: 12.5 },
     archiveLink: { alignSelf: 'flex-start' },

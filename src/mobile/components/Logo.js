@@ -19,7 +19,7 @@ export default function Logo({ size = 40, radius }) {
       style={[styles.badge, { width: size, height: size, borderRadius: cornerRadius }]}
     >
       <LinearGradient
-        colors={isDark ? ['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)'] : ['rgba(255,255,255,0.55)', 'rgba(255,255,255,0)']}
+        colors={isDark ? ['rgba(232,248,244,0.44)', 'rgba(232,248,244,0)'] : ['rgba(255,255,255,0.58)', 'rgba(255,255,255,0)']}
         start={{ x: 0.5, y: 0 }}
         end={{ x: 0.5, y: 0.7 }}
         style={StyleSheet.absoluteFill}
@@ -51,22 +51,22 @@ const styles = StyleSheet.create({
   badge: { alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   glyph: { position: 'absolute', fontWeight: '800', includeFontPadding: false },
   // Dark mode: light/frosted-white glass glyphs on the gradient.
-  glyphBackDark: { color: 'rgba(255,255,255,0.32)' },
+  glyphBackDark: { color: 'rgba(232,248,244,0.34)' },
   glyphFrontDark: {
-    color: 'rgba(255,255,255,0.92)',
+    color: 'rgba(232,248,244,0.96)',
     ...Platform.select({
-      web: { textShadow: '0 1px 3px rgba(26,10,14,0.35)' },
+      web: { textShadow: '0 1px 4px rgba(0,36,29,0.42)' },
       default: {
-        textShadowColor: 'rgba(26,10,14,0.35)',
+        textShadowColor: 'rgba(0,36,29,0.42)',
         textShadowOffset: { width: 0, height: 1 },
         textShadowRadius: 3,
       },
     }),
   },
   // Light mode: dark/smoked-glass glyphs on the same gradient.
-  glyphBackLight: { color: 'rgba(26,10,14,0.22)' },
+  glyphBackLight: { color: 'rgba(0,48,40,0.23)' },
   glyphFrontLight: {
-    color: 'rgba(26,10,14,0.85)',
+    color: 'rgba(0,48,40,0.88)',
     ...Platform.select({
       web: { textShadow: '0 1px 3px rgba(255,255,255,0.45)' },
       default: {
@@ -76,5 +76,5 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  border: { ...StyleSheet.absoluteFillObject, borderWidth: 1, borderColor: 'rgba(255,255,255,0.4)' },
+  border: { ...StyleSheet.absoluteFillObject, borderWidth: 1, borderColor: 'rgba(232,248,244,0.44)' },
 });

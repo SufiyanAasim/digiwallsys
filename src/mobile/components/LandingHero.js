@@ -271,8 +271,12 @@ export default function LandingHero({ onGetStarted }) {
           },
         ]}
       >
+        <View style={themedStyles.eyebrow}>
+          <View style={themedStyles.eyebrowDot} />
+          <Text style={themedStyles.eyebrowText}>AURORA GLASS · LIVE LEDGER</Text>
+        </View>
         <Wordmark size={54} />
-        <Text style={themedStyles.headline}>Money, held together properly.</Text>
+        <Text style={themedStyles.headline}>Money, moving with clarity.</Text>
         <Text style={themedStyles.subheadline}>
           A digital wallet with a real double-entry ledger underneath — multi-currency,
           shared, and budgeted, not just a balance and a button.
@@ -316,6 +320,12 @@ function buildStyles(colors) {
   return StyleSheet.create({
     wrap: { width: '100%', maxWidth: 920, alignSelf: 'center', marginBottom: 48, position: 'relative' },
     heroBlock: { alignItems: 'center', paddingVertical: 32, gap: 14 },
+    eyebrow: {
+      flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 7, paddingHorizontal: 12,
+      borderRadius: radii.pill, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border,
+    },
+    eyebrowDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.success },
+    eyebrowText: { color: colors.primary, fontSize: 10, fontWeight: '900', letterSpacing: 1.15 },
     headline: {
       color: colors.text,
       fontSize: 34,
@@ -349,8 +359,13 @@ function buildStyles(colors) {
       padding: 18,
       gap: 8,
       ...Platform.select({
-        web: { boxShadow: '0 0 0 rgba(0,0,0,0)', transitionProperty: 'border-color', transitionDuration: '180ms' },
-        default: null,
+        web: {
+          backdropFilter: 'blur(18px) saturate(125%)',
+          boxShadow: '0 16px 44px rgba(0,36,29,0.18)',
+          transitionProperty: 'border-color, box-shadow',
+          transitionDuration: '180ms',
+        },
+        default: { elevation: 2 },
       }),
     },
     cardIcon: {
@@ -382,6 +397,10 @@ function buildStyles(colors) {
       padding: 18,
       gap: 10,
       minHeight: 172,
+      ...Platform.select({
+        web: { backdropFilter: 'blur(18px) saturate(125%)', boxShadow: '0 16px 44px rgba(0,36,29,0.16)' },
+        default: { elevation: 2 },
+      }),
     },
     stepHovered: { borderColor: colors.borderStrong },
     stepHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -394,7 +413,7 @@ function buildStyles(colors) {
       backgroundColor: colors.primarySoft,
     },
     stepNumberText: { color: colors.primary, fontWeight: '800', fontSize: 13 },
-    stepNumberTextOn: { color: '#FFFFFF', fontWeight: '800', fontSize: 13 },
+    stepNumberTextOn: { color: colors.primaryDark, fontWeight: '800', fontSize: 13 },
     stepTitle: { color: colors.text, fontWeight: '700', fontSize: 14.5 },
     stepBody: { color: colors.textMuted, fontSize: 12.5, lineHeight: 18 },
 

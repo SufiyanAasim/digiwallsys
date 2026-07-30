@@ -2,7 +2,7 @@
   "name": "@digiwallsys/mobile",
   "author": "Sufiyan Aasim",
   "license": "MIT",
-  "version": "1.8.5",
+  "version": "1.9.0",
   "main": "index.js",
   "scripts": {
     "start": "node scripts/run-package-bin.js expo start",

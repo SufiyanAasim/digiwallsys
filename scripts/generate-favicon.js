@@ -14,9 +14,9 @@ const SIZE = 256;
 const SS = 4;                    // supersample factor, downsampled for anti-aliasing
 const W = SIZE * SS;
 
-// Ember Glass gradient, diagonal top-left -> bottom-right.
-const FROM = [0xFF, 0x54, 0x70];
-const TO = [0xFF, 0xA4, 0x5B];
+// Aurora Glass gradient, diagonal top-left -> bottom-right.
+const FROM = [0x31, 0xD1, 0xA7];
+const TO = [0x2C, 0xA7, 0xD3];
 
 const s = (n) => n * SS;
 

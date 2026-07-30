@@ -13,7 +13,7 @@ import { motionDriver, useMotion } from '../motion';
 
 const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
 
-// Soft rose/amber glow behind every screen. The blobs are sized from the actual
+// Soft mint/cyan glow behind every screen. The blobs are sized from the actual
 // viewport so the glow fills a wide desktop monitor edge to edge instead of
 // sitting as two small circles in the middle of the page.
 // Screen-level usage. On web the shell paints one AmbientLayer across the whole

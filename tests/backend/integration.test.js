@@ -165,4 +165,85 @@ if (!process.env.TEST_DATABASE_URL) {
     const balance = await request('/api/wallet/balance', { token: sender.accessToken });
     assert.equal(Number(balance.body.balance), 20);
   });
+
+  test('profile, verified email, and password changes are authenticated and audited', async () => {
+    const session = await registerAndLogin('Profile Owner', 'profile@example.test');
+
+    const renamed = await request('/api/users/me', {
+      method: 'PATCH',
+      token: session.accessToken,
+      body: { name: 'Aurora Owner', email: 'profile@example.test' },
+    });
+    assert.equal(renamed.status, 200);
+    assert.equal(renamed.body.user.name, 'Aurora Owner');
+    assert.equal(renamed.body.user.emailVerified, true);
+
+    const rejectedEmail = await request('/api/users/me', {
+      method: 'PATCH',
+      token: session.accessToken,
+      body: {
+        name: 'Aurora Owner',
+        email: 'profile-new@example.test',
+        currentPassword: 'wrong-password',
+      },
+    });
+    assert.equal(rejectedEmail.status, 401);
+
+    const changedEmail = await request('/api/users/me', {
+      method: 'PATCH',
+      token: session.accessToken,
+      body: {
+        name: 'Aurora Owner',
+        email: 'profile-new@example.test',
+        currentPassword: 'SecurePass123!',
+      },
+    });
+    assert.equal(changedEmail.status, 200);
+    assert.equal(changedEmail.body.user.emailVerified, false);
+    assert.ok(changedEmail.body.verificationToken);
+
+    const verification = await request('/api/auth/verify-email', {
+      method: 'POST',
+      body: { token: changedEmail.body.verificationToken },
+    });
+    assert.equal(verification.status, 200);
+
+    const changedPassword = await request('/api/users/me/password', {
+      method: 'PATCH',
+      token: session.accessToken,
+      body: {
+        currentPassword: 'SecurePass123!',
+        newPassword: 'NewSecurePass456!',
+      },
+    });
+    assert.equal(changedPassword.status, 200);
+
+    const revokedRefresh = await request('/api/auth/refresh', {
+      method: 'POST',
+      body: { refreshToken: session.refreshToken },
+    });
+    assert.equal(revokedRefresh.status, 401);
+
+    const oldLogin = await request('/api/auth/login', {
+      method: 'POST',
+      body: { email: 'profile-new@example.test', password: 'SecurePass123!' },
+    });
+    assert.equal(oldLogin.status, 401);
+    const newLogin = await request('/api/auth/login', {
+      method: 'POST',
+      body: { email: 'profile-new@example.test', password: 'NewSecurePass456!' },
+    });
+    assert.equal(newLogin.status, 200);
+
+    const audit = await pool.query(
+      `SELECT action FROM audit_logs
+       WHERE actor_userid = $1 AND action IN ('user.profile_updated', 'auth.password_changed')
+       ORDER BY action`,
+      [session.user.id]
+    );
+    assert.deepEqual(
+      audit.rows.map((row) => row.action),
+      ['auth.password_changed', 'user.profile_updated', 'user.profile_updated']
+    );
+  });
 }

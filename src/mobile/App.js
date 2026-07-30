@@ -1,8 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createStackNavigator } from '@react-navigation/stack';
+import { StatusBar } from 'expo-status-bar';
 
 import AccountRecoveryScreen from './screens/AccountRecoveryScreen';
 import AddMoneyScreen from './screens/AddMoneyScreen';
@@ -34,6 +35,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { ConfirmProvider } from './components/ConfirmProvider';
 import { ToastProvider } from './components/ToastProvider';
 import ScrollbarTheme from './components/web/ScrollbarTheme';
+import CompactHeader from './components/web/CompactHeader';
 import Sidebar from './components/web/Sidebar';
 
 const NativeStack = createNativeStackNavigator();
@@ -105,6 +107,7 @@ const linking = {
 function AppShell() {
   const isWeb = Platform.OS === 'web';
   const Stack = isWeb ? JSStack : NativeStack;
+  const { width: viewportWidth } = useWindowDimensions();
   const [activeRoute, setActiveRoute] = useState('Login');
   const [user, setUser] = useState(null);
   const [sessionReady, setSessionReady] = useState(false);
@@ -177,18 +180,27 @@ function AppShell() {
   // signed in, and its 248px column pushed the page off-centre and added its own
   // nav scrollbar. Every other non-public route sits behind the redirect guard,
   // so a sidebar is always correct there.
-  const showSidebar = isWeb
+  const showAppNavigation = isWeb
     && !PUBLIC_ROUTES.includes(activeRoute)
     && (activeRoute !== 'Credits' || !!user);
+  const showSidebar = showAppNavigation && viewportWidth >= 900;
+  const showCompactHeader = showAppNavigation && viewportWidth < 900;
 
   return (
     <View style={styles.webRoot}>
+      <StatusBar
+        style={colors.mode === 'dark' ? 'light' : 'dark'}
+        backgroundColor={colors.background}
+      />
       <ScrollbarTheme />
       {showSidebar && (
         <Sidebar activeRoute={activeRoute} user={user} onNavigate={navigate} />
       )}
       <View style={styles.webContentArea}>
         {isWeb && <AmbientLayer />}
+        {showCompactHeader && (
+          <CompactHeader activeRoute={activeRoute} user={user} onNavigate={navigate} />
+        )}
         <View style={[styles.webContentColumn, !showSidebar && styles.fullWidthColumn]}>
           <AuthContext.Provider value={{ ready: sessionReady, user }}>
           <NavigationContainer
@@ -248,7 +260,15 @@ function AppShell() {
               <Stack.Screen name="Wallets">{(props) => <ProtectedScreen {...props} screen={WalletsScreen} />}</Stack.Screen>
               <Stack.Screen name="Family">{(props) => <ProtectedScreen {...props} screen={FamilyScreen} />}</Stack.Screen>
               <Stack.Screen name="Notifications">{(props) => <ProtectedScreen {...props} screen={NotificationsScreen} />}</Stack.Screen>
-              <Stack.Screen name="Security">{(props) => <ProtectedScreen {...props} screen={SecurityScreen} />}</Stack.Screen>
+              <Stack.Screen name="Security">
+                {(props) => (
+                  <ProtectedScreen
+                    {...props}
+                    screen={SecurityScreen}
+                    onAccountUpdated={setUser}
+                  />
+                )}
+              </Stack.Screen>
               <Stack.Screen name="Admin">{(props) => <ProtectedScreen {...props} screen={AdminScreen} />}</Stack.Screen>
               <Stack.Screen name="Credits">
                 {(props) => (

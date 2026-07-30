@@ -9,6 +9,19 @@ docker compose up --build
 ```
 
 The API listens on `http://localhost:5000` and the database on `localhost:5432`.
+For a browser or device opening the web client over LAN, set the exact origin
+before starting Compose:
+
+```bash
+CORS_ORIGIN=http://192.168.1.25:8081 docker compose up --build
+```
+
+PowerShell:
+
+```powershell
+$env:CORS_ORIGIN='http://192.168.1.25:8081'
+docker compose up --build
+```
 
 ## Schema initialization
 

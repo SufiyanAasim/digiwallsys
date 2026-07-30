@@ -43,7 +43,7 @@ export function ToastProvider({ children }) {
             ]}
           >
             <View style={styles.iconWrap}>
-              <Icon name={ICONS[toast.type] || ICONS.success} size={14} color={colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E'} />
+              <Icon name={ICONS[toast.type] || ICONS.success} size={14} color={colors.mode === 'light' ? '#FFFFFF' : colors.primaryDark} />
             </View>
             <View style={styles.textWrap}>
               <Text style={styles.title} numberOfLines={1}>{toast.title}</Text>

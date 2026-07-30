@@ -89,7 +89,8 @@ async function ensureDemoUser(client, user, openingBalance) {
 
   const priorFunding = await client.query(
     `SELECT 1 FROM ledger_journals
-     WHERE journal_type = 'demo_funding'
+     WHERE journal_type = 'funding'
+       AND metadata->>'source' = 'demo-bootstrap'
        AND metadata->>'recipient' = $1
      LIMIT 1`,
     [user.email]
@@ -98,7 +99,7 @@ async function ensureDemoUser(client, user, openingBalance) {
     const walletAccount = await ensureWalletAccount(client, wallet.rows[0]);
     const clearingAccount = await getClearingAccount(client, wallet.rows[0].currency);
     const journal = await postJournal(client, {
-      journalType: 'demo_funding',
+      journalType: 'funding',
       description: 'Demo account opening funds',
       createdBy: userId,
       metadata: { source: 'demo-bootstrap', recipient: user.email },

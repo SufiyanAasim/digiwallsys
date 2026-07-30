@@ -2,14 +2,14 @@
 
 <img src="assets/logo-glass.png" alt="digiwallsys app icon" width="110" height="110" />
 <br />
-<img src="assets/wordmark-ember-glass.svg" alt="digiwallsys" width="360" />
+<img src="assets/wordmark-glass-alt.png" alt="digiwallsys Aurora Glass wordmark" width="360" />
 
 **A secure digiwallsys digital wallet platform with verified funding, immutable ledger accounting, QR payments, automation, alerts, and audited operations**
 
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
-[![Version](https://img.shields.io/badge/version-v1.8.5-713b49?style=flat)](docs/releases/v1.8.5.md)
-[![Release](https://img.shields.io/badge/name-Trench-c6533c?style=flat)](docs/releases/v1.8.5.md)
-[![Status](https://img.shields.io/badge/status-in%20verification-e9a23b?style=flat)](docs/releases/v1.8.5.md)
+[![Version](https://img.shields.io/badge/version-v1.9.0-087f68?style=flat)](docs/releases/v1.9.0.md)
+[![Release](https://img.shields.io/badge/name-Crest-167fa8?style=flat)](docs/releases/v1.9.0.md)
+[![Status](https://img.shields.io/badge/status-in%20verification-8a6511?style=flat)](docs/releases/v1.9.0.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-64748b?style=flat)]()
 [![Build](https://img.shields.io/badge/build-passing-16a34a?style=flat)](.github/workflows/build.yml)
@@ -19,7 +19,7 @@ Register securely, fund through a verified provider, send or request money,
 scan QR payments, schedule transfers, receive alerts, and reconcile every wallet
 against a balanced double-entry ledger.
 
-[**Web app**](https://digiwallsys.vercel.app) · [**Trench notes**](docs/releases/v1.8.5.md) · [**Container package**](https://github.com/SufiyanAasim/digiwallsys/pkgs/container/digiwallsys) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
+[**Web app**](https://digiwallsys.vercel.app) · [**Crest notes**](docs/releases/v1.9.0.md) · [**Container package**](https://github.com/SufiyanAasim/digiwallsys/pkgs/container/digiwallsys) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
 
 </div>
 
@@ -33,6 +33,8 @@ against a balanced double-entry ledger.
 - **Rotating refresh tokens** stored as hashes, with replay detection and
   session-family revocation.
 - **Email verification** and **password reset** using expiring, single-use tokens.
+- **Self-service profile and credential editing** with current-password-gated
+  email changes, automatic initials, audit events, and session revocation.
 - **Login lockout controls** after repeated authentication failures.
 - **Biometric login** through Expo Local Authentication and securely stored tokens.
 
@@ -145,7 +147,7 @@ and shared-wallet sequence diagrams, are in
 | Accounting | Immutable balanced double-entry journals |
 | Background work | Schedule, email-outbox, and Expo push workers |
 | Testing | Node test runner · disposable PostgreSQL CI service |
-| Delivery | Docker Compose · GitHub Actions |
+| Delivery | Docker Compose · GitHub Actions · GitHub Container Registry |
 | Analytics | Python · pandas · scikit-learn · matplotlib (standalone, read-only — see `analytics/README.md`) |
 
 ---
@@ -154,6 +156,7 @@ and shared-wallet sequence diagrams, are in
 
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
+| [v1.9.0](docs/releases/v1.9.0.md) | **Crest** | In verification | Aurora Glass UI, profile controls, responsive refinement, and renewed brand assets |
 | [v1.8.5](docs/releases/v1.8.5.md) | **Trench** | In verification | Accessible live motion, transfer-test users, and GHCR delivery |
 | [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Deployed | Multi-currency wallets and shared/family wallets |
 | [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Implemented | Savings goals, budgets, calendar, tagging, statements, alerts |
@@ -174,7 +177,7 @@ and shared-wallet sequence diagrams, are in
 | [v1.0.0](docs/releases/v1.0.0.md) | **Anchor** | Base Release | Secure wallet foundation and PostgreSQL acceptance gates |
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
-prerelease identifiers. `v1.8.5` (`Trench`) is the current verification
+prerelease identifiers. `v1.9.0` (`Crest`) is the current verification
 candidate. The deployed `v1.8.0` (`Estuary`) remains available as a Vercel web
 app with a Render API and Supabase PostgreSQL. Signed Android build `10` is available
 as an [installable APK](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.apk)
@@ -331,11 +334,11 @@ digiwallsys/
 ├── analytics/                # Standalone read-only Python spend analysis;
 │                             #   not imported by the API or client
 ├── artifacts/                # Signed v1.8.0 APK/AAB tracked through Git LFS
-├── assets/                   # README-only logo and marketing brand assets
+├── assets/                   # Current Aurora and preserved Ember brand assets
 ├── config/
 │   ├── database.sql          # Fresh PostgreSQL bootstrap entrypoint
 │   └── migrations/           # Ordered versioned SQL migrations
-├── docker/                   # Container guidance
+├── docker/                   # Container build and Compose guidance
 ├── docs/
 │   ├── architecture/         # Financial and application architecture
 │   ├── api/                  # Endpoint contracts
@@ -346,7 +349,7 @@ digiwallsys/
 │   └── troubleshooting/      # Common runtime problems
 ├── examples/                 # Render, Supabase, Vercel, worker, and mobile
 │                             #   environment templates
-├── scripts/                  # Repository consistency checks
+├── scripts/                  # Consistency checks and deterministic brand generation
 ├── src/
 │   ├── backend/
 │   │   ├── controllers/      # HTTP handlers
@@ -356,9 +359,9 @@ digiwallsys/
 │   │   ├── workers/          # Email, push, and scheduled transfers
 │   │   └── scripts/          # Migration, provisioning, and syntax tooling
 │   └── mobile/
-│       ├── assets/           # App icon, adaptive icon, and generated logo art
-│       ├── components/       # Shared Ember Glass UI and web sidebar shell
-│       │   └── web/          # Web-only sidebar and scrollbar theme
+│       ├── assets/           # Current Aurora icons plus preserved Ember assets
+│       ├── components/       # Shared Aurora Glass UI and web sidebar shell
+│       │   └── web/          # Responsive web sidebar/header and scrollbar theme
 │       ├── plugins/          # Expo Android monorepo build correction
 │       ├── screens/          # Wallet, QR, admin, analytics, savings, budgets,
 │       │                     #   multi-currency wallets, family sharing, alerts
@@ -368,7 +371,7 @@ digiwallsys/
 │       ├── eas.json          # Signed APK, AAB, and iOS profiles
 │       ├── session.js        # Secure token and biometric session storage
 │       ├── motion.js         # Reduced-motion-aware transitions and staging
-│       ├── theme.js          # Ember Glass dark/light tokens and layout helpers
+│       ├── theme.js          # Aurora Glass dark/light tokens and layout helpers
 │       └── ThemeContext.js   # Persisted runtime theme provider
 ├── tests/
 │   ├── backend/              # Smoke, validation, integration, concurrency
@@ -376,8 +379,6 @@ digiwallsys/
 ├── .env.example              # Canonical configuration reference
 ├── .gitattributes            # LF policy and APK/AAB Git LFS rules
 ├── docker-compose.yml        # Local database, API, and worker stack
-├── docker/
-│   └── README.md             # Container build and Compose usage
 ├── Dockerfile                # Production API/worker image
 ├── Makefile                  # Shortcuts for install, verify, and containers
 ├── package.json              # npm workspace commands and security overrides

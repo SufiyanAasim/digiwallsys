@@ -72,6 +72,32 @@ test('shared motion is layout-safe and respects reduced-motion preferences', () 
   assert.doesNotMatch(motionSource, /\b(width|height|margin|padding):\s*progress/);
   assert.match(ambientSource, /Animated\.loop/);
   assert.match(touchableSource, /AnimatedPressable/);
+  assert.match(touchableSource, /style=\{\[/);
+  assert.doesNotMatch(touchableSource, /style=\{\(state\)\s*=>/);
+});
+
+test('Crest uses Aurora Glass tokens and preserves Ember Glass history', () => {
+  const themeSource = readFileSync(join(__dirname, '../../src/mobile/theme.js'), 'utf8');
+  const appSource = readFileSync(join(__dirname, '../../src/mobile/App.js'), 'utf8');
+
+  assert.match(themeSource, /background: '#001A15'/);
+  assert.match(themeSource, /gradientPrimary: \['#31D1A7', '#2CA7D3'\]/);
+  assert.match(themeSource, /backdropFilter: 'blur\(18px\) saturate\(125%\)'/);
+  assert.doesNotMatch(themeSource, /#FF5470|#FFA45B|Ember Glass/);
+  assert.match(appSource, /<StatusBar/);
+
+  for (const relativePath of [
+    '../../assets/logo.svg',
+    '../../assets/wordmark-aurora-glass.svg',
+    '../../assets/logo-ember-glass.svg',
+    '../../assets/wordmark-ember-glass.svg',
+    '../../src/mobile/assets/ember-glass/icon-app.png',
+  ]) {
+    assert.doesNotThrow(
+      () => readFileSync(join(__dirname, relativePath)),
+      `${relativePath} should preserve the expected brand asset`
+    );
+  }
 });
 
 test('mobile navigation exposes advanced payment and security screens', () => {
@@ -79,6 +105,24 @@ test('mobile navigation exposes advanced payment and security screens', () => {
   for (const screen of ['Payment Tools', 'QR Payment', 'Notifications', 'Security', 'Admin']) {
     assert.match(appSource, new RegExp(`name=\\"${screen}\\"`));
   }
+});
+
+test('Crest profile controls update identity and revoke sessions after password changes', () => {
+  const appSource = readFileSync(join(__dirname, '../../src/mobile/App.js'), 'utf8');
+  const apiSource = readFileSync(join(__dirname, '../../src/mobile/api.js'), 'utf8');
+  const securitySource = readFileSync(
+    join(__dirname, '../../src/mobile/screens/SecurityScreen.js'),
+    'utf8'
+  );
+
+  assert.match(appSource, /onAccountUpdated=\{setUser\}/);
+  assert.match(apiSource, /export const updateCurrentUser/);
+  assert.match(apiSource, /export const changeCurrentPassword/);
+  assert.match(securitySource, /initialsFor\(name\)/);
+  assert.match(securitySource, /Changing email requires your password/);
+  assert.match(securitySource, /await clearSession\(\)/);
+  assert.match(securitySource, /resetToLogin\(\)/);
+  assert.doesNotMatch(securitySource, /user1@584|user2@584/);
 });
 
 test('Expo uses the generated digiwallsys logo and deep-link scheme', () => {
@@ -122,9 +166,9 @@ test('native package identifiers and EAS store profiles are configured', () => {
 
   assert.equal(appConfig.expo.android.package, 'com.sufiyanaasim.digiwallsys');
   assert.equal(appConfig.expo.ios.bundleIdentifier, 'com.sufiyanaasim.digiwallsys');
-  assert.equal(appConfig.expo.version, '1.8.5');
-  assert.equal(appConfig.expo.android.versionCode, 11);
-  assert.equal(appConfig.expo.ios.buildNumber, '6');
+  assert.equal(appConfig.expo.version, '1.9.0');
+  assert.equal(appConfig.expo.android.versionCode, 12);
+  assert.equal(appConfig.expo.ios.buildNumber, '7');
   assert.equal(appConfig.expo.extra.eas.projectId, projectId);
   assert.equal(easConfig.build.preview.android.buildType, 'apk');
   assert.equal(easConfig.build.production.android.buildType, 'app-bundle');
@@ -171,6 +215,11 @@ test('web sidebar stacks above the fixed ambient layer without changing native f
     join(__dirname, '../../src/mobile/components/web/ScrollbarTheme.js'),
     'utf8'
   );
+  const compactHeaderSource = readFileSync(
+    join(__dirname, '../../src/mobile/components/web/CompactHeader.js'),
+    'utf8'
+  );
+  const appSource = readFileSync(join(__dirname, '../../src/mobile/App.js'), 'utf8');
 
   assert.match(ambientSource, /web:\s*\{\s*position:\s*'fixed'/);
   assert.match(ambientSource, /default:\s*\{\s*\.\.\.StyleSheet\.absoluteFillObject/);
@@ -182,4 +231,7 @@ test('web sidebar stacks above the fixed ambient layer without changing native f
     scrollbarSource,
     /html,\s*body,\s*#root\s*\{\s*background-color:\s*\$\{colors\.background\};\s*\}/
   );
+  assert.match(appSource, /viewportWidth >= 900/);
+  assert.match(appSource, /viewportWidth < 900/);
+  assert.match(compactHeaderSource, /accessibilityLabel=\{label\}/);
 });

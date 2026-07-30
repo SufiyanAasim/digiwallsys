@@ -87,4 +87,22 @@ test('demo-user provisioning requires passwords without hardcoding them', () => 
   );
   assert.doesNotMatch(source, /user1@584|user2@584/);
   assert.doesNotMatch(source, /console\.log\([^)]*password/i);
+  assert.match(source, /journalType:\s*'funding'/);
+  assert.match(source, /source:\s*'demo-bootstrap'/);
+  assert.doesNotMatch(source, /demo_funding/);
+});
+
+test('self-service profile changes protect email and password updates', () => {
+  const source = readFileSync(
+    join(__dirname, '../../src/backend/controllers/userController.js'),
+    'utf8'
+  );
+
+  assert.match(source, /bcrypt\.compare\(currentPassword, current\.passwordhash\)/);
+  assert.match(source, /email_verified_at = CASE WHEN \$4 THEN NULL/);
+  assert.match(source, /template: 'verify_email'/);
+  assert.match(source, /action: 'user\.profile_updated'/);
+  assert.match(source, /action: 'auth\.password_changed'/);
+  assert.match(source, /UPDATE refresh_tokens/);
+  assert.doesNotMatch(source, /console\.log|user1@584|user2@584/);
 });

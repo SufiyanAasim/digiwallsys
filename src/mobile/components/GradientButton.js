@@ -6,7 +6,7 @@ import { radii } from '../theme';
 
 export default function GradientButton({ label, onPress, disabled, style, textStyle, ...props }) {
   const { colors } = useAppTheme();
-  const textColor = colors.mode === 'light' ? '#FFFFFF' : '#1A0A0E';
+  const textColor = colors.mode === 'light' ? '#FFFFFF' : colors.primaryDark;
   return (
     <TouchableOpacity
       onPress={onPress}

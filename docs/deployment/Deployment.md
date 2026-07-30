@@ -38,7 +38,8 @@ source history, deployment logs, or chat.
 Set the two `DEMO_USER_*_PASSWORD` values in a trusted Render Shell, confirm
 the configured emails and opening balance, run `npm run demo:seed`, and remove
 every `DEMO_*` variable. The command creates or refreshes two verified member
-accounts and posts opening funds through balanced `demo_funding` journals; it
+accounts and posts opening funds through balanced `funding` journals tagged
+with the `demo-bootstrap` source; it
 does not write plaintext passwords or directly invent wallet balances.
 
 ### GitHub Container Registry

@@ -4,6 +4,7 @@ import TouchableOpacity from '../components/TouchableOpacity';
 import {  FlatList, Platform, SafeAreaView, StyleSheet, Text, View  } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { getBalance, getCurrentUser, getTransactions } from '../api';
 import ActionTile from '../components/ActionTile';
 import AmbientBackground from '../components/AmbientBackground';
@@ -13,6 +14,7 @@ import { useToast } from '../components/ToastProvider';
 import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';
 import { contentColumn, layout, radii, screenBackground } from '../theme';
+import { MotionSection } from '../motion';
 import { formatMoney, getErrorMessage } from '../utils';
 
 const LOGOUT_ACTION = 'Logout';
@@ -107,12 +109,18 @@ export default function HomeScreen({ navigation, route }) {
         contentContainerStyle={styles.container}
         ListHeaderComponent={
           <>
-            <View style={styles.header}>
+            <MotionSection style={styles.header} delay={40}>
               <View>
                 <Wordmark size={19} />
                 <Text style={styles.welcome}>Hello, {user?.name || 'there'}</Text>
               </View>
               <View style={styles.headerActions}>
+                {Platform.OS === 'web' && (
+                  <View style={styles.statusChip}>
+                    <View style={styles.statusDot} />
+                    <Text style={styles.statusText}>Ledger live</Text>
+                  </View>
+                )}
                 {Platform.OS !== 'web' && (
                   <TouchableOpacity
                     style={styles.themeToggle}
@@ -125,11 +133,27 @@ export default function HomeScreen({ navigation, route }) {
                 )}
                 <View style={styles.avatar}><Text style={styles.avatarText}>{initials}</Text></View>
               </View>
-            </View>
-            <View style={styles.balanceCard}>
-              <Text style={styles.balanceLabel}>Available balance</Text>
+            </MotionSection>
+            <MotionSection delay={100}>
+              <LinearGradient
+                colors={[colors.surfaceStrong, colors.surface]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.balanceCard}
+              >
+              <View style={styles.balanceTopRow}>
+                <Text style={styles.balanceLabel}>Available balance</Text>
+                <View style={styles.secureBadge}>
+                  <Icon name="shield-checkmark-outline" size={13} color={colors.primary} />
+                  <Text style={styles.secureText}>Ledger verified</Text>
+                </View>
+              </View>
               <Text style={styles.balance}>{balance ? formatMoney(balance.balance, balance.currency) : loading ? 'Loading…' : '—'}</Text>
-            </View>
+              {!!balance && Number(balance.balance) === 0 && (
+                <Text style={styles.balanceHint}>Add your first funds to get started.</Text>
+              )}
+              </LinearGradient>
+            </MotionSection>
             {!!error && (
               <View style={styles.errorBox} accessibilityRole="alert">
                 <Text style={styles.errorText}>{error}</Text>
@@ -173,6 +197,12 @@ function buildStyles(colors) {
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     welcome: { color: colors.textMuted, marginTop: 2, fontSize: 12.5 },
     headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+    statusChip: {
+      flexDirection: 'row', alignItems: 'center', gap: 7, paddingVertical: 7, paddingHorizontal: 11,
+      borderRadius: radii.pill, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.border,
+    },
+    statusDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: colors.success },
+    statusText: { color: colors.primary, fontSize: 11, fontWeight: '800', letterSpacing: 0.2 },
     themeToggle: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.surfaceMuted, borderWidth: 1, borderColor: colors.glassBorder, alignItems: 'center', justifyContent: 'center' },
     avatar: { width: 42, height: 42, borderRadius: 21, backgroundColor: colors.primarySoft, borderWidth: 1, borderColor: colors.borderStrong, alignItems: 'center', justifyContent: 'center' },
     avatarText: { color: colors.primary, fontWeight: '800', fontSize: 14 },
@@ -183,9 +213,18 @@ function buildStyles(colors) {
       borderColor: colors.glassBorder,
       borderRadius: radii.xl,
       padding: 22,
+      overflow: 'hidden',
+      ...Platform.select({
+        web: { backdropFilter: 'blur(20px) saturate(125%)', boxShadow: '0 20px 54px rgba(0,36,29,0.24)' },
+        default: { elevation: 3 },
+      }),
     },
+    balanceTopRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
     balanceLabel: { color: colors.textMuted, fontSize: 12, textTransform: 'uppercase', letterSpacing: 0.6 },
+    secureBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 5, paddingHorizontal: 8, borderRadius: radii.pill, backgroundColor: colors.primarySoft },
+    secureText: { color: colors.primary, fontSize: 10.5, fontWeight: '700' },
     balance: { fontSize: 36, fontWeight: '800', marginTop: 8, color: colors.text, letterSpacing: -0.5 },
+    balanceHint: { color: colors.primary, marginTop: 5, fontSize: 12.5, fontWeight: '600' },
     errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: radii.md, padding: 12, marginTop: 14 },
     errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GRID_GAP, marginTop: 22 },

@@ -36,7 +36,9 @@ services:
       DATABASE_URL: postgresql://digiwallsys:digiwallsys@database:5432/digiwallsys
       DATABASE_SSL: "false"
       DATABASE_POOL_SIZE: 10
-      CORS_ORIGIN: http://localhost:8081,http://localhost:19006
+      # Override CORS_ORIGIN when testing from another device/LAN hostname,
+      # for example CORS_ORIGIN=http://192.168.1.25:8081.
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:8081,http://localhost:19006}
       # Numeric: app.js passes this straight to Express' "trust proxy".
       TRUST_PROXY: 0
       GLOBAL_RATE_LIMIT: 300

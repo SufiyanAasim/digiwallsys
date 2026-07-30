@@ -6,7 +6,13 @@
 2. Verify the email using the delivered token/link before logging in. Signing in
    before verifying is rejected with "Verify your email before signing in".
 3. Enable biometric login from **Security** on a supported enrolled device.
-4. Use **Account security** to resend verification or reset a password.
+4. Open **Profile & security** to edit your display name or email, change your
+   password, or manage device security.
+
+Your avatar uses initials derived from the display name and updates
+automatically. Changing email requires the current password and verification of
+the new address. Changing password revokes every saved session and returns you
+to sign-in.
 
 ## Staying signed in
 

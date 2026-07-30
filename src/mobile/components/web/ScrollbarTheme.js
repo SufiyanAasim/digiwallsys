@@ -9,7 +9,7 @@ const STYLE_ID = 'digiwallsys-scrollbar-theme';
 // CSS, neither of which has an RN style equivalent. Injecting a single <style>
 // tag and rewriting it whenever the palette changes is the only route, and it
 // stops the browser painting a stark default light scrollbar down the edge of
-// the dark Ember Glass surfaces.
+// the dark Aurora Glass surfaces.
 //
 // Renders nothing; mounted once inside the theme provider.
 export default function ScrollbarTheme() {
@@ -25,7 +25,7 @@ export default function ScrollbarTheme() {
       document.head.appendChild(style);
     }
 
-    // The thumb carries the actual Ember Glass gradient rather than a flat
+    // The thumb carries the actual Aurora Glass gradient rather than a flat
     // tint, so the bar reads as part of the brand instead of a browser
     // control bolted onto the edge. An earlier pass inset it by 3px on a
     // 10px bar, which left ~4px of visible thumb and looked like a thin

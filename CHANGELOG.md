@@ -6,6 +6,43 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.9.0] — Crest
+
+### Added
+
+- Aurora Glass dark/light theme tokens, live ledger status treatments, and
+  mint/cyan chart series across the shared Expo client.
+- Reproducible brand generation for the launcher icon, Android adaptive
+  foreground, web favicon, and repository marketing PNGs.
+- New Aurora Glass SVG monogram and wordmark while preserving the prior Ember
+  Glass assets under explicit historical filenames.
+- Authenticated profile editing with dynamic initials, current-password-gated
+  email changes, new-address verification, and audited password rotation.
+
+### Changed
+
+- Landing, dashboard balance, action tiles, sidebar navigation, scrollbar, and
+  public/mobile footers now share the Aurora Glass hierarchy and materiality.
+- Android public version is `1.9.0` build `12`; iOS build number is `7`.
+- Shared cards use controlled blur/elevation and motion remains limited to
+  opacity and transforms to avoid responsive layout reflow.
+- Password changes revoke every refresh session; profile updates immediately
+  refresh the sidebar identity without storing credential fields.
+
+### Fixed
+
+- Brand generation now declares its direct `pngjs` dependency instead of
+  relying on an accidental transitive installation.
+- Current release, app, API, native-build, logo, and documentation metadata are
+  aligned to `v1.9.0` (`Crest`).
+- Animated pressable styles now retain responsive flex-basis, padding, borders,
+  and touch geometry on React Native Web.
+- The complete web sidebar fits the supported 800px desktop height while
+  preserving full-width controls and a stable footer.
+- Authenticated mobile-web layouts now replace the 248px desktop sidebar with a
+  compact Aurora navigation header below 900px, preventing narrow forms and
+  dashboards from being crushed.
+
 ## [1.8.5] — Trench
 
 ### Added

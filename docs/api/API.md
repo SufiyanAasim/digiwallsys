@@ -37,6 +37,8 @@ never expose verification/reset tokens; delivery occurs through the email outbox
 | Method | Endpoint | Authentication | Response |
 | --- | --- | --- | --- |
 | `GET` | `/api/users/me` | Bearer | Current profile and role |
+| `PATCH` | `/api/users/me` | Bearer | Update `name` and `email`; changing email also requires `currentPassword` and queues verification |
+| `PATCH` | `/api/users/me/password` | Bearer | Change password with `currentPassword` and `newPassword`; revokes every refresh session |
 | `GET` | `/api/users` | Bearer | Verified payment recipients |
 | `GET` | `/api/wallet/balance` | Bearer | Cached balance and currency (`?currency=` selects which wallet, default `USD`) |
 | `GET` | `/api/wallet` | Bearer | Every currency wallet the user holds |
@@ -45,6 +47,10 @@ never expose verification/reset tokens; delivery occurs through the email outbox
 | `GET` | `/api/wallet/conversions` | Bearer | Recent currency-conversion history |
 
 The acting user never comes from a URL or request body.
+Display-name changes take effect immediately. An email change marks the new
+address unverified until its single-use verification token is consumed.
+Passwords require at least 10 characters and changing one signs out every
+device.
 
 Conversion uses the most recent rate in `fx_rates` for the pair (or its inverse);
 `422` if no rate has been set. It is posted as two independently-balanced
