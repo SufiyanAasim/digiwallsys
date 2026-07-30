@@ -12,9 +12,11 @@
 
 ### Supported provider shape
 
-The current deployment uses Vercel for the exported web build, Render for the
-API, and Supabase PostgreSQL for data. The dedicated Render worker remains a
-separate service whose status and secrets are managed in the Render dashboard.
+The current deployment uses Vercel for the exported web build, one Render Free
+web service for the API plus inline scheduler/push workers, and Supabase
+PostgreSQL for data. Render is configured with `RUN_INLINE_WORKERS=true`,
+`ENABLE_SCHEDULER=true`, `ENABLE_PUSH_WORKER=true`, and
+`ENABLE_EMAIL_WORKER=false`.
 `examples/render.env.example`, `examples/supabase.env.example`, and
 `examples/vercel.env.example` document the deployed shape — none of
 these three read a `.env` file from the repo, so every variable has to be set
@@ -22,9 +24,13 @@ in that provider's own dashboard. See the README's "Deployment target env
 files" section for which file goes where.
 
 Render auto-injects `PORT`; do not set it. Point the web service at the root
-`Dockerfile` or `npm run start:api`. Create a separate background worker
-service using `npm run start:worker`; do not run workers in every API instance.
-Until a real email-delivery adapter is connected, keep the worker on
+`Dockerfile` or `npm run start:api`. The inline mode is appropriate only for
+this single-instance demonstration deployment: Render Free can sleep after
+inactivity, so scheduled transfers and push delivery are best-effort rather
+than production-reliable. A scaled or real-money deployment must create a
+separate background worker using `npm run start:worker` and set
+`RUN_INLINE_WORKERS=false` on every API instance. Until a real email-delivery
+adapter is connected, keep the worker on
 `ENABLE_SCHEDULER=true`, `ENABLE_PUSH_WORKER=true`, and
 `ENABLE_EMAIL_WORKER=false`, with `EMAIL_WEBHOOK_URL` and
 `EMAIL_DELIVERY_TOKEN` unset. When email delivery is introduced, set both
@@ -96,7 +102,7 @@ the Android signing keystore. An Apple Developer account is required for the iOS
 distribution certificate and provisioning profile. Use the package/bundle ID
 `com.sufiyanaasim.digiwallsys` in both stores.
 
-The current candidate artifacts are public version `1.9.0`, Android build `12`:
+The released artifacts are public version `1.9.0`, Android build `12`:
 
 | Output | EAS build ID | Repository copy |
 | --- | --- | --- |
@@ -121,7 +127,8 @@ npm run build:ios:bundle
 Expo Go is not a distributable IPA. A production EAS iOS build still requires
 an Apple distribution certificate and provisioning profile; `app.json`
 declares `ITSAppUsesNonExemptEncryption=false` for the app's HTTPS-only
-networking.
+networking. The project owner deferred that archive and physical-device
+acceptance outside the `v1.9.0` delivery scope.
 Generate native projects with Expo prebuild only when local native debugging is
 needed; use the EAS preview profile for an installable test APK and the
 production profiles for store artifacts. Always set the final

@@ -13,6 +13,7 @@ let stopWorkers = [];
 if (process.env.RUN_INLINE_WORKERS === 'true') {
   const { startWorkers } = require('./worker');
   stopWorkers = startWorkers();
+  console.log('digiwallsys background workers started inline');
 }
 
 const server = app.listen(port, '0.0.0.0', () => {

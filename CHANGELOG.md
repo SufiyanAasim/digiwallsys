@@ -22,7 +22,7 @@ All notable changes to this project are documented here. The format follows
   actions across web and native Credits.
 - Expo Doctor is now a reproducible local and GitHub Actions compatibility gate.
 - Signed Android build `12` APK/AAB artifacts and their SHA-256 manifest are
-  retained through Git LFS for reproducible candidate verification.
+  retained through Git LFS for reproducible release verification.
 
 ### Changed
 
@@ -57,6 +57,11 @@ All notable changes to this project are documented here. The format follows
   real delivery webhook and bearer token are configured.
 - The iOS Hermes bundle exports cleanly for Expo Go development testing while
   App Store/TestFlight archives remain isolated behind Apple signing.
+- The exact signed `v1.9.0` tag, `Crest` GitHub release, verified Android
+  assets, and matching GHCR container tag form one reproducible release set.
+- The deployed single-instance Render Free service runs scheduler and push
+  workers inline with the API; email delivery remains disabled until a real
+  adapter is configured.
 
 ## [1.8.5] — Trench
 

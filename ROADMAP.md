@@ -204,11 +204,14 @@ shared Expo web and native clients.
       APK/AAB artifacts through Git LFS.
 - [x] Export the iOS Hermes bundle and serve the `v1.9.0` Expo Go manifest for
       free on-device development testing.
-- [ ] Publish the signed `v1.9.0` GitHub release assets and the matching
+- [x] Publish the signed `v1.9.0` GitHub release assets and the matching
       container tag.
-- [ ] Create the signed iOS distribution archive after Apple Developer
-      credentials and provisioning are available.
-- [ ] Complete deployed desktop, mobile-web, and device acceptance.
+- [x] Complete deployed desktop and mobile-web acceptance.
+- [x] Deploy the Vercel web app, Render API with single-instance inline
+      scheduler/push workers, and Supabase-backed acceptance accounts.
+
+Physical-device acceptance and an Apple-signed iOS distribution archive are
+owner-deferred outside the `v1.9.0` delivery scope.
 
 No release may be marked complete until its tests, documentation, migration,
 security, and operational acceptance criteria pass.

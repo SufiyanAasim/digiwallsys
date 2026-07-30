@@ -9,7 +9,7 @@
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
 [![Version](https://img.shields.io/badge/version-v1.9.0-087f68?style=flat)](docs/releases/v1.9.0.md)
 [![Release](https://img.shields.io/badge/name-Crest-167fa8?style=flat)](docs/releases/v1.9.0.md)
-[![Status](https://img.shields.io/badge/status-in%20verification-8a6511?style=flat)](docs/releases/v1.9.0.md)
+[![Status](https://img.shields.io/badge/status-released%20%26%20deployed-16a34a?style=flat)](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.9.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-64748b?style=flat)]()
 [![Build](https://img.shields.io/badge/build-passing-16a34a?style=flat)](.github/workflows/build.yml)
@@ -156,7 +156,7 @@ and shared-wallet sequence diagrams, are in
 
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
-| [v1.9.0](docs/releases/v1.9.0.md) | **Crest** | In verification | Aurora Glass UI, profile controls, responsive refinement, and renewed brand assets |
+| [v1.9.0](docs/releases/v1.9.0.md) | **Crest** | Released & Deployed | Aurora Glass UI, profile controls, responsive refinement, and renewed brand assets |
 | [v1.8.5](docs/releases/v1.8.5.md) | **Trench** | Released | Accessible live motion, transfer-test users, and GHCR delivery |
 | [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Deployed | Multi-currency wallets and shared/family wallets |
 | [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Implemented | Savings goals, budgets, calendar, tagging, statements, alerts |
@@ -177,24 +177,25 @@ and shared-wallet sequence diagrams, are in
 | [v1.0.0](docs/releases/v1.0.0.md) | **Anchor** | Base Release | Secure wallet foundation and PostgreSQL acceptance gates |
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
-prerelease identifiers. `v1.9.0` (`Crest`) is the current verification
-candidate. Its signed Android build `12` is checked in through Git LFS as an
+prerelease identifiers. [`v1.9.0`](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.9.0)
+(`Crest`) is the current released and deployed version. Its signed Android build
+`12` is checked in through Git LFS as an
 [installable APK](artifacts/digiwallsys-v1.9.0-build12.apk) and
 [Google Play AAB](artifacts/digiwallsys-v1.9.0-build12.aab), with reproducible
-[SHA-256 checksums](artifacts/SHA256SUMS-v1.9.0.txt). The existing
-[`v1.8.0` Estuary release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0)
-remains the previous published Android binary release.
+[SHA-256 checksums](artifacts/SHA256SUMS-v1.9.0.txt).
 
-### Current verification status
+### Release and deployment status
 
-Completed for the `v1.9.0` candidate:
+Completed for `v1.9.0`:
 
 - All repository checks, Expo Doctor, web export, dependency audit, Docker
   build/config validation, and default-branch CI pass.
 - The signed Android build `12` APK and AAB have verified signatures, package
   metadata, production API embedding, Bundletool validation, and checksums.
-- The exact `v1.9.0` / `Crest` GitHub draft release contains the verified APK,
-  AAB, and checksum manifest without creating an unsigned tag.
+- The exact signed `v1.9.0` tag and `Crest` GitHub release publish the verified
+  APK, AAB, and checksum manifest.
+- GHCR publishes `ghcr.io/sufiyanaasim/digiwallsys:v1.9.0`; its OCI revision
+  matches the released source.
 - The public Vercel routes and Render API health endpoint pass desktop and
   mobile-web smoke checks without horizontal overflow or an unpainted scroll
   band; a production user login loads the full sidebar, reconciled balance, and
@@ -204,16 +205,12 @@ Completed for the `v1.9.0` candidate:
   the deployed API, leaving cached and ledger balances reconciled.
 - The iOS JavaScript/Hermes export passes and the Expo Go manifest serves the
   correct `1.9.0` metadata, bundle identifier, and production API.
+- The free Render web service runs scheduler and push processing inline with
+  the API (`RUN_INLINE_WORKERS=true`); email processing remains disabled until
+  a real delivery adapter is configured.
 
-Still required before the README status changes to **Released**:
-
-- Physical Android and iPhone interaction testing, including biometrics, QR,
-  notifications, responsive motion, profile editing, and long-page scrolling.
-- Apple Developer signing credentials for a distributable iOS archive,
-  TestFlight, or App Store delivery.
-- A dedicated Render background worker service and dashboard liveness check.
-- The signed `v1.9.0` Git tag, publishing the prepared draft, and the matching
-  GHCR `v1.9.0` container tag.
+Physical-device acceptance and an Apple-signed iOS archive are intentionally
+outside this release's delivery scope. They are not represented as completed.
 
 ---
 
@@ -333,7 +330,7 @@ submission. A Mac is required only for local Xcode simulator/device builds.
 | `ENABLE_SCHEDULER` | No | `true` | Runs scheduled-transfer worker |
 | `ENABLE_PUSH_WORKER` | No | `true` | Runs Expo push dispatcher |
 | `ENABLE_EMAIL_WORKER` | No | `true` locally | Runs the email outbox; keep `false` on a production worker until both delivery adapter variables are configured |
-| `RUN_INLINE_WORKERS` | No | `false` | Runs workers inside the API process; use only for local single-process development |
+| `RUN_INLINE_WORKERS` | No | `false` | Runs workers inside one API process; the current single-instance Render Free deployment sets `true`, while scaled production should use a dedicated worker |
 | `API_BASE_URL` | No | `http://localhost:$PORT` | Target for `scripts/simulate-funding-webhook.js` |
 | `EXPO_PUBLIC_API_URL` | No | Localhost in development; live Render API otherwise | Mobile and web API base URL |
 | `EXPO_PUBLIC_EAS_PROJECT_ID` | Push | `7c79c661-f3ea-4c5d-b207-77b8de410ba1` | Linked Expo project ID for push tokens |
@@ -343,8 +340,9 @@ tokens in Expo public variables.
 
 ### Deployment target env files
 
-The web app is deployed on Vercel, the API and worker run on Render, and
-PostgreSQL is hosted by Supabase. Dashboard variables and database credentials
+The web app is deployed on Vercel, the API and its inline worker runtime run on
+one Render Free service, and PostgreSQL is hosted by Supabase. Dashboard
+variables and database credentials
 must still be configured in each provider and are never read from these example
 files automatically:
 

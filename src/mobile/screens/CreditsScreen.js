@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import { Image, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Linking, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import Logo from '../components/Logo';
@@ -26,13 +26,16 @@ function SectionTitle({ icon, children, colors, styles }) {
 export default function CreditsScreen() {
   const { colors } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
-  const openGitHub = () => {
-    Linking.openURL('https://github.com/SufiyanAasim');
-  };
-  const openContact = () => {
-    Linking.openURL(
-      'mailto:sufiyanaasim@outlook.com?subject=digiwallsys%20project%20inquiry'
-    );
+  const githubUrl = 'https://github.com/SufiyanAasim';
+  const contactUrl = 'mailto:sufiyanaasim@outlook.com?subject=digiwallsys%20project%20inquiry';
+  const externalLinkProps = (url, newTab = false) => {
+    if (Platform.OS === 'web') {
+      return {
+        href: url,
+        ...(newTab ? { target: '_blank', rel: 'noopener noreferrer' } : {}),
+      };
+    }
+    return { onPress: () => Linking.openURL(url) };
   };
 
   return (
@@ -80,7 +83,7 @@ export default function CreditsScreen() {
             <View style={styles.creatorActions}>
               <TouchableOpacity
                 style={styles.creatorButton}
-                onPress={openGitHub}
+                {...externalLinkProps(githubUrl, true)}
                 accessibilityRole="link"
                 accessibilityLabel="Open Mohammad Sufiyan Aasim on GitHub"
               >
@@ -89,7 +92,7 @@ export default function CreditsScreen() {
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.creatorButton, styles.contactButton]}
-                onPress={openContact}
+                {...externalLinkProps(contactUrl)}
                 accessibilityRole="link"
                 accessibilityLabel="Email Mohammad Sufiyan Aasim"
                 accessibilityHint="Opens your default mail application"
@@ -176,7 +179,16 @@ function buildStyles(colors) {
     expertiseChip: { backgroundColor: colors.surfaceMuted, borderColor: colors.border, borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6 },
     expertiseText: { color: colors.text, fontSize: 12, fontWeight: '600' },
     creatorActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-    creatorButton: { flexDirection: 'row', gap: 8, alignItems: 'center', backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24 },
+    creatorButton: {
+      flexDirection: 'row',
+      gap: 8,
+      alignItems: 'center',
+      backgroundColor: colors.primary,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 24,
+      ...Platform.select({ web: { cursor: 'pointer', textDecorationLine: 'none' }, default: {} }),
+    },
     creatorButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
     contactButton: { backgroundColor: colors.surfaceMuted, borderColor: colors.borderStrong, borderWidth: 1 },
     contactButtonText: { color: colors.text },

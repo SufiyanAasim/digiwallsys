@@ -3,7 +3,7 @@
 ## Supported versions
 
 Security fixes are applied to the latest stable release and the current
-default-branch release candidate.
+default branch.
 
 ## Reporting a vulnerability
 
