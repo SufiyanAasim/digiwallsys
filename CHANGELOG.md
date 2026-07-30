@@ -57,6 +57,9 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- The transitive UUID implementation used by Expo's Xcode project tooling is
+  pinned to patched `uuid@11.1.1`, preventing partial writes when v3, v5, or v6
+  receive an out-of-bounds output buffer.
 - The mobile lint toolchain keeps `@eslint/js` on the ESLint 9-compatible line;
   the independently merged ESLint 10 preset required a peer version that the
   React and React Native lint plugins do not yet support.
