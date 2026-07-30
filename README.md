@@ -193,6 +193,8 @@ Completed for the `v1.9.0` candidate:
   build/config validation, and default-branch CI pass.
 - The signed Android build `12` APK and AAB have verified signatures, package
   metadata, production API embedding, Bundletool validation, and checksums.
+- The exact `v1.9.0` / `Crest` GitHub draft release contains the verified APK,
+  AAB, and checksum manifest without creating an unsigned tag.
 - The public Vercel routes and Render API health endpoint pass desktop and
   mobile-web smoke checks without horizontal overflow or an unpainted scroll
   band; a production user login loads the full sidebar, reconciled balance, and
@@ -210,8 +212,8 @@ Still required before the README status changes to **Released**:
 - Apple Developer signing credentials for a distributable iOS archive,
   TestFlight, or App Store delivery.
 - A dedicated Render background worker service and dashboard liveness check.
-- The signed `v1.9.0` Git tag, GitHub release assets/checksums, and GHCR
-  `v1.9.0` container tag.
+- The signed `v1.9.0` Git tag, publishing the prepared draft, and the matching
+  GHCR `v1.9.0` container tag.
 
 ---
 
