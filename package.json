@@ -24,13 +24,19 @@
     "brand:generate": "node scripts/generate-brand-assets.js",
     "check:name": "node scripts/check-name.js",
     "check:docs": "node scripts/check-doc-links.js && node scripts/check-api-docs.js",
-    "verify": "npm run check:name && npm run check:docs && npm run lint && npm test"
+    "check:expo": "node src/mobile/scripts/run-package-bin.js expo-doctor",
+    "verify": "npm run check:name && npm run check:docs && npm run check:expo && npm run lint && npm test"
   },
   "engines": {
     "node": ">=20.19.0"
   },
   "overrides": {
+    "@react-native-async-storage/async-storage": "2.2.0",
     "flatted": "3.4.3",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native-safe-area-context": "5.7.0",
+    "react-native-svg": "15.15.4",
     "tar": "7.5.22",
     "xcode@3.0.1": {
       "uuid": "11.1.1"
@@ -38,6 +44,8 @@
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
-    "pngjs": "^7.0.0"
+    "expo-doctor": "1.20.1",
+    "pngjs": "^7.0.0",
+    "react": "19.2.3"
   }
 }

@@ -119,3 +119,15 @@ test('release tags cannot overwrite the default GHCR image', () => {
   );
   assert.doesNotMatch(workflow, /value=latest,enable=\{\{is_default_branch\}\}/);
 });
+
+test('Expo SDK compatibility is a local and CI verification gate', () => {
+  const rootPackage = JSON.parse(readFileSync(join(__dirname, '../../package.json'), 'utf8'));
+  const buildWorkflow = readFileSync(
+    join(__dirname, '../../.github/workflows/build.yml'),
+    'utf8'
+  );
+
+  assert.match(rootPackage.scripts.verify, /npm run check:expo/);
+  assert.match(rootPackage.scripts['check:expo'], /run-package-bin\.js expo-doctor/);
+  assert.match(buildWorkflow, /npm run check:expo/);
+});

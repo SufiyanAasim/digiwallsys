@@ -18,5 +18,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run check:expo
       - run: npm run build
       - run: npm run build:web

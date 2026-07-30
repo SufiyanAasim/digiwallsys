@@ -20,6 +20,7 @@ All notable changes to this project are documented here. The format follows
   email changes, new-address verification, and audited password rotation.
 - An expanded creator profile with accessible GitHub and default-mail contact
   actions across web and native Credits.
+- Expo Doctor is now a reproducible local and GitHub Actions compatibility gate.
 
 ### Changed
 
@@ -46,6 +47,8 @@ All notable changes to this project are documented here. The format follows
   dashboards from being crushed.
 - Release-tag container builds can no longer overwrite GHCR `latest`; only a
   push to `refs/heads/main` may move that tag.
+- Expo SDK 57 dependencies now use the supported AsyncStorage, React,
+  React DOM, safe-area, and SVG versions without duplicate native modules.
 
 ## [1.8.5] — Trench
 

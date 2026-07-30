@@ -405,6 +405,10 @@ npm run verify
 npm run build
 ```
 
+`npm run verify` includes Expo Doctor, so SDK-incompatible package versions and
+duplicate native modules fail locally and in GitHub Actions before release
+packaging.
+
 Run the PostgreSQL integration and concurrency suite against a disposable test
 database whose name ends in `_test`:
 
