@@ -178,12 +178,40 @@ and shared-wallet sequence diagrams, are in
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
 prerelease identifiers. `v1.9.0` (`Crest`) is the current verification
-candidate. The deployed `v1.8.0` (`Estuary`) remains available as a Vercel web
-app with a Render API and Supabase PostgreSQL. Signed Android build `10` is available
-as an [installable APK](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.apk)
-and [Google Play AAB](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.aab)
-in the exact `v1.8.0` [Estuary GitHub Release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0).
-The same verified binaries are versioned under `artifacts/` through Git LFS.
+candidate. Its signed Android build `12` is checked in through Git LFS as an
+[installable APK](artifacts/digiwallsys-v1.9.0-build12.apk) and
+[Google Play AAB](artifacts/digiwallsys-v1.9.0-build12.aab), with reproducible
+[SHA-256 checksums](artifacts/SHA256SUMS-v1.9.0.txt). The existing
+[`v1.8.0` Estuary release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0)
+remains the previous published Android binary release.
+
+### Current verification status
+
+Completed for the `v1.9.0` candidate:
+
+- All repository checks, Expo Doctor, web export, dependency audit, Docker
+  build/config validation, and default-branch CI pass.
+- The signed Android build `12` APK and AAB have verified signatures, package
+  metadata, production API embedding, Bundletool validation, and checksums.
+- The public Vercel routes and Render API health endpoint pass desktop and
+  mobile-web smoke checks without horizontal overflow or an unpainted scroll
+  band; a production user login loads the full sidebar, reconciled balance, and
+  reciprocal transaction history without a 401 loop.
+- The two verified Supabase acceptance users are live with balanced USD 1,000
+  opening journals; both logins and reciprocal USD 1.25 transfers pass against
+  the deployed API, leaving cached and ledger balances reconciled.
+- The iOS JavaScript/Hermes export passes and the Expo Go manifest serves the
+  correct `1.9.0` metadata, bundle identifier, and production API.
+
+Still required before the README status changes to **Released**:
+
+- Physical Android and iPhone interaction testing, including biometrics, QR,
+  notifications, responsive motion, profile editing, and long-page scrolling.
+- Apple Developer signing credentials for a distributable iOS archive,
+  TestFlight, or App Store delivery.
+- A dedicated Render background worker service and dashboard liveness check.
+- The signed `v1.9.0` Git tag, GitHub release assets/checksums, and GHCR
+  `v1.9.0` container tag.
 
 ---
 
@@ -248,12 +276,27 @@ npm run build:android:aab
 
 # Upload to TestFlight or the App Store
 npm run build:ios:ipa
+
+# Validate the iOS JavaScript/Hermes bundle without Apple credentials
+npm run build:ios:bundle
 ```
 
 Android uses the application ID `com.sufiyanaasim.digiwallsys`; iOS uses the
 matching bundle identifier. The APK profile is for internal installation, while
 the production profiles create an Android App Bundle and an iOS archive. Apple
 Developer membership and signing access are required for a device IPA.
+
+For free iPhone testing, install Expo Go, keep the iPhone and development
+computer on the same network, and start the LAN development server:
+
+```bash
+npm run start:mobile -- --lan
+```
+
+Scan the displayed QR code in Expo Go. This path needs no Apple Developer
+membership and uses the `EXPO_PUBLIC_API_URL` from `src/mobile/.env.local`.
+It is a development test path, not an IPA, TestFlight build, or App Store
+submission. A Mac is required only for local Xcode simulator/device builds.
 
 ---
 
@@ -287,7 +330,7 @@ Developer membership and signing access are required for a device IPA.
 | `EMAIL_DELIVERY_TOKEN` | Production | None | Email adapter bearer token |
 | `ENABLE_SCHEDULER` | No | `true` | Runs scheduled-transfer worker |
 | `ENABLE_PUSH_WORKER` | No | `true` | Runs Expo push dispatcher |
-| `ENABLE_EMAIL_WORKER` | No | `true` | Runs email-outbox dispatcher |
+| `ENABLE_EMAIL_WORKER` | No | `true` locally | Runs the email outbox; keep `false` on a production worker until both delivery adapter variables are configured |
 | `RUN_INLINE_WORKERS` | No | `false` | Runs workers inside the API process; use only for local single-process development |
 | `API_BASE_URL` | No | `http://localhost:$PORT` | Target for `scripts/simulate-funding-webhook.js` |
 | `EXPO_PUBLIC_API_URL` | No | Localhost in development; live Render API otherwise | Mobile and web API base URL |
@@ -333,7 +376,8 @@ digiwallsys/
 │   └── launch.json           # Shared web and API launch profiles
 ├── analytics/                # Standalone read-only Python spend analysis;
 │                             #   not imported by the API or client
-├── artifacts/                # Signed v1.8.0 APK/AAB tracked through Git LFS
+├── artifacts/                # Signed Android builds plus v1.9.0 checksums;
+│                             #   APK/AAB binaries are tracked through Git LFS
 ├── assets/                   # Current Aurora and preserved Ember brand assets
 ├── config/
 │   ├── database.sql          # Fresh PostgreSQL bootstrap entrypoint
@@ -376,6 +420,9 @@ digiwallsys/
 ├── tests/
 │   ├── backend/              # Smoke, validation, integration, concurrency
 │   └── mobile/               # Expo, build, identity, and web-layout checks
+├── .easignore                # Excludes secrets, generated output, and binaries
+│                             #   from monorepo EAS uploads
+├── .editorconfig             # Cross-editor whitespace and newline policy
 ├── .env.example              # Canonical configuration reference
 ├── .gitattributes            # LF policy and APK/AAB Git LFS rules
 ├── docker-compose.yml        # Local database, API, and worker stack

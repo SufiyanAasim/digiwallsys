@@ -21,6 +21,8 @@ All notable changes to this project are documented here. The format follows
 - An expanded creator profile with accessible GitHub and default-mail contact
   actions across web and native Credits.
 - Expo Doctor is now a reproducible local and GitHub Actions compatibility gate.
+- Signed Android build `12` APK/AAB artifacts and their SHA-256 manifest are
+  retained through Git LFS for reproducible candidate verification.
 
 ### Changed
 
@@ -53,6 +55,8 @@ All notable changes to this project are documented here. The format follows
   manual export-compliance configuration for standard HTTPS-only networking.
 - The production worker template keeps email delivery disabled until both a
   real delivery webhook and bearer token are configured.
+- The iOS Hermes bundle exports cleanly for Expo Go development testing while
+  App Store/TestFlight archives remain isolated behind Apple signing.
 
 ## [1.8.5] — Trench
 

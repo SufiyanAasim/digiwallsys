@@ -13,6 +13,7 @@
     "test": "node --test ../../tests/mobile/*.test.js",
     "build": "node scripts/run-package-bin.js expo export --platform android --output-dir dist",
     "build:web": "node scripts/run-package-bin.js expo export --platform web --output-dir dist-web",
+    "build:ios:bundle": "node scripts/run-package-bin.js expo export --platform ios --output-dir dist-ios",
     "build:android:apk": "npx --yes eas-cli@21.4.0 build --platform android --profile preview",
     "build:android:aab": "npx --yes eas-cli@21.4.0 build --platform android --profile production",
     "build:ios:ipa": "npx --yes eas-cli@21.4.0 build --platform ios --profile production"

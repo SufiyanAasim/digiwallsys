@@ -49,7 +49,8 @@ of variables. The values there are local placeholders — `JWT_SECRET` and
 `FUNDING_WEBHOOK_SECRET` must be replaced with real secrets before any
 deployment, and no real credential belongs in this file, which is tracked in Git.
 
-`NODE_ENV` is set back to `development` for the local stack. The image itself
-defaults to `production`; under that setting `emailService` withholds the
-verification token from the API response, and because no mail provider is wired
-up locally, no account could be verified and no one could sign in.
+`NODE_ENV` is set to `development` for the local stack, so verification/reset
+tokens can be exercised without a mail provider and the email worker only logs
+masked recipients. The image itself defaults to `production`; a dedicated
+production worker must set `ENABLE_EMAIL_WORKER=false` until both
+`EMAIL_WEBHOOK_URL` and `EMAIL_DELIVERY_TOKEN` are configured.

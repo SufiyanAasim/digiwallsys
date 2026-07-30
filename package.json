@@ -18,6 +18,7 @@
     "test": "npm run test --workspaces --if-present",
     "build": "npm run build --workspace @digiwallsys/mobile",
     "build:web": "npm run build:web --workspace @digiwallsys/mobile",
+    "build:ios:bundle": "npm run build:ios:bundle --workspace @digiwallsys/mobile",
     "build:android:apk": "npm run build:android:apk --workspace @digiwallsys/mobile",
     "build:android:aab": "npm run build:android:aab --workspace @digiwallsys/mobile",
     "build:ios:ipa": "npm run build:ios:ipa --workspace @digiwallsys/mobile",

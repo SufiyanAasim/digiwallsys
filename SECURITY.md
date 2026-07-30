@@ -2,7 +2,8 @@
 
 ## Supported versions
 
-Security fixes are applied to the latest stable release.
+Security fixes are applied to the latest stable release and the current
+default-branch release candidate.
 
 ## Reporting a vulnerability
 
@@ -16,18 +17,19 @@ concept. Do not access data that does not belong to you.
 
 ## Dependency vulnerabilities
 
-`npm audit --omit=dev` inside `src/backend` — the code that actually runs in
-production — reports **zero** vulnerabilities. Verify this yourself with:
+`npm audit --omit=dev` at the repository root and inside `src/backend` — the
+code that actually runs in production — report **zero** vulnerabilities.
+Verify this yourself with:
 
 ```bash
-cd src/backend && npm audit --omit=dev
+npm audit --omit=dev
+npm audit --omit=dev --workspace @digiwallsys/api
 ```
 
 The mobile workspace uses Expo SDK 57 and does not bundle the build-service CLI
 as an application dependency. `npm audit --omit=dev --audit-level=high` is a
-blocking CI gate. At the time of this release candidate it reports no high or
-critical findings; remaining moderate advisories are transitive native-project
-generation tools and must be reviewed again before each release.
+blocking CI gate. Dependency advisories must be reviewed again before every
+release even when the current scan is clean.
 
 ## Scope warning
 

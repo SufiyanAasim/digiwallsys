@@ -47,6 +47,11 @@ every `DEMO_*` variable. The command creates or refreshes two verified member
 accounts and posts opening funds through balanced `funding` journals tagged
 with the `demo-bootstrap` source; it
 does not write plaintext passwords or directly invent wallet balances.
+On a free Render service, Shell and one-off jobs are unavailable. Run the same
+command from another trusted environment with temporary database access, or use
+a controlled database-administration session that preserves the script's
+idempotent user, wallet, ledger, notification, and audit semantics. Never store
+demo passwords in a committed SQL file or provider variable after provisioning.
 
 ### GitHub Container Registry
 
@@ -91,11 +96,32 @@ the Android signing keystore. An Apple Developer account is required for the iOS
 distribution certificate and provisioning profile. Use the package/bundle ID
 `com.sufiyanaasim.digiwallsys` in both stores.
 
-EAS Android build `9` produced an installable APK and a Play Store AAB for
-public version `1.8.0`. The verified binaries are stored in the repository
-through Git LFS and distributed through the
-[Estuary GitHub Release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0);
-copies are also retained in EAS.
+The current candidate artifacts are public version `1.9.0`, Android build `12`:
+
+| Output | EAS build ID | Repository copy |
+| --- | --- | --- |
+| Installable APK | `5fa10378-791a-48ad-aa4c-a1c93dcff7a8` | `artifacts/digiwallsys-v1.9.0-build12.apk` |
+| Google Play AAB | `b650ffe7-d1eb-4dd0-8206-359ec124d1da` | `artifacts/digiwallsys-v1.9.0-build12.aab` |
+
+Both binaries embed `https://digiwallsys-api.onrender.com`; the APK's Android
+v2 signature, the AAB's JAR signature, Bundletool validation, package metadata,
+and `artifacts/SHA256SUMS-v1.9.0.txt` have been verified. Git LFS retains the
+large repository copies without storing them as ordinary Git blobs.
+
+Free iPhone development testing does not require Apple Developer membership:
+
+```bash
+# Same LAN as the iPhone; scan the printed QR code with Expo Go
+npm run start:mobile -- --lan
+
+# Reproducible iOS JavaScript/Hermes export gate
+npm run build:ios:bundle
+```
+
+Expo Go is not a distributable IPA. A production EAS iOS build still requires
+an Apple distribution certificate and provisioning profile; `app.json`
+declares `ITSAppUsesNonExemptEncryption=false` for the app's HTTPS-only
+networking.
 Generate native projects with Expo prebuild only when local native debugging is
 needed; use the EAS preview profile for an installable test APK and the
 production profiles for store artifacts. Always set the final

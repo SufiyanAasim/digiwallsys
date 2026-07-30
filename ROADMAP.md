@@ -180,8 +180,9 @@ container distribution.
 - [x] Add secure, idempotent provisioning for two verified transfer-test users.
 - [x] Seed opening funds through balanced funding journals tagged as demo bootstrap.
 - [x] Publish the production API image through GitHub Container Registry.
-- [ ] Provision the two demo users against the deployed Supabase database.
-- [ ] Verify transfers in both directions through the deployed API.
+- [x] Provision the two demo users against the deployed Supabase database.
+- [x] Verify transfers in both directions through the deployed API and
+      reconcile their cached and ledger balances.
 
 ## v1.9.0 — Crest
 
@@ -199,8 +200,14 @@ shared Expo web and native clients.
 - [x] Add audited display-name, verified-email, and password editing with
       automatic initials/avatar updates and cross-device session revocation.
 - [x] Align public, Android, iOS, API, documentation, and release metadata.
-- [ ] Publish signed Android build `12` APK/AAB artifacts and the `v1.9.0`
+- [x] Generate, download, sign-verify, checksum, and retain Android build `12`
+      APK/AAB artifacts through Git LFS.
+- [x] Export the iOS Hermes bundle and serve the `v1.9.0` Expo Go manifest for
+      free on-device development testing.
+- [ ] Publish the signed `v1.9.0` GitHub release assets and the matching
       container tag.
+- [ ] Create the signed iOS distribution archive after Apple Developer
+      credentials and provisioning are available.
 - [ ] Complete deployed desktop, mobile-web, and device acceptance.
 
 No release may be marked complete until its tests, documentation, migration,

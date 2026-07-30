@@ -9,7 +9,7 @@ so work in one part does not sit in the way of another.
 
 | Branch | Covers |
 | --- | --- |
-| `main` | Released, deployable state. The default branch. |
+| `main` | Integrated deployable or release-candidate state. The default branch. |
 | `backend` | `src/backend` — Express API, services, workers |
 | `frontend` | `src/mobile` — the shared mobile + web client |
 | `database` | `config/migrations`, `config/database.sql`, schema work |
