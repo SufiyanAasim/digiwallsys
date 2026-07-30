@@ -205,12 +205,14 @@ Completed for `v1.9.0`:
   the deployed API, leaving cached and ledger balances reconciled.
 - The iOS JavaScript/Hermes export passes and the Expo Go manifest serves the
   correct `1.9.0` metadata, bundle identifier, and production API.
+- Physical Android and iPhone smoke testing has been completed successfully by
+  the project owner.
 - The free Render web service runs scheduler and push processing inline with
   the API (`RUN_INLINE_WORKERS=true`); email processing remains disabled until
   a real delivery adapter is configured.
 
-Physical-device acceptance and an Apple-signed iOS archive are intentionally
-outside this release's delivery scope. They are not represented as completed.
+An Apple-signed iOS archive remains intentionally deferred outside this
+release's delivery scope.
 
 ---
 
@@ -308,7 +310,7 @@ submission. A Mac is required only for local Xcode simulator/device builds.
 | `DATABASE_URL` | Yes | None | PostgreSQL connection string |
 | `DATABASE_SSL` | No | `false` | Enables hosted PostgreSQL TLS |
 | `DATABASE_POOL_SIZE` | No | `10` | Maximum database pool connections |
-| `TEST_DATABASE_URL` | No | Unset | Enables the PostgreSQL integration suite when set to a database ending in `_test` |
+| `TEST_DATABASE_URL` | Local/CI only | Unset | Enables the PostgreSQL integration suite against a disposable database ending in `_test`; never point it at production or add it to deployment dashboards |
 | `JWT_SECRET` | Yes | None | Access-token signing secret |
 | `ACCESS_TOKEN_MINUTES` | No | `15` | Short-lived access-token duration |
 | `REFRESH_TOKEN_DAYS` | No | `30` | Rotating refresh-token duration |
@@ -464,7 +466,10 @@ TEST_DATABASE_URL=postgresql://user:pass@localhost:5432/digiwallsys_test npm tes
 ```
 
 The suite refuses destructive setup against a database without a test suffix.
-GitHub Actions supplies PostgreSQL 16 automatically.
+Keep `TEST_DATABASE_URL` in an ignored local environment file or the temporary
+CI environment only; `.env.*` files are excluded by `.gitignore`. Never use the
+production Supabase database for this suite. GitHub Actions supplies its own
+ephemeral PostgreSQL 16 service automatically.
 
 ---
 
