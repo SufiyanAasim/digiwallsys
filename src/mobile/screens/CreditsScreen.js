@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
-import {  Image, Linking, ScrollView, StyleSheet, Text, View  } from 'react-native';
+import { Image, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import Logo from '../components/Logo';
@@ -29,6 +29,11 @@ export default function CreditsScreen() {
   const openGitHub = () => {
     Linking.openURL('https://github.com/SufiyanAasim');
   };
+  const openContact = () => {
+    Linking.openURL(
+      'mailto:sufiyanaasim@outlook.com?subject=digiwallsys%20project%20inquiry'
+    );
+  };
 
   return (
     <View style={styles.screen}>
@@ -53,17 +58,46 @@ export default function CreditsScreen() {
               <Image
                 source={{ uri: 'https://github.com/SufiyanAasim.png' }}
                 style={styles.avatar}
-                accessibilityLabel="GitHub profile picture of Sufiyan Aasim"
+                accessibilityLabel="GitHub profile picture of Mohammad Sufiyan Aasim"
               />
               <View style={styles.architectText}>
-                <Text style={styles.nameText}>Sufiyan Aasim</Text>
-                <Text style={styles.roleText}>System Architecture · Financial Core · Mobile & Web Release</Text>
+                <Text style={styles.nameText}>Mohammad Sufiyan Aasim</Text>
+                <Text style={styles.roleText}>Software Engineer · System Architect</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.githubButton} onPress={openGitHub} accessibilityRole="button">
-              <Icon name="logo-github" size={20} color="#FFFFFF" />
-              <Text style={styles.githubButtonText}>@SufiyanAasim</Text>
-            </TouchableOpacity>
+            <Text style={styles.creatorSummary}>
+              Designed, engineered, and released digiwallsys end to end—from its
+              financial ledger and secure API to the responsive web and mobile
+              experience, quality assurance, and cloud delivery.
+            </Text>
+            <View style={styles.expertiseRow}>
+              {['Financial Systems', 'Full-Stack & Cloud', 'Mobile & Web', 'Software Quality'].map((area) => (
+                <View key={area} style={styles.expertiseChip}>
+                  <Text style={styles.expertiseText}>{area}</Text>
+                </View>
+              ))}
+            </View>
+            <View style={styles.creatorActions}>
+              <TouchableOpacity
+                style={styles.creatorButton}
+                onPress={openGitHub}
+                accessibilityRole="link"
+                accessibilityLabel="Open Mohammad Sufiyan Aasim on GitHub"
+              >
+                <Icon name="logo-github" size={20} color="#FFFFFF" />
+                <Text style={styles.creatorButtonText}>GitHub Profile</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.creatorButton, styles.contactButton]}
+                onPress={openContact}
+                accessibilityRole="link"
+                accessibilityLabel="Email Mohammad Sufiyan Aasim"
+                accessibilityHint="Opens your default mail application"
+              >
+                <Icon name="mail-outline" size={20} color={colors.text} />
+                <Text style={[styles.creatorButtonText, styles.contactButtonText]}>Contact</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </MotionSection>
 
@@ -106,7 +140,7 @@ export default function CreditsScreen() {
         </MotionSection>
 
         <MotionSection style={styles.footer} delay={300}>
-          <Text style={styles.footerText}>MIT License © 2026 Sufiyan Aasim</Text>
+          <Text style={styles.footerText}>MIT License © 2026 Mohammad Sufiyan Aasim</Text>
         </MotionSection>
         </View>
       </ScrollView>
@@ -137,8 +171,15 @@ function buildStyles(colors) {
     card: { backgroundColor: colors.surface, borderRadius: 16, padding: 18, borderColor: colors.border, borderWidth: 1 },
     nameText: { fontSize: 18, fontWeight: '700', color: colors.text, marginBottom: 4 },
     roleText: { fontSize: 13, color: colors.textMuted },
-    githubButton: { flexDirection: 'row', gap: 8, alignItems: 'center', backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24, alignSelf: 'flex-start' },
-    githubButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
+    creatorSummary: { color: colors.textMuted, fontSize: 14, lineHeight: 21, marginBottom: 14 },
+    expertiseRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 16 },
+    expertiseChip: { backgroundColor: colors.surfaceMuted, borderColor: colors.border, borderWidth: 1, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6 },
+    expertiseText: { color: colors.text, fontSize: 12, fontWeight: '600' },
+    creatorActions: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+    creatorButton: { flexDirection: 'row', gap: 8, alignItems: 'center', backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24 },
+    creatorButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 14 },
+    contactButton: { backgroundColor: colors.surfaceMuted, borderColor: colors.borderStrong, borderWidth: 1 },
+    contactButtonText: { color: colors.text },
     techRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, borderBottomColor: colors.border, borderBottomWidth: 0.5 },
     techKey: { fontSize: 13, fontWeight: '600', color: colors.textMuted },
     techVal: { fontSize: 13, fontWeight: '600', color: colors.text, textAlign: 'right', flex: 1, marginLeft: 10 },

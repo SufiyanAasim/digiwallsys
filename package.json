@@ -3,7 +3,7 @@
   "version": "1.9.0",
   "private": true,
   "description": "A full-stack digital wallet demo with an Expo mobile client and Express API.",
-  "author": "Sufiyan Aasim",
+  "author": "Mohammad Sufiyan Aasim",
   "license": "MIT",
   "workspaces": [
     "src/backend",

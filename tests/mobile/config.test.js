@@ -125,6 +125,22 @@ test('Crest profile controls update identity and revoke sessions after password 
   assert.doesNotMatch(securitySource, /user1@584|user2@584/);
 });
 
+test('Crest credits expose the complete creator identity and accessible contact actions', () => {
+  const creditsSource = readFileSync(
+    join(__dirname, '../../src/mobile/screens/CreditsScreen.js'),
+    'utf8'
+  );
+
+  assert.match(creditsSource, /Mohammad Sufiyan Aasim/);
+  assert.match(creditsSource, /https:\/\/github\.com\/SufiyanAasim/);
+  assert.match(creditsSource, /mailto:sufiyanaasim@outlook\.com/);
+  assert.match(creditsSource, /accessibilityLabel="Open Mohammad Sufiyan Aasim on GitHub"/);
+  assert.match(creditsSource, /accessibilityLabel="Email Mohammad Sufiyan Aasim"/);
+  assert.match(creditsSource, /Software Engineer · System Architect/);
+  assert.match(creditsSource, /Financial Systems/);
+  assert.match(creditsSource, /Full-Stack & Cloud/);
+});
+
 test('Expo uses the generated digiwallsys logo and deep-link scheme', () => {
   const appConfig = JSON.parse(readFileSync(join(__dirname, '../../src/mobile/app.json'), 'utf8'));
   assert.equal(appConfig.expo.icon, './assets/icon-app.png');

@@ -18,6 +18,8 @@ All notable changes to this project are documented here. The format follows
   Glass assets under explicit historical filenames.
 - Authenticated profile editing with dynamic initials, current-password-gated
   email changes, new-address verification, and audited password rotation.
+- An expanded creator profile with accessible GitHub and default-mail contact
+  actions across web and native Credits.
 
 ### Changed
 

@@ -20,7 +20,7 @@
     "express",
     "postgresql"
   ],
-  "author": "Sufiyan Aasim",
+  "author": "Mohammad Sufiyan Aasim",
   "license": "MIT",
   "type": "commonjs",
   "description": "Authenticated REST API for digiwallsys",

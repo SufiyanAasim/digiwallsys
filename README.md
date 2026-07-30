@@ -439,7 +439,7 @@ Report vulnerabilities privately using [SECURITY.md](SECURITY.md).
     <td align="center">
       <a href="https://github.com/SufiyanAasim">
         <img src="https://github.com/SufiyanAasim.png" width="72" alt="SufiyanAasim"/><br/>
-        <sub><b>Sufiyan Aasim</b></sub>
+        <sub><b>Mohammad Sufiyan Aasim</b></sub>
       </a><br/>
       <sub>System Architecture · Financial Core · Mobile · Build & Release</sub>
     </td>
@@ -452,7 +452,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) to get involved.
 
 ## 📄 License
 
-[MIT License](LICENSE) © 2026 Sufiyan Aasim.
+[MIT License](LICENSE) © 2026 Mohammad Sufiyan Aasim.
 
 ---
 
