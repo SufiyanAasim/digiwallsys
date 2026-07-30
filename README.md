@@ -7,9 +7,9 @@
 **A secure digiwallsys digital wallet platform with verified funding, immutable ledger accounting, QR payments, automation, alerts, and audited operations**
 
 [![Node 20](https://img.shields.io/badge/Node.js-20%2B-0f766e?style=flat&logo=node.js&logoColor=white)](docs/guides/Developer%20Guide.md)
-[![Version](https://img.shields.io/badge/version-v1.8.0-713b49?style=flat)](docs/releases/v1.8.0.md)
-[![Release](https://img.shields.io/badge/name-Estuary-c6533c?style=flat)](docs/releases/v1.8.0.md)
-[![Status](https://img.shields.io/badge/status-deployed-16a34a?style=flat)](docs/releases/v1.8.0.md)
+[![Version](https://img.shields.io/badge/version-v1.8.5-713b49?style=flat)](docs/releases/v1.8.5.md)
+[![Release](https://img.shields.io/badge/name-Trench-c6533c?style=flat)](docs/releases/v1.8.5.md)
+[![Status](https://img.shields.io/badge/status-in%20verification-e9a23b?style=flat)](docs/releases/v1.8.5.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20Web-64748b?style=flat)]()
 [![Build](https://img.shields.io/badge/build-passing-16a34a?style=flat)](.github/workflows/build.yml)
@@ -19,7 +19,7 @@ Register securely, fund through a verified provider, send or request money,
 scan QR payments, schedule transfers, receive alerts, and reconcile every wallet
 against a balanced double-entry ledger.
 
-[**Web app**](https://digiwallsys.vercel.app) · [**Android APK**](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.apk) · [**Estuary release**](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Release notes**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
+[**Web app**](https://digiwallsys.vercel.app) · [**Trench notes**](docs/releases/v1.8.5.md) · [**Container package**](https://github.com/SufiyanAasim/digiwallsys/pkgs/container/digiwallsys) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
 
 </div>
 
@@ -154,6 +154,7 @@ and shared-wallet sequence diagrams, are in
 
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
+| [v1.8.5](docs/releases/v1.8.5.md) | **Trench** | In verification | Accessible live motion, transfer-test users, and GHCR delivery |
 | [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Deployed | Multi-currency wallets and shared/family wallets |
 | [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Implemented | Savings goals, budgets, calendar, tagging, statements, alerts |
 | [v1.7.0](docs/releases/v1.7.0.md) | **Compass** | Implemented | Real-data analytics, spend breakdown, spending alerts |
@@ -163,7 +164,7 @@ and shared-wallet sequence diagrams, are in
 | [v1.5.0](docs/releases/v1.5.0.md) | **Meridian** | Completed | Reconciliation and currency precision |
 | [v1.4.5](docs/releases/v1.4.5.md) | **Trade** | Completed | Payment requests and scheduled transfers |
 | [v1.4.0](docs/releases/v1.4.0.md) | **Voyage** | Completed | QR, biometrics, and broader-market foundations |
-| [v1.3.5](docs/releases/v1.3.5.md) | **Beacon** | Completed | Search, exports, receipts, notifications, and alerts |
+| [v1.3.5](docs/releases/v1.3.5.md) | **Shoal** | Completed | Search, exports, receipts, notifications, and alerts |
 | [v1.3.0](docs/releases/v1.3.0.md) | **Harbor** | Completed | Audited administrator operations |
 | [v1.2.5](docs/releases/v1.2.5.md) | **Gale** | Completed | Fraud controls and stress optimization |
 | [v1.2.0](docs/releases/v1.2.0.md) | **Passage** | Completed | Immutable double-entry ledger |
@@ -173,8 +174,9 @@ and shared-wallet sequence diagrams, are in
 | [v1.0.0](docs/releases/v1.0.0.md) | **Anchor** | Base Release | Secure wallet foundation and PostgreSQL acceptance gates |
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
-prerelease identifiers. `v1.8.0` (`Estuary`) is deployed as a Vercel web app
-with a Render API and Supabase PostgreSQL. Signed Android build `10` is available
+prerelease identifiers. `v1.8.5` (`Trench`) is the current verification
+candidate. The deployed `v1.8.0` (`Estuary`) remains available as a Vercel web
+app with a Render API and Supabase PostgreSQL. Signed Android build `10` is available
 as an [installable APK](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.apk)
 and [Google Play AAB](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.aab)
 in the exact `v1.8.0` [Estuary GitHub Release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0).
@@ -352,7 +354,7 @@ digiwallsys/
 │   │   ├── routes/           # REST route modules
 │   │   ├── services/         # Ledger, fraud, auth, audit, and notifications
 │   │   ├── workers/          # Email, push, and scheduled transfers
-│   │   └── scripts/          # Migration and syntax tooling
+│   │   └── scripts/          # Migration, provisioning, and syntax tooling
 │   └── mobile/
 │       ├── assets/           # App icon, adaptive icon, and generated logo art
 │       ├── components/       # Shared Ember Glass UI and web sidebar shell
@@ -365,6 +367,7 @@ digiwallsys/
 │       ├── app.json          # Expo identity, native IDs, build numbers
 │       ├── eas.json          # Signed APK, AAB, and iOS profiles
 │       ├── session.js        # Secure token and biometric session storage
+│       ├── motion.js         # Reduced-motion-aware transitions and staging
 │       ├── theme.js          # Ember Glass dark/light tokens and layout helpers
 │       └── ThemeContext.js   # Persisted runtime theme provider
 ├── tests/

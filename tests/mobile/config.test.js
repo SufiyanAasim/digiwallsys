@@ -51,6 +51,29 @@ test('web dashboard tiles fill complete rows and orphan touch endings are ignore
   assert.match(indexSource, /event\.stopImmediatePropagation\(\)/);
 });
 
+test('shared motion is layout-safe and respects reduced-motion preferences', () => {
+  const motionSource = readFileSync(
+    join(__dirname, '../../src/mobile/motion.js'),
+    'utf8'
+  );
+  const ambientSource = readFileSync(
+    join(__dirname, '../../src/mobile/components/AmbientBackground.js'),
+    'utf8'
+  );
+  const touchableSource = readFileSync(
+    join(__dirname, '../../src/mobile/components/TouchableOpacity.js'),
+    'utf8'
+  );
+
+  assert.match(motionSource, /AccessibilityInfo\.isReduceMotionEnabled/);
+  assert.match(motionSource, /reduceMotionChanged/);
+  assert.match(motionSource, /export function MotionScreen/);
+  assert.match(motionSource, /export function MotionSection/);
+  assert.doesNotMatch(motionSource, /\b(width|height|margin|padding):\s*progress/);
+  assert.match(ambientSource, /Animated\.loop/);
+  assert.match(touchableSource, /AnimatedPressable/);
+});
+
 test('mobile navigation exposes advanced payment and security screens', () => {
   const appSource = readFileSync(join(__dirname, '../../src/mobile/App.js'), 'utf8');
   for (const screen of ['Payment Tools', 'QR Payment', 'Notifications', 'Security', 'Admin']) {
@@ -99,9 +122,9 @@ test('native package identifiers and EAS store profiles are configured', () => {
 
   assert.equal(appConfig.expo.android.package, 'com.sufiyanaasim.digiwallsys');
   assert.equal(appConfig.expo.ios.bundleIdentifier, 'com.sufiyanaasim.digiwallsys');
-  assert.equal(appConfig.expo.version, '1.8.0');
-  assert.equal(appConfig.expo.android.versionCode, 10);
-  assert.equal(appConfig.expo.ios.buildNumber, '5');
+  assert.equal(appConfig.expo.version, '1.8.5');
+  assert.equal(appConfig.expo.android.versionCode, 11);
+  assert.equal(appConfig.expo.ios.buildNumber, '6');
   assert.equal(appConfig.expo.extra.eas.projectId, projectId);
   assert.equal(easConfig.build.preview.android.buildType, 'apk');
   assert.equal(easConfig.build.production.android.buildType, 'app-bundle');

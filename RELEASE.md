@@ -13,7 +13,7 @@ outcome, while Git tags and GitHub release titles remain exact.
 | `v1.2.0` | Passage | Secure movement of funds across gateways. |
 | `v1.2.5` | Gale | Stress testing and high-speed optimization. |
 | `v1.3.0` | Harbor | Dashboard for holding and managing funds. |
-| `v1.3.5` | Beacon | Enhanced visibility, reporting, and alerts. |
+| `v1.3.5` | Shoal | Enhanced visibility, reporting, and alerts. |
 | `v1.4.0` | Voyage | Expanding to multi-currency or broader markets. |
 | `v1.4.5` | Trade | Refining business-to-business transaction logic. |
 | `v1.5.0` | Meridian | Global alignment and high-precision accuracy. |
@@ -23,6 +23,7 @@ outcome, while Git tags and GitHub release titles remain exact.
 | `v1.7.0` | Compass | Real-data analytics: spend breakdown and spending alerts. |
 | `v1.7.5` | Convoy | Savings goals, budgets, calendar, tagging, statements, alerts. |
 | `v1.8.0` | Estuary | Multi-currency wallets and shared/family wallets. |
+| `v1.8.5` | Trench | Coordinated motion, demo accounts, and container packaging. |
 
 ## Exact naming rules
 

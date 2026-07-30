@@ -6,8 +6,16 @@ All notable changes to this project are documented here. The format follows
 
 ## [Unreleased]
 
+## [1.8.5] — Trench
+
 ### Added
 
+- Shared reduced-motion-aware screen, section, ambient, hover, and press
+  animations across the Expo web and native clients.
+- Idempotent demo-user provisioning with verified accounts and balanced opening
+  funding journals for two-way transfer acceptance.
+- GitHub Container Registry publishing for default-branch, release-tag, and
+  commit-SHA Docker images.
 - Git LFS tracking for the current signed Android build `10` APK and AAB while
   retaining build `9` as the immutable earlier Estuary candidate.
 - EAS ownership and deterministic production profiles for matching signed
@@ -100,8 +108,8 @@ All notable changes to this project are documented here. The format follows
 - Savings round-ups now select the enabled goal correctly, include completed
   non-archived goals in earmarked balances, and cannot exceed the remaining
   goal target or available wallet balance.
-- Android advanced to signed build `9`; iOS remains at build `4` while the
-  public app version stays `1.8.0`.
+- Android metadata advanced to build `11`, iOS to build `6`, and the public
+  app version to `1.8.5`.
 - `react/jsx-no-undef` is now enabled. Core `no-undef` does not treat a JSX
   element name as an identifier reference, so a component used without being
   imported passed lint and only failed at runtime — which is exactly how a

@@ -1,6 +1,6 @@
 {
   "name": "digiwallsys",
-  "version": "1.8.0",
+  "version": "1.8.5",
   "private": true,
   "description": "A full-stack digital wallet demo with an Expo mobile client and Express API.",
   "author": "Sufiyan Aasim",
@@ -12,6 +12,7 @@
   "scripts": {
     "start:api": "npm run start --workspace @digiwallsys/api",
     "start:worker": "npm run start:worker --workspace @digiwallsys/api",
+    "demo:seed": "npm run demo:seed --workspace @digiwallsys/api",
     "start:mobile": "npm run start --workspace @digiwallsys/mobile",
     "lint": "npm run lint --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",

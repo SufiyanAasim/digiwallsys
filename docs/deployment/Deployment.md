@@ -33,6 +33,21 @@ Set `ADMIN_BOOTSTRAP_EMAIL`, `ADMIN_BOOTSTRAP_PASSWORD`, and optionally
 then remove those variables. Rotate any password that has ever appeared in
 source history, deployment logs, or chat.
 
+### One-time demo-user provisioning
+
+Set the two `DEMO_USER_*_PASSWORD` values in a trusted Render Shell, confirm
+the configured emails and opening balance, run `npm run demo:seed`, and remove
+every `DEMO_*` variable. The command creates or refreshes two verified member
+accounts and posts opening funds through balanced `demo_funding` journals; it
+does not write plaintext passwords or directly invent wallet balances.
+
+### GitHub Container Registry
+
+Pushes to `main` and version tags publish the production image as
+`ghcr.io/sufiyanaasim/digiwallsys`. Pull requests build the same Dockerfile
+without publishing it. The workflow authenticates with the repository-scoped
+`GITHUB_TOKEN`, so no registry password belongs in repository secrets.
+
 ## Mobile
 
 Set `EXPO_PUBLIC_API_URL` to the deployed HTTPS API before creating the Expo

@@ -1,6 +1,6 @@
 {
   "name": "@digiwallsys/api",
-  "version": "1.8.0",
+  "version": "1.8.5",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -10,6 +10,7 @@
     "funding:sandbox": "node scripts/simulate-funding-webhook.js",
     "admin:promote": "node scripts/promote-admin.js",
     "admin:seed": "node scripts/create-admin-account.js",
+    "demo:seed": "node scripts/provision-demo-users.js",
     "lint": "node scripts/check-syntax.js",
     "test": "node --test ../../tests/backend/*.test.js"
   },

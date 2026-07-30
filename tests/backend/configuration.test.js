@@ -10,6 +10,9 @@ const {
 const {
   readBootstrapConfig,
 } = require('../../src/backend/scripts/create-admin-account');
+const {
+  readDemoConfig,
+} = require('../../src/backend/scripts/provision-demo-users');
 
 test('production CORS always includes the canonical deployed web origin', () => {
   assert.deepEqual(
@@ -60,4 +63,28 @@ test('admin bootstrap source has no positional or logged password fallback', () 
 
   assert.doesNotMatch(source, /process\.argv/);
   assert.doesNotMatch(source, /Password:\s*\$\{password\}/);
+});
+
+test('demo-user provisioning requires passwords without hardcoding them', () => {
+  assert.throws(() => readDemoConfig({}), /DEMO_USER_1_PASSWORD/);
+  const config = readDemoConfig({
+    DEMO_USER_1_PASSWORD: 'demo-pass-one',
+    DEMO_USER_2_PASSWORD: 'demo-pass-two',
+    DEMO_USER_OPENING_BALANCE: '750',
+  });
+  assert.deepEqual(
+    config.users.map(({ email, name }) => ({ email, name })),
+    [
+      { email: 'user1@digiwallsys.com', name: 'digiwallsys User 1' },
+      { email: 'user2@digiwallsys.com', name: 'digiwallsys User 2' },
+    ]
+  );
+  assert.equal(config.openingBalance, 750);
+
+  const source = readFileSync(
+    join(__dirname, '../../src/backend/scripts/provision-demo-users.js'),
+    'utf8'
+  );
+  assert.doesNotMatch(source, /user1@584|user2@584/);
+  assert.doesNotMatch(source, /console\.log\([^)]*password/i);
 });

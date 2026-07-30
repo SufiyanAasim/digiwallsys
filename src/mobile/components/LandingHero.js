@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import GradientButton from './GradientButton';
 import Wordmark from './Wordmark';
 import { useAppTheme } from '../ThemeContext';
+import { useMotion } from '../motion';
 import { radii } from '../theme';
 
 const FEATURES = [
@@ -70,9 +71,14 @@ const ORBS = [
 ];
 
 function GlowOrbs({ colors }) {
+  const { reduceMotion } = useMotion();
   const animsRef = useRef(ORBS.map(() => new Animated.Value(0)));
 
   useEffect(() => {
+    if (reduceMotion) {
+      animsRef.current.forEach((value) => value.setValue(0));
+      return undefined;
+    }
     const loops = animsRef.current.map((value, index) =>
       Animated.loop(
         Animated.sequence([
@@ -84,7 +90,7 @@ function GlowOrbs({ colors }) {
     );
     loops.forEach((loop) => loop.start());
     return () => loops.forEach((loop) => loop.stop());
-  }, []);
+  }, [reduceMotion]);
 
   return (
     <View style={[decorativeStyles.orbLayer, { pointerEvents: 'none' }]}>
@@ -115,21 +121,36 @@ function GlowOrbs({ colors }) {
 }
 
 function FeatureCard({ feature, colors, styles, index }) {
+  const { reduceMotion } = useMotion();
   const enter = useRef(new Animated.Value(0)).current;
   const hover = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(enter, {
+    if (reduceMotion) {
+      enter.setValue(1);
+      return undefined;
+    }
+    const animation = Animated.timing(enter, {
       toValue: 1,
       duration: 420,
       delay: 150 + index * 90,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: Platform.OS !== 'web',
-    }).start();
-  }, [enter, index]);
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [enter, index, reduceMotion]);
 
   function setHovered(hovered) {
-    Animated.timing(hover, { toValue: hovered ? 1 : 0, duration: 180, useNativeDriver: Platform.OS !== 'web' }).start();
+    if (reduceMotion) {
+      hover.setValue(0);
+      return;
+    }
+    Animated.timing(hover, {
+      toValue: hovered ? 1 : 0,
+      duration: 180,
+      useNativeDriver: Platform.OS !== 'web',
+    }).start();
   }
 
   return (
@@ -158,18 +179,25 @@ function FeatureCard({ feature, colors, styles, index }) {
 // flat tint into the live brand gradient, so the row responds to the pointer
 // rather than sitting inert.
 function StepCard({ step, index, colors, styles }) {
+  const { reduceMotion } = useMotion();
   const enter = useRef(new Animated.Value(0)).current;
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    Animated.timing(enter, {
+    if (reduceMotion) {
+      enter.setValue(1);
+      return undefined;
+    }
+    const animation = Animated.timing(enter, {
       toValue: 1,
       duration: 420,
       delay: 520 + index * 110,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: Platform.OS !== 'web',
-    }).start();
-  }, [enter, index]);
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [enter, index, reduceMotion]);
 
   return (
     <Animated.View
@@ -211,17 +239,24 @@ function StepCard({ step, index, colors, styles }) {
 // where a full-screen pitch would just be in the way on a phone.
 export default function LandingHero({ onGetStarted }) {
   const { colors } = useAppTheme();
+  const { reduceMotion } = useMotion();
   const themedStyles = useMemo(() => buildStyles(colors), [colors]);
   const heroEnter = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.timing(heroEnter, {
+    if (reduceMotion) {
+      heroEnter.setValue(1);
+      return undefined;
+    }
+    const animation = Animated.timing(heroEnter, {
       toValue: 1,
       duration: 480,
       easing: Easing.out(Easing.cubic),
       useNativeDriver: Platform.OS !== 'web',
-    }).start();
-  }, [heroEnter]);
+    });
+    animation.start();
+    return () => animation.stop();
+  }, [heroEnter, reduceMotion]);
 
 
   return (

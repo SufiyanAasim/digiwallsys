@@ -14,3 +14,6 @@ Release status is tracked only in the README's app-version table, not repeated
 inside individual release documents. Every release document follows
 `Template.md`: overview, objectives, feature groups, changes, architecture
 progress, compatibility, ownership, and release summary.
+
+The current sequence extends through `v1.8.5` (`Trench`); see `RELEASE.md` for
+the complete immutable version-to-name mapping.

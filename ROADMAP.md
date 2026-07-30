@@ -72,7 +72,7 @@ each release builds on the previous one without changing its exact tag or name.
 - [x] Add immutable administrator audit logs.
 - [x] Add operational balance, funding, schedule, fraud, and exception dashboards.
 
-## v1.3.5 — Beacon
+## v1.3.5 — Shoal
 
 **Context:** Enhanced visibility, reporting, and alerts.
 
@@ -169,6 +169,19 @@ both touch core ledger and authorization logic directly.
       exercise the PostgreSQL integration suite (`TEST_DATABASE_URL` is not
       configured in the environment this was built in).
 - [ ] Deploy to production.
+
+## v1.8.5 — Trench
+
+**Context:** Deep interaction polish, repeatable demo-account acceptance, and
+container distribution.
+
+- [x] Add reduced-motion-aware screen, control, ambient, landing, login, and
+      Credits animations for web and native.
+- [x] Add secure, idempotent provisioning for two verified transfer-test users.
+- [x] Seed opening funds through balanced demo-funding journals.
+- [x] Publish the production API image through GitHub Container Registry.
+- [ ] Provision the two demo users against the deployed Supabase database.
+- [ ] Verify transfers in both directions through the deployed API.
 
 No release may be marked complete until its tests, documentation, migration,
 security, and operational acceptance criteria pass.

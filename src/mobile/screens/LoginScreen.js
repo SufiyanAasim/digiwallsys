@@ -18,6 +18,7 @@ import GradientButton from '../components/GradientButton';
 import LandingHero from '../components/LandingHero';
 import PublicWebFooter, { PUBLIC_FOOTER_HEIGHT } from '../components/PublicWebFooter';
 import Wordmark from '../components/Wordmark';
+import { MotionSection } from '../motion';
 import { loginUser, refreshUserSession, registerUser } from '../api';
 import { authenticateBiometric, clearSession, getRefreshToken, isBiometricEnabled, saveSession } from '../session';
 import { useAppTheme } from '../ThemeContext';
@@ -147,7 +148,7 @@ export default function LoginScreen({ navigation, onAuthenticated }) {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.flex}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled">
           {showLanding ? <LandingHero onGetStarted={() => setAuthOpen(true)} /> : (
-          <View style={styles.formColumn}>
+          <MotionSection style={styles.formColumn} distance={16}>
           {isWeb && (
             <TouchableOpacity
               style={styles.backLink}
@@ -251,7 +252,7 @@ export default function LoginScreen({ navigation, onAuthenticated }) {
             )}
           </View>
           <AppFooter navigation={navigation} />
-          </View>
+          </MotionSection>
           )}
         </ScrollView>
       </KeyboardAvoidingView>

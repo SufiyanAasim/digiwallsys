@@ -27,6 +27,7 @@ import { getRefreshToken } from './session';
 import { currentRouteName, navigate, navigationRef, resetToLogin } from './navigation';
 import { layout } from './theme';
 import { useAppTheme, ThemeProvider } from './ThemeContext';
+import { MotionProvider, MotionScreen } from './motion';
 
 import { AmbientLayer } from './components/AmbientBackground';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -60,7 +61,11 @@ function ProtectedScreen({ screen: Screen, ...props }) {
       </View>
     );
   }
-  return <Screen {...props} />;
+  return (
+    <MotionScreen routeKey={props.route?.key}>
+      <Screen {...props} />
+    </MotionScreen>
+  );
 }
 
 // Without this the address bar stays on "/" no matter which screen is open, so
@@ -217,9 +222,19 @@ function AppShell() {
               }}
             >
               <Stack.Screen name="Login" options={{ headerShown: false }}>
-                {(props) => <LoginScreen {...props} onAuthenticated={setUser} />}
+                {(props) => (
+                  <MotionScreen routeKey={props.route?.key}>
+                    <LoginScreen {...props} onAuthenticated={setUser} />
+                  </MotionScreen>
+                )}
               </Stack.Screen>
-              <Stack.Screen name="Account Recovery" component={AccountRecoveryScreen} />
+              <Stack.Screen name="Account Recovery">
+                {(props) => (
+                  <MotionScreen routeKey={props.route?.key}>
+                    <AccountRecoveryScreen {...props} />
+                  </MotionScreen>
+                )}
+              </Stack.Screen>
               <Stack.Screen name="Home" options={{ headerShown: false }}>{(props) => <ProtectedScreen {...props} screen={HomeScreen} />}</Stack.Screen>
               <Stack.Screen name="Analytics">{(props) => <ProtectedScreen {...props} screen={AnalyticsScreen} />}</Stack.Screen>
               <Stack.Screen name="Add Money">{(props) => <ProtectedScreen {...props} screen={AddMoneyScreen} />}</Stack.Screen>
@@ -235,7 +250,13 @@ function AppShell() {
               <Stack.Screen name="Notifications">{(props) => <ProtectedScreen {...props} screen={NotificationsScreen} />}</Stack.Screen>
               <Stack.Screen name="Security">{(props) => <ProtectedScreen {...props} screen={SecurityScreen} />}</Stack.Screen>
               <Stack.Screen name="Admin">{(props) => <ProtectedScreen {...props} screen={AdminScreen} />}</Stack.Screen>
-              <Stack.Screen name="Credits" component={CreditsScreen} />
+              <Stack.Screen name="Credits">
+                {(props) => (
+                  <MotionScreen routeKey={props.route?.key}>
+                    <CreditsScreen {...props} />
+                  </MotionScreen>
+                )}
+              </Stack.Screen>
             </Stack.Navigator>
           </NavigationContainer>
           </AuthContext.Provider>
@@ -249,11 +270,13 @@ export default function App() {
   return (
     <ErrorBoundary>
       <ThemeProvider>
-        <ToastProvider>
-          <ConfirmProvider>
-            <AppShell />
-          </ConfirmProvider>
-        </ToastProvider>
+        <MotionProvider>
+          <ToastProvider>
+            <ConfirmProvider>
+              <AppShell />
+            </ConfirmProvider>
+          </ToastProvider>
+        </MotionProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );

@@ -6,6 +6,7 @@ import { Ionicons as Icon } from '@expo/vector-icons';
 import AmbientBackground from '../components/AmbientBackground';
 import Logo from '../components/Logo';
 import Wordmark from '../components/Wordmark';
+import { MotionSection } from '../motion';
 import { useAppTheme } from '../ThemeContext';
 import { screenBackground } from '../theme';
 
@@ -34,18 +35,18 @@ export default function CreditsScreen() {
       <AmbientBackground />
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
         <View style={styles.inner}>
-        <View style={styles.headerCard}>
+        <MotionSection style={styles.headerCard} distance={16}>
           <Logo size={72} />
           <View style={styles.titleWrap}><Wordmark size={28} /></View>
           <Text style={styles.tagline}>Digital Wallet & Financial Accounting System</Text>
           <View style={styles.badgeRow}>
-            <View style={styles.badge}><Text style={styles.badgeText}>v1.8.0</Text></View>
-            <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Estuary"</Text></View>
+            <View style={styles.badge}><Text style={styles.badgeText}>v1.8.5</Text></View>
+            <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Trench"</Text></View>
             <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Deployed</Text></View>
           </View>
-        </View>
+        </MotionSection>
 
-        <View style={styles.section}>
+        <MotionSection style={styles.section} delay={90}>
           <SectionTitle icon="person-circle-outline" colors={colors} styles={styles}>System Architect &amp; Creator</SectionTitle>
           <View style={styles.card}>
             <View style={styles.architectRow}>
@@ -64,9 +65,9 @@ export default function CreditsScreen() {
               <Text style={styles.githubButtonText}>@SufiyanAasim</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </MotionSection>
 
-        <View style={styles.section}>
+        <MotionSection style={styles.section} delay={160}>
           <SectionTitle icon="layers-outline" colors={colors} styles={styles}>Technology Stack</SectionTitle>
           <View style={styles.card}>
             <View style={styles.techRow}>
@@ -90,9 +91,9 @@ export default function CreditsScreen() {
               <Text style={styles.techVal}>Vercel · Render · Supabase</Text>
             </View>
           </View>
-        </View>
+        </MotionSection>
 
-        <View style={styles.section}>
+        <MotionSection style={styles.section} delay={230}>
           <SectionTitle icon="shield-checkmark-outline" colors={colors} styles={styles}>Core Features</SectionTitle>
           <View style={styles.card}>
             <Text style={styles.bullet}>• Double-Entry Immutable Ledger Accounting</Text>
@@ -102,11 +103,11 @@ export default function CreditsScreen() {
             <Text style={styles.bullet}>• Real-time Fraud Engine & Admin Reconciliation</Text>
             <Text style={styles.bullet}>• Secure Token Rotation & Biometric Authentication</Text>
           </View>
-        </View>
+        </MotionSection>
 
-        <View style={styles.footer}>
+        <MotionSection style={styles.footer} delay={300}>
           <Text style={styles.footerText}>MIT License © 2026 Sufiyan Aasim</Text>
-        </View>
+        </MotionSection>
         </View>
       </ScrollView>
     </View>

@@ -9,6 +9,7 @@ import TouchableOpacity from '../TouchableOpacity';
 import Wordmark from '../Wordmark';
 import { useAppTheme } from '../../ThemeContext';
 import { radii } from '../../theme';
+import { MotionSection } from '../../motion';
 
 const NAV_ITEMS = [
   { route: 'Home', label: 'Home', icon: 'home-outline' },
@@ -35,7 +36,7 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
   const items = user?.role === 'admin' ? [...NAV_ITEMS, { route: 'Admin', label: 'Admin operations', icon: 'settings-outline' }] : NAV_ITEMS;
 
   return (
-    <View style={styles.sidebar}>
+    <MotionSection style={styles.sidebar} horizontal distance={-12}>
       {/* The sidebar sits outside the content area's AmbientLayer, so it had
           none of the rose glow every other surface picks up and read as a flat
           slab beside them. This gives it the same wash on its own. */}
@@ -98,9 +99,9 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
           <Icon name="log-out-outline" size={18} color={colors.primary} />
           <Text style={styles.logoutLabel}>Log out</Text>
         </TouchableOpacity>
-        <Text style={styles.version}>v1.8.0 "Estuary"</Text>
+        <Text style={styles.version}>v1.8.5 "Trench"</Text>
       </View>
-    </View>
+    </MotionSection>
   );
 }
 

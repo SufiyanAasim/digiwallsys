@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 import TouchableOpacity from './TouchableOpacity';
 import { useAppTheme } from '../ThemeContext';
+import { MotionSection } from '../motion';
 
 export const PUBLIC_FOOTER_HEIGHT = 52;
 
@@ -19,7 +20,7 @@ export default function PublicWebFooter({ navigation }) {
   if (Platform.OS !== 'web') return null;
 
   return (
-    <View style={styles.bar}>
+    <MotionSection style={styles.bar} delay={220} distance={10}>
       <TouchableOpacity
         onPress={() => navigation && navigation.navigate('Credits')}
         accessibilityRole="button"
@@ -28,10 +29,10 @@ export default function PublicWebFooter({ navigation }) {
         <Text style={styles.link}>Credits</Text>
       </TouchableOpacity>
       <Text style={styles.dot}>·</Text>
-      <Text style={styles.version}>v1.8.0 &quot;Estuary&quot;</Text>
+      <Text style={styles.version}>v1.8.5 &quot;Trench&quot;</Text>
       <Text style={styles.dot}>·</Text>
       <Text style={styles.tagline}>digiwallsys digital wallet</Text>
-    </View>
+    </MotionSection>
   );
 }
 

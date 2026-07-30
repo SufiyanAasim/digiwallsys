@@ -1,6 +1,17 @@
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { useEffect, useRef } from 'react';
+import {
+  Animated,
+  Easing,
+  Platform,
+  StyleSheet,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../ThemeContext';
+import { motionDriver, useMotion } from '../motion';
+
+const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
 
 // Soft rose/amber glow behind every screen. The blobs are sized from the actual
 // viewport so the glow fills a wide desktop monitor edge to edge instead of
@@ -17,8 +28,55 @@ export default function AmbientBackground() {
 // Always paints. Used by the web shell (and by AmbientBackground on native).
 export function AmbientLayer() {
   const { colors } = useAppTheme();
+  const { reduceMotion } = useMotion();
   const { width, height } = useWindowDimensions();
   const isWeb = Platform.OS === 'web';
+  const topMotion = useRef(new Animated.Value(0)).current;
+  const bottomMotion = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    topMotion.stopAnimation();
+    bottomMotion.stopAnimation();
+    if (reduceMotion) {
+      topMotion.setValue(0);
+      bottomMotion.setValue(0);
+      return undefined;
+    }
+    const topLoop = Animated.loop(Animated.sequence([
+      Animated.timing(topMotion, {
+        toValue: 1,
+        duration: 12000,
+        easing: Easing.inOut(Easing.sin),
+        useNativeDriver: motionDriver,
+      }),
+      Animated.timing(topMotion, {
+        toValue: 0,
+        duration: 12000,
+        easing: Easing.inOut(Easing.sin),
+        useNativeDriver: motionDriver,
+      }),
+    ]));
+    const bottomLoop = Animated.loop(Animated.sequence([
+      Animated.timing(bottomMotion, {
+        toValue: 1,
+        duration: 15000,
+        easing: Easing.inOut(Easing.sin),
+        useNativeDriver: motionDriver,
+      }),
+      Animated.timing(bottomMotion, {
+        toValue: 0,
+        duration: 15000,
+        easing: Easing.inOut(Easing.sin),
+        useNativeDriver: motionDriver,
+      }),
+    ]));
+    topLoop.start();
+    bottomLoop.start();
+    return () => {
+      topLoop.stop();
+      bottomLoop.stop();
+    };
+  }, [bottomMotion, reduceMotion, topMotion]);
 
   // On web scale with the viewport (never smaller than a phone-sized blob);
   // on native keep the original fixed sizes.
@@ -28,7 +86,7 @@ export function AmbientLayer() {
   return (
     <View style={[styles.wrap, { backgroundColor: colors.background, pointerEvents: 'none' }]}>
       <LinearGradient colors={[colors.background, colors.background]} style={StyleSheet.absoluteFill} />
-      <LinearGradient
+      <AnimatedGradient
         colors={[colors.gradientAmbientTop, 'transparent']}
         start={{ x: 0.15, y: 0 }}
         end={{ x: 0.7, y: 0.55 }}
@@ -40,10 +98,16 @@ export function AmbientLayer() {
             width: topSize,
             height: topSize,
             borderRadius: topSize,
+            opacity: topMotion.interpolate({ inputRange: [0, 1], outputRange: [0.72, 1] }),
+            transform: [
+              { translateX: topMotion.interpolate({ inputRange: [0, 1], outputRange: [0, 18] }) },
+              { translateY: topMotion.interpolate({ inputRange: [0, 1], outputRange: [0, 10] }) },
+              { scale: topMotion.interpolate({ inputRange: [0, 1], outputRange: [1, 1.035] }) },
+            ],
           },
         ]}
       />
-      <LinearGradient
+      <AnimatedGradient
         colors={[colors.gradientAmbientBottom, 'transparent']}
         start={{ x: 1, y: 0.1 }}
         end={{ x: 0.2, y: 0.7 }}
@@ -55,6 +119,12 @@ export function AmbientLayer() {
             width: bottomSize,
             height: bottomSize,
             borderRadius: bottomSize,
+            opacity: bottomMotion.interpolate({ inputRange: [0, 1], outputRange: [0.68, 0.95] }),
+            transform: [
+              { translateX: bottomMotion.interpolate({ inputRange: [0, 1], outputRange: [0, -16] }) },
+              { translateY: bottomMotion.interpolate({ inputRange: [0, 1], outputRange: [0, -12] }) },
+              { scale: bottomMotion.interpolate({ inputRange: [0, 1], outputRange: [1, 1.04] }) },
+            ],
           },
         ]}
       />

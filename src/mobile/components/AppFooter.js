@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
 import TouchableOpacity from './TouchableOpacity';
 
-import {  Platform, StyleSheet, Text, View  } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 import { useAppTheme } from '../ThemeContext';
+import { MotionSection } from '../motion';
 
 export default function AppFooter({ navigation }) {
   const { colors } = useAppTheme();
@@ -10,7 +11,7 @@ export default function AppFooter({ navigation }) {
   // On web the persistent sidebar already surfaces Credits and the version — avoid showing it twice.
   if (Platform.OS === 'web') return null;
   return (
-    <View style={styles.footerContainer}>
+    <MotionSection style={styles.footerContainer} delay={180}>
       <TouchableOpacity
         onPress={() => navigation && navigation.navigate('Credits')}
         accessibilityRole="button"
@@ -19,10 +20,10 @@ export default function AppFooter({ navigation }) {
         <Text style={styles.linkText}>Credits</Text>
       </TouchableOpacity>
       <Text style={styles.separator}>·</Text>
-      <Text style={styles.versionText}>v1.8.0 "Estuary"</Text>
+      <Text style={styles.versionText}>v1.8.5 "Trench"</Text>
       <Text style={styles.separator}>·</Text>
       <Text style={styles.taglineText}>digiwallsys digital wallet</Text>
-    </View>
+    </MotionSection>
   );
 }
 
