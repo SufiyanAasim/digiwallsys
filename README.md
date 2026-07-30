@@ -157,7 +157,7 @@ and shared-wallet sequence diagrams, are in
 | Version | Name | Status | Highlights |
 | --- | --- | --- | --- |
 | [v1.9.0](docs/releases/v1.9.0.md) | **Crest** | In verification | Aurora Glass UI, profile controls, responsive refinement, and renewed brand assets |
-| [v1.8.5](docs/releases/v1.8.5.md) | **Trench** | In verification | Accessible live motion, transfer-test users, and GHCR delivery |
+| [v1.8.5](docs/releases/v1.8.5.md) | **Trench** | Released | Accessible live motion, transfer-test users, and GHCR delivery |
 | [v1.8.0](docs/releases/v1.8.0.md) | **Estuary** | Deployed | Multi-currency wallets and shared/family wallets |
 | [v1.7.5](docs/releases/v1.7.5.md) | **Convoy** | Implemented | Savings goals, budgets, calendar, tagging, statements, alerts |
 | [v1.7.0](docs/releases/v1.7.0.md) | **Compass** | Implemented | Real-data analytics, spend breakdown, spending alerts |
