@@ -42,6 +42,8 @@ All notable changes to this project are documented here. The format follows
 - Authenticated mobile-web layouts now replace the 248px desktop sidebar with a
   compact Aurora navigation header below 900px, preventing narrow forms and
   dashboards from being crushed.
+- Release-tag container builds can no longer overwrite GHCR `latest`; only a
+  push to `refs/heads/main` may move that tag.
 
 ## [1.8.5] — Trench
 

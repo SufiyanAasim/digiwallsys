@@ -106,3 +106,16 @@ test('self-service profile changes protect email and password updates', () => {
   assert.match(source, /UPDATE refresh_tokens/);
   assert.doesNotMatch(source, /console\.log|user1@584|user2@584/);
 });
+
+test('release tags cannot overwrite the default GHCR image', () => {
+  const workflow = readFileSync(
+    join(__dirname, '../../.github/workflows/docker.yml'),
+    'utf8'
+  );
+
+  assert.match(
+    workflow,
+    /type=raw,value=latest,enable=\$\{\{\s*github\.ref == 'refs\/heads\/main'\s*\}\}/
+  );
+  assert.doesNotMatch(workflow, /value=latest,enable=\{\{is_default_branch\}\}/);
+});
