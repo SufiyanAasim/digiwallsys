@@ -5,11 +5,16 @@ import TouchableOpacity from './TouchableOpacity';
 import { useAppTheme } from '../ThemeContext';
 import { radii } from '../theme';
 
-export default function ActionTile({ icon, label, onPress }) {
+export default function ActionTile({ icon, label, onPress, webWidth }) {
   const { colors } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
   return (
-    <TouchableOpacity style={styles.tile} onPress={onPress} accessibilityRole="button" accessibilityLabel={label}>
+    <TouchableOpacity
+      style={[styles.tile, webWidth ? { flexBasis: webWidth, minWidth: webWidth } : null]}
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
       <View style={styles.iconWrap}>
         <Icon name={icon} size={17} color={colors.text} />
       </View>
@@ -22,7 +27,8 @@ function buildStyles(colors) {
   return StyleSheet.create({
     tile: {
       // Phones fit 3 per row; on a desktop grid a percentage basis would make
-      // each tile ~350px wide, so cap them to a fixed, denser size instead.
+      // each tile ~350px wide. HomeScreen measures the web grid and replaces
+      // this initial width with an exact, evenly distributed column width.
       ...(Platform.OS === 'web'
         ? { flexBasis: 168, flexGrow: 0, minWidth: 168 }
         : { flexBasis: '31%', flexGrow: 1, minWidth: 92 }),

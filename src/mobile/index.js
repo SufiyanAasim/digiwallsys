@@ -7,6 +7,32 @@ import { dispatchAlert } from './components/alertBridge';
 if (Platform.OS === 'web') {
   enableScreens(false);
 
+  // React Native Web attaches its responder tracker after the application
+  // starts. A touch that begins before that point (for example, the tap that
+  // reloads a mobile-emulated tab) can end inside the document afterwards,
+  // producing a false "touch end without a touch start" warning. Track touches
+  // from startup and keep only wholly orphaned endings away from the responder;
+  // valid in-app gestures continue through unchanged.
+  if (typeof document !== 'undefined') {
+    const activeTouchIds = new Set();
+    const changedTouchIds = (event) =>
+      Array.from(event.changedTouches || [], (touch) => touch.identifier);
+
+    document.addEventListener('touchstart', (event) => {
+      changedTouchIds(event).forEach((identifier) => activeTouchIds.add(identifier));
+    }, true);
+
+    const finishTouches = (event) => {
+      const identifiers = changedTouchIds(event);
+      const hasTrackedTouch = identifiers.some((identifier) => activeTouchIds.has(identifier));
+      identifiers.forEach((identifier) => activeTouchIds.delete(identifier));
+      if (identifiers.length > 0 && !hasTrackedTouch) event.stopImmediatePropagation();
+    };
+
+    document.addEventListener('touchend', finishTouches, true);
+    document.addEventListener('touchcancel', finishTouches, true);
+  }
+
   // Render Alert.alert through the in-app dialog. Browsers suppress
   // window.alert/confirm in embedded contexts, and they ignore the design
   // system, so those are only a fallback for the window before React mounts.
@@ -36,4 +62,3 @@ if (Platform.OS === 'web') {
 import App from './App';
 
 registerRootComponent(App);
-

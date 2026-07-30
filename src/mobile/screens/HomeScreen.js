@@ -16,6 +16,9 @@ import { contentColumn, layout, radii, screenBackground } from '../theme';
 import { formatMoney, getErrorMessage } from '../utils';
 
 const LOGOUT_ACTION = 'Logout';
+const GRID_GAP = 10;
+const WEB_TILE_MIN_WIDTH = 168;
+const WEB_TILE_MAX_COLUMNS = 6;
 
 const actions = [
   ['Analytics', 'Analytics', 'bar-chart-outline'],
@@ -38,12 +41,29 @@ export default function HomeScreen({ navigation, route }) {
   const [balance, setBalance] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [user, setUser] = useState(null);
+  const [gridWidth, setGridWidth] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { showToast } = useToast();
   const { requestLogout } = useLogout();
   const { colors, isDark, toggleTheme } = useAppTheme();
   const styles = useMemo(() => buildStyles(colors), [colors]);
+  const webTileWidth = useMemo(() => {
+    if (Platform.OS !== 'web' || !gridWidth) return undefined;
+    const columns = Math.max(
+      1,
+      Math.min(
+        WEB_TILE_MAX_COLUMNS,
+        Math.floor((gridWidth + GRID_GAP) / (WEB_TILE_MIN_WIDTH + GRID_GAP))
+      )
+    );
+    return (gridWidth - GRID_GAP * (columns - 1)) / columns;
+  }, [gridWidth]);
+
+  const measureGrid = useCallback((event) => {
+    const nextWidth = Math.round(event.nativeEvent.layout.width);
+    setGridWidth((currentWidth) => currentWidth === nextWidth ? currentWidth : nextWidth);
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -116,12 +136,13 @@ export default function HomeScreen({ navigation, route }) {
                 <TouchableOpacity onPress={load} style={styles.retry} accessibilityRole="button"><Text style={styles.retryText}>Try again</Text></TouchableOpacity>
               </View>
             )}
-            <View style={styles.grid}>
+            <View style={styles.grid} onLayout={measureGrid}>
               {visibleActions.map(([route, label, icon]) => (
                 <ActionTile
                   key={route}
                   icon={icon}
                   label={label}
+                  webWidth={webTileWidth}
                   onPress={route === LOGOUT_ACTION ? requestLogout : () => navigation.navigate(route)}
                 />
               ))}
@@ -167,7 +188,7 @@ function buildStyles(colors) {
     balance: { fontSize: 36, fontWeight: '800', marginTop: 8, color: colors.text, letterSpacing: -0.5 },
     errorBox: { backgroundColor: 'rgba(255,107,107,0.12)', borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)', borderRadius: radii.md, padding: 12, marginTop: 14 },
     errorText: { color: colors.danger }, retry: { minHeight: 44, justifyContent: 'center', alignSelf: 'flex-start' }, retryText: { color: colors.primary, fontWeight: '700' },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10, marginTop: 22 },
+    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GRID_GAP, marginTop: 22 },
     heading: { fontSize: 18, fontWeight: '800', color: colors.text, marginTop: 26, marginBottom: 10 },
     empty: { color: colors.textMuted, lineHeight: 21, paddingVertical: 14 },
     transaction: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 12, borderBottomWidth: 1, borderColor: colors.border },

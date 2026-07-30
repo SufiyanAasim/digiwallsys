@@ -12,13 +12,49 @@ export const API_BASE_URL = (
 const api = axios.create({ baseURL: API_BASE_URL, timeout: 15000 });
 const sessionApi = axios.create({ baseURL: API_BASE_URL, timeout: 15000 });
 let refreshPromise;
+const TOKEN_REFRESH_WINDOW_MS = 30_000;
+
+function accessTokenExpiresSoon(token) {
+  try {
+    const payload = token.split('.')[1];
+    if (!payload || typeof globalThis.atob !== 'function') return false;
+    const normalized = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+    const { exp } = JSON.parse(globalThis.atob(padded));
+    return Number.isFinite(exp) && exp * 1000 <= Date.now() + TOKEN_REFRESH_WINDOW_MS;
+  } catch {
+    // If a provider ever returns an opaque access token, let the API validate
+    // it and retain the response interceptor as the authoritative fallback.
+    return false;
+  }
+}
+
+function refreshSessionOnce() {
+  refreshPromise ||= refreshUserSession().finally(() => { refreshPromise = null; });
+  return refreshPromise;
+}
 
 function idempotencyKey(scope) {
   return `${scope}-${Date.now()}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 }
 
 api.interceptors.request.use(async (config) => {
-  const token = await getAccessToken();
+  let token = await getAccessToken();
+  const refreshToken = await getRefreshToken();
+
+  // Refresh before sending an authenticated request when the access token is
+  // missing or about to expire. This avoids an expected-but-noisy 401 from
+  // /api/users/me every time a remembered web session is restored.
+  if (refreshToken && (!token || accessTokenExpiresSoon(token))) {
+    try {
+      const session = await refreshSessionOnce();
+      token = session.accessToken;
+    } catch (refreshError) {
+      await clearSession();
+      throw refreshError;
+    }
+  }
+
   if (token) config.headers.Authorization = `Bearer ${token}`;
   return config;
 });
@@ -31,9 +67,8 @@ api.interceptors.response.use(
       throw error;
     }
     original._retried = true;
-    refreshPromise ||= refreshUserSession().finally(() => { refreshPromise = null; });
     try {
-      const session = await refreshPromise;
+      const session = await refreshSessionOnce();
       original.headers.Authorization = `Bearer ${session.accessToken}`;
       return api(original);
     } catch (refreshError) {

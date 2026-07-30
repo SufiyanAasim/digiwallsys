@@ -23,6 +23,34 @@ test('mobile API URL is configurable', () => {
   assert.doesNotMatch(apiSource, /api\/wallet\/add/);
 });
 
+test('remembered sessions refresh before protected API requests expire', () => {
+  const apiSource = readFileSync(
+    join(__dirname, '../../src/mobile/api.js'),
+    'utf8'
+  );
+
+  assert.match(apiSource, /function accessTokenExpiresSoon\(token\)/);
+  assert.match(apiSource, /refreshToken && \(!token \|\| accessTokenExpiresSoon\(token\)\)/);
+  assert.match(apiSource, /const session = await refreshSessionOnce\(\)/);
+});
+
+test('web dashboard tiles fill complete rows and orphan touch endings are ignored', () => {
+  const homeSource = readFileSync(
+    join(__dirname, '../../src/mobile/screens/HomeScreen.js'),
+    'utf8'
+  );
+  const indexSource = readFileSync(
+    join(__dirname, '../../src/mobile/index.js'),
+    'utf8'
+  );
+
+  assert.match(homeSource, /WEB_TILE_MAX_COLUMNS = 6/);
+  assert.match(homeSource, /onLayout=\{measureGrid\}/);
+  assert.match(homeSource, /webWidth=\{webTileWidth\}/);
+  assert.match(indexSource, /const activeTouchIds = new Set\(\)/);
+  assert.match(indexSource, /event\.stopImmediatePropagation\(\)/);
+});
+
 test('mobile navigation exposes advanced payment and security screens', () => {
   const appSource = readFileSync(join(__dirname, '../../src/mobile/App.js'), 'utf8');
   for (const screen of ['Payment Tools', 'QR Payment', 'Notifications', 'Security', 'Admin']) {
