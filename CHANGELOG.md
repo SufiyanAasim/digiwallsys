@@ -25,6 +25,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- Mobile and Vercel environment templates now carry the deployed Render API URL
+  and linked EAS project ID instead of generic placeholders.
 - Deployment documentation now records the live Vercel web app, Render API and
   worker, and Supabase PostgreSQL topology.
 - CI and release instructions again recognize the documented four-branch

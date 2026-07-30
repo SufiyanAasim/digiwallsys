@@ -286,8 +286,8 @@ Developer membership and signing access are required for a device IPA.
 | `ENABLE_EMAIL_WORKER` | No | `true` | Runs email-outbox dispatcher |
 | `RUN_INLINE_WORKERS` | No | `false` | Runs workers inside the API process; use only for local single-process development |
 | `API_BASE_URL` | No | `http://localhost:$PORT` | Target for `scripts/simulate-funding-webhook.js` |
-| `EXPO_PUBLIC_API_URL` | No | `http://localhost:5000` | Mobile API base URL |
-| `EXPO_PUBLIC_EAS_PROJECT_ID` | Push | None | Expo project ID for push tokens |
+| `EXPO_PUBLIC_API_URL` | No | Localhost in development; live Render API otherwise | Mobile and web API base URL |
+| `EXPO_PUBLIC_EAS_PROJECT_ID` | Push | `7c79c661-f3ea-4c5d-b207-77b8de410ba1` | Linked Expo project ID for push tokens |
 
 Never place `JWT_SECRET`, database credentials, webhook secrets, or provider
 tokens in Expo public variables.

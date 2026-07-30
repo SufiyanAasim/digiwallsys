@@ -79,6 +79,16 @@ test('native package identifiers and EAS store profiles are configured', () => {
     assert.equal(easConfig.build[profile].env.EXPO_PUBLIC_API_URL, productionApiUrl);
     assert.equal(easConfig.build[profile].env.EXPO_PUBLIC_EAS_PROJECT_ID, projectId);
   }
+
+  for (const template of [
+    '../../.env.example',
+    '../../examples/mobile.env.example',
+    '../../examples/vercel.env.example',
+  ]) {
+    const templateSource = readFileSync(join(__dirname, template), 'utf8');
+    assert.match(templateSource, new RegExp(productionApiUrl.replace(/[./]/g, '\\$&')));
+    assert.match(templateSource, new RegExp(projectId));
+  }
 });
 
 test('Android monorepo build delegates release bundling to Expo CLI', () => {
