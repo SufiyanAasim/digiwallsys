@@ -1,4 +1,3 @@
-import React from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAppTheme } from '../ThemeContext';

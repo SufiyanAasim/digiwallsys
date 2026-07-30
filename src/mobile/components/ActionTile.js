@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import TouchableOpacity from './TouchableOpacity';

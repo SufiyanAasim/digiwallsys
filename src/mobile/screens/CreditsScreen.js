@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Image, Linking, ScrollView, StyleSheet, Text, View  } from 'react-native';
@@ -41,7 +41,7 @@ export default function CreditsScreen() {
           <View style={styles.badgeRow}>
             <View style={styles.badge}><Text style={styles.badgeText}>v1.8.0</Text></View>
             <View style={[styles.badge, styles.badgeAccent]}><Text style={styles.badgeText}>"Estuary"</Text></View>
-            <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Local candidate</Text></View>
+            <View style={[styles.badge, styles.badgeSuccess]}><Text style={styles.badgeText}>Deployed</Text></View>
           </View>
         </View>
 
@@ -87,7 +87,7 @@ export default function CreditsScreen() {
             </View>
             <View style={styles.techRow}>
               <Text style={styles.techKey}>Cloud Hosting</Text>
-              <Text style={styles.techVal}>Provider-neutral · Not currently deployed</Text>
+              <Text style={styles.techVal}>Vercel · Render · Supabase</Text>
             </View>
           </View>
         </View>

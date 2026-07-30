@@ -8,10 +8,10 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
-- Git LFS tracking for the signed Android build `9` APK and AAB, mirroring the
-  verified binaries already published with the Estuary GitHub Release.
-- EAS ownership and production profiles for signed Android `v1.8.0` build `9`
-  APK and AAB artifacts.
+- Git LFS tracking for the current signed Android build `10` APK and AAB while
+  retaining build `9` as the immutable earlier Estuary candidate.
+- EAS ownership and deterministic production profiles for matching signed
+  Android `v1.8.0` build `10` APK and AAB artifacts.
 - Explicit one-time administrator bootstrap variables; the repository no longer
   contains or prints a built-in administrator password.
 - Dedicated background-worker entrypoint and environment template for scheduled
@@ -25,6 +25,14 @@ All notable changes to this project are documented here. The format follows
 
 ### Changed
 
+- The GitHub release workflow now publishes only from an existing annotated,
+  signed tag selected as the workflow ref; it can no longer silently create an
+  unsigned tag at the wrong commit.
+- README technology versions, clone URL, and project tree now match the Expo 57
+  monorepo, signed artifacts, environment templates, and deployment files.
+- The mobile lint path now uses ESLint 10's native JSX scope analysis, drops
+  obsolete React default imports and unused React plugins, and requires the
+  corresponding Node.js 20.19+ runtime floor.
 - Mobile and Vercel environment templates now carry the deployed Render API URL
   and linked EAS project ID instead of generic placeholders.
 - Deployment documentation now records the live Vercel web app, Render API and
@@ -57,9 +65,19 @@ All notable changes to this project are documented here. The format follows
 
 ### Fixed
 
+- The fixed web ambient layer no longer paints over the authenticated sidebar;
+  the sidebar now has an explicit stacking context while the ambient layer
+  retains viewport coverage on long pages.
+- The document canvas now shares the active theme background, preventing
+  full-page capture, printing, or compositor transitions from exposing a white
+  band below the fixed ambient layer.
+- Credits now reports the deployed Vercel, Render, and Supabase topology instead
+  of the obsolete local-candidate status.
 - The transitive UUID implementation used by Expo's Xcode project tooling is
   pinned to patched `uuid@11.1.1`, preventing partial writes when v3, v5, or v6
   receive an out-of-bounds output buffer.
+- The lint toolchain now uses the patched ESLint 10 dependency graph, removing
+  the transitive unbounded-expansion denial-of-service advisory.
 - The mobile lint toolchain keeps `@eslint/js` on the ESLint 9-compatible line;
   the independently merged ESLint 10 preset required a peer version that the
   React and React Native lint plugins do not yet support.

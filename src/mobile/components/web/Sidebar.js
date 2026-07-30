@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -107,6 +107,11 @@ export default function Sidebar({ activeRoute, user, onNavigate }) {
 function buildStyles(colors) {
   return StyleSheet.create({
     sidebar: {
+      // AmbientLayer is fixed on web so it keeps painting while long pages
+      // scroll. Establish an explicit stacking order so that viewport layer
+      // can never cover this sibling merely because it appears later in DOM.
+      position: 'relative',
+      zIndex: 1,
       width: 248,
       minWidth: 248,
       height: '100%',

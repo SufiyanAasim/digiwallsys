@@ -50,6 +50,12 @@ export default function ScrollbarTheme() {
          scrolling at all. */
       body { overflow-y: visible; }
 
+      /* AmbientLayer stays fixed so the live viewport is always painted while
+         a long page scrolls. Keep the document canvas on the same palette as a
+         defensive fallback for full-page capture/printing and any compositor
+         frame where content extends beyond that fixed viewport. */
+      html, body, #root { background-color: ${colors.background}; }
+
       @supports not selector(::-webkit-scrollbar) {
         * {
           scrollbar-width: thin;

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  FlatList, Platform, SafeAreaView, StyleSheet, Text, View  } from 'react-native';

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { logoutUser } from '../api';
 import { clearSession } from '../session';
 import { resetToLogin } from '../navigation';

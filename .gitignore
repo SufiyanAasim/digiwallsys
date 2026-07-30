@@ -17,6 +17,8 @@ src/mobile/.eas/
 artifacts/*
 !artifacts/digiwallsys-v1.8.0-build9.apk
 !artifacts/digiwallsys-v1.8.0-build9.aab
+!artifacts/digiwallsys-v1.8.0-build10.apk
+!artifacts/digiwallsys-v1.8.0-build10.aab
 
 # Track the shared launch profile while keeping personal editor settings local.
 .vscode/*

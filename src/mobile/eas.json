@@ -15,7 +15,7 @@
       }
     },
     "production": {
-      "autoIncrement": true,
+      "autoIncrement": false,
       "env": {
         "EXPO_PUBLIC_API_URL": "https://digiwallsys-api.onrender.com",
         "EXPO_PUBLIC_EAS_PROJECT_ID": "7c79c661-f3ea-4c5d-b207-77b8de410ba1"

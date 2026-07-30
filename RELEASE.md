@@ -58,9 +58,14 @@ change; the version and release name themselves never change.
 ## Publish
 
 1. Merge the release branch into `main`.
-2. Run the release workflow using the exact version including `v`.
-3. Confirm that the generated tag and release name match the table exactly.
-4. Publish checksums alongside platform artifacts.
-5. Confirm `main` contains the tagged commit, fast-forward `backend`, `frontend`,
+2. Create an annotated, cryptographically signed tag on that exact commit,
+   using the mapped name as its annotation (for example
+   `git tag -s v1.8.0 -m Estuary`), then push that tag.
+3. Run the release workflow from the same tag ref and enter that exact version,
+   including `v`, as the workflow input. The workflow refuses unsigned,
+   lightweight, or mismatched tags.
+4. Confirm that the verified tag and release name match the table exactly.
+5. Publish checksums alongside platform artifacts.
+6. Confirm `main` contains the tagged commit, fast-forward `backend`, `frontend`,
    and `database` to the released `main`, remove the temporary release branch,
    and monitor the release.

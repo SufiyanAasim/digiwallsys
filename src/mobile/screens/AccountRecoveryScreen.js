@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import TouchableOpacity from '../components/TouchableOpacity';
 
 import {  Alert, ScrollView, StyleSheet, Text, TextInput, View  } from 'react-native';

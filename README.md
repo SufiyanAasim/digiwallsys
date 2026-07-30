@@ -19,7 +19,7 @@ Register securely, fund through a verified provider, send or request money,
 scan QR payments, schedule transfers, receive alerts, and reconcile every wallet
 against a balanced double-entry ledger.
 
-[**Web app**](https://digiwallsys.vercel.app) · [**Android APK**](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.apk) · [**Estuary release**](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Release notes**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
+[**Web app**](https://digiwallsys.vercel.app) · [**Android APK**](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.apk) · [**Estuary release**](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0) · [**API health**](https://digiwallsys-api.onrender.com/api/health) · [**Release notes**](docs/releases/v1.8.0.md) · [**Changelog**](CHANGELOG.md) · [**Roadmap**](ROADMAP.md) · [**Report a bug**](.github/ISSUE_TEMPLATE/bug_report.yml)
 
 </div>
 
@@ -136,7 +136,7 @@ and shared-wallet sequence diagrams, are in
 
 | Layer | Technology |
 | --- | --- |
-| Mobile | Expo 53 · React Native 0.79.6 · React Navigation 7 |
+| Mobile | Expo 57 · React Native 0.86.2 · React Navigation 7 |
 | Device security | Expo SecureStore · Local Authentication |
 | QR and notifications | Expo Camera · Expo Notifications · `react-native-qrcode-svg` |
 | API | Node.js 20+ · Express 5 |
@@ -174,9 +174,9 @@ and shared-wallet sequence diagrams, are in
 
 The exact tags and names never receive prefixes, suffixes, subtitles, or
 prerelease identifiers. `v1.8.0` (`Estuary`) is deployed as a Vercel web app
-with a Render API and Supabase PostgreSQL. Signed Android build `9` is available
-as an [installable APK](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.apk)
-and [Google Play AAB](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.aab)
+with a Render API and Supabase PostgreSQL. Signed Android build `10` is available
+as an [installable APK](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.apk)
+and [Google Play AAB](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build10.aab)
 in the exact `v1.8.0` [Estuary GitHub Release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0).
 The same verified binaries are versioned under `artifacts/` through Git LFS.
 
@@ -186,7 +186,7 @@ The same verified binaries are versioned under `artifacts/` through Git LFS.
 
 ### Requirements
 
-- Node.js 20 or newer and npm 10 or newer.
+- Node.js 20.19 or newer and npm 10 or newer.
 - PostgreSQL 14 or newer, or Docker Desktop with Compose.
 - Expo Go on a physical device, or an Android/iOS simulator.
 - Git LFS when cloning the checked-in Android release artifacts.
@@ -194,8 +194,7 @@ The same verified binaries are versioned under `artifacts/` through Git LFS.
 ### Clone and install
 
 ```bash
-# After publishing the new repository:
-git clone https://github.com/YOUR-ACCOUNT/digiwallsys.git
+git clone https://github.com/SufiyanAasim/digiwallsys.git
 cd digiwallsys
 npm install
 ```
@@ -317,11 +316,20 @@ remains the canonical description of what every variable does.
 
 ```text
 digiwallsys/
-├── .github/                  # Templates and separate CI workflows
-├── analytics/                 # Standalone, read-only Python spend-analysis
-│                              #   pipeline (see analytics/README.md); not
-│                              #   imported by the API or the app
-├── assets/                   # README logo and shared brand assets
+├── .github/
+│   ├── ISSUE_TEMPLATE/       # Structured bug and feature forms
+│   ├── workflows/            # Analytics, build, deploy, Docker, lint,
+│   │                         #   release, security, and test automation
+│   ├── CODEOWNERS
+│   ├── FUNDING.yml
+│   ├── PULL_REQUEST_TEMPLATE.md
+│   └── dependabot.yml
+├── .vscode/
+│   └── launch.json           # Shared web and API launch profiles
+├── analytics/                # Standalone read-only Python spend analysis;
+│                             #   not imported by the API or client
+├── artifacts/                # Signed v1.8.0 APK/AAB tracked through Git LFS
+├── assets/                   # README-only logo and marketing brand assets
 ├── config/
 │   ├── database.sql          # Fresh PostgreSQL bootstrap entrypoint
 │   └── migrations/           # Ordered versioned SQL migrations
@@ -334,6 +342,8 @@ digiwallsys/
 │   ├── guides/               # User, developer, and admin guides
 │   ├── releases/             # Exact version/name release documents
 │   └── troubleshooting/      # Common runtime problems
+├── examples/                 # Render, Supabase, Vercel, worker, and mobile
+│                             #   environment templates
 ├── scripts/                  # Repository consistency checks
 ├── src/
 │   ├── backend/
@@ -345,20 +355,38 @@ digiwallsys/
 │   │   └── scripts/          # Migration and syntax tooling
 │   └── mobile/
 │       ├── assets/           # App icon, adaptive icon, and generated logo art
-│       ├── components/       # Shared UI: glass surfaces, toasts, charts,
-│       │                     #   themed Switch, and the web-only Sidebar
+│       ├── components/       # Shared Ember Glass UI and web sidebar shell
+│       │   └── web/          # Web-only sidebar and scrollbar theme
+│       ├── plugins/          # Expo Android monorepo build correction
 │       ├── screens/          # Wallet, QR, admin, analytics, savings, budgets,
 │       │                     #   multi-currency wallets, family sharing, alerts
-│       ├── theme.js          # Ember Glass color/style tokens (dark + light)
-│       ├── ThemeContext.js   # Runtime theme provider + persisted toggle
+│       ├── scripts/          # Cross-platform package binary runner
 │       ├── api.js            # Authenticated API and refresh handling
-│       └── session.js        # Secure token and biometric session storage
+│       ├── app.json          # Expo identity, native IDs, build numbers
+│       ├── eas.json          # Signed APK, AAB, and iOS profiles
+│       ├── session.js        # Secure token and biometric session storage
+│       ├── theme.js          # Ember Glass dark/light tokens and layout helpers
+│       └── ThemeContext.js   # Persisted runtime theme provider
 ├── tests/
 │   ├── backend/              # Smoke, validation, integration, concurrency
-│   └── mobile/               # Expo identity and configuration checks
+│   └── mobile/               # Expo, build, identity, and web-layout checks
+├── .env.example              # Canonical configuration reference
+├── .gitattributes            # LF policy and APK/AAB Git LFS rules
+├── docker-compose.yml        # Local database, API, and worker stack
+├── docker/
+│   └── README.md             # Container build and Compose usage
+├── Dockerfile                # Production API/worker image
+├── Makefile                  # Shortcuts for install, verify, and containers
+├── package.json              # npm workspace commands and security overrides
+├── vercel.json               # Expo web build and SPA deep-link rewrites
 ├── CHANGELOG.md
+├── CODE_OF_CONDUCT.md
+├── CONTRIBUTING.md
+├── LICENSE
 ├── RELEASE.md
 ├── ROADMAP.md
+├── SECURITY.md
+├── SUPPORT.md
 └── README.md
 ```
 

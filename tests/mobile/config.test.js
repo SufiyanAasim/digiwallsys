@@ -71,9 +71,13 @@ test('native package identifiers and EAS store profiles are configured', () => {
 
   assert.equal(appConfig.expo.android.package, 'com.sufiyanaasim.digiwallsys');
   assert.equal(appConfig.expo.ios.bundleIdentifier, 'com.sufiyanaasim.digiwallsys');
+  assert.equal(appConfig.expo.version, '1.8.0');
+  assert.equal(appConfig.expo.android.versionCode, 10);
+  assert.equal(appConfig.expo.ios.buildNumber, '5');
   assert.equal(appConfig.expo.extra.eas.projectId, projectId);
   assert.equal(easConfig.build.preview.android.buildType, 'apk');
   assert.equal(easConfig.build.production.android.buildType, 'app-bundle');
+  assert.equal(easConfig.build.production.autoIncrement, false);
   assert.equal(easConfig.build.production.ios.simulator, false);
   for (const profile of ['preview', 'production']) {
     assert.equal(easConfig.build[profile].env.EXPO_PUBLIC_API_URL, productionApiUrl);
@@ -101,4 +105,30 @@ test('Android monorepo build delegates release bundling to Expo CLI', () => {
   assert.doesNotMatch(pluginSource, /node_modules\/@expo\/cli/);
   assert.match(pluginSource, /node_modules\/hermes-compiler\/hermesc/);
   assert.doesNotMatch(pluginSource, /react-native\/sdks\/hermesc/);
+});
+
+test('web sidebar stacks above the fixed ambient layer without changing native fill', () => {
+  const ambientSource = readFileSync(
+    join(__dirname, '../../src/mobile/components/AmbientBackground.js'),
+    'utf8'
+  );
+  const sidebarSource = readFileSync(
+    join(__dirname, '../../src/mobile/components/web/Sidebar.js'),
+    'utf8'
+  );
+  const scrollbarSource = readFileSync(
+    join(__dirname, '../../src/mobile/components/web/ScrollbarTheme.js'),
+    'utf8'
+  );
+
+  assert.match(ambientSource, /web:\s*\{\s*position:\s*'fixed'/);
+  assert.match(ambientSource, /default:\s*\{\s*\.\.\.StyleSheet\.absoluteFillObject/);
+  assert.match(
+    sidebarSource,
+    /sidebar:\s*\{[\s\S]*?position:\s*'relative',[\s\S]*?zIndex:\s*1,/
+  );
+  assert.match(
+    scrollbarSource,
+    /html,\s*body,\s*#root\s*\{\s*background-color:\s*\$\{colors\.background\};\s*\}/
+  );
 });

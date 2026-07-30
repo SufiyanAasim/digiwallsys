@@ -1,4 +1,3 @@
-import React from 'react';
 import { Platform, StyleSheet, Text } from 'react-native';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { LinearGradient } from 'expo-linear-gradient';

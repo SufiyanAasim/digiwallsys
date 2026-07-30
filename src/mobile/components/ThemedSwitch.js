@@ -1,4 +1,3 @@
-import React from 'react';
 import { Switch } from 'react-native';
 import { useAppTheme } from '../ThemeContext';
 

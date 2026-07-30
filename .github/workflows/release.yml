@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Exact planned version including v, for example v1.0.0
+        description: Exact signed tag selected for this run, for example v1.8.0
         required: true
 
 permissions:
@@ -15,6 +15,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v7
         with:
           node-version: 20
@@ -47,6 +49,18 @@ jobs:
             *) echo "Unsupported release version: $VERSION" >&2; exit 1 ;;
           esac
           test -f "docs/releases/${VERSION}.md"
+          test "$GITHUB_REF" = "refs/tags/${VERSION}" || {
+            echo "Run this workflow from the exact signed tag ref: ${VERSION}" >&2
+            exit 1
+          }
+          git rev-parse --verify "refs/tags/${VERSION}^{tag}" >/dev/null || {
+            echo "${VERSION} must be an annotated tag" >&2
+            exit 1
+          }
+          git cat-file -p "$VERSION" | grep -Eq '^-----BEGIN (SSH|PGP) SIGNATURE-----$' || {
+            echo "${VERSION} must be signed before creating its GitHub Release" >&2
+            exit 1
+          }
           echo "name=$NAME" >> "$GITHUB_OUTPUT"
           echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
       - name: Create exact GitHub release
@@ -60,7 +74,7 @@ jobs:
             gh release create "$VERSION"
             --title "$RELEASE_NAME"
             --notes-file "docs/releases/${VERSION}.md"
-            --target "$GITHUB_SHA"
+            --verify-tag
           )
           if [[ "$PRERELEASE" == "true" ]]; then
             ARGS+=(--prerelease)

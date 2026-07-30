@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import TouchableOpacity from './TouchableOpacity';
 
 import {  Platform, StyleSheet, Text, View  } from 'react-native';
