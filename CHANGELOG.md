@@ -8,6 +8,8 @@ All notable changes to this project are documented here. The format follows
 
 ### Added
 
+- Git LFS tracking for the signed Android build `9` APK and AAB, mirroring the
+  verified binaries already published with the Estuary GitHub Release.
 - EAS ownership and production profiles for signed Android `v1.8.0` build `9`
   APK and AAB artifacts.
 - Explicit one-time administrator bootstrap variables; the repository no longer

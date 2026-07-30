@@ -178,6 +178,7 @@ with a Render API and Supabase PostgreSQL. Signed Android build `9` is available
 as an [installable APK](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.apk)
 and [Google Play AAB](https://github.com/SufiyanAasim/digiwallsys/releases/download/v1.8.0/digiwallsys-v1.8.0-build9.aab)
 in the exact `v1.8.0` [Estuary GitHub Release](https://github.com/SufiyanAasim/digiwallsys/releases/tag/v1.8.0).
+The same verified binaries are versioned under `artifacts/` through Git LFS.
 
 ---
 
@@ -188,6 +189,7 @@ in the exact `v1.8.0` [Estuary GitHub Release](https://github.com/SufiyanAasim/d
 - Node.js 20 or newer and npm 10 or newer.
 - PostgreSQL 14 or newer, or Docker Desktop with Compose.
 - Expo Go on a physical device, or an Android/iOS simulator.
+- Git LFS when cloning the checked-in Android release artifacts.
 
 ### Clone and install
 
