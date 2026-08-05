@@ -50,7 +50,7 @@
     "react-native-web": "^0.21.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^8.0.1",
     "@eslint/js": "^10.0.1",
     "eslint": "^10.8.0",
     "globals": "^17.8.0"
