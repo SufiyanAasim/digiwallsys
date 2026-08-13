@@ -38,7 +38,7 @@ export default function Wordmark({ size = 22, style }) {
 }
 
 const styles = StyleSheet.create({
-  wrap: { alignSelf: 'flex-start' },
+  wrap: { minWidth: 0 },
   text: { fontWeight: '800', letterSpacing: -0.5, color: '#000' },
   hidden: { opacity: 0 },
 });

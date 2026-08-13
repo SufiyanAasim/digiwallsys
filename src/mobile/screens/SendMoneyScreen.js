@@ -117,7 +117,7 @@ function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: screenBackground(colors) }, content: { padding: 24, gap: 12, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text, marginBottom: 8 }, label: { fontWeight: '700', color: colors.text },
-    picker: { backgroundColor: colors.surface, color: colors.text, minHeight: 48 }, input: commonStyles.input,
+    picker: commonStyles.picker, input: commonStyles.input,
     back: { alignItems: 'center', padding: 12 }, backText: { color: colors.textMuted, fontWeight: '600' },
   });
 }

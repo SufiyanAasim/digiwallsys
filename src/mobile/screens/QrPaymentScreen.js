@@ -104,7 +104,7 @@ function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: screenBackground(colors) }, center: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 16, padding: 24, backgroundColor: screenBackground(colors) }, content: { flex: 1, padding: 24, gap: 14, ...contentColumn(layout.form) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text }, input: commonStyles.input,
-    picker: { backgroundColor: colors.surface, color: colors.text, minHeight: 48 },
+    picker: commonStyles.picker,
     secondary: { minHeight: 48, justifyContent: 'center', backgroundColor: colors.surfaceMuted, borderRadius: 22, padding: 15, alignItems: 'center' },
     secondaryText: { color: colors.text, fontWeight: '700' }, qr: { alignItems: 'center', gap: 12, marginVertical: 20 }, meta: { color: colors.textMuted }, permissionText: { color: colors.text, textAlign: 'center', lineHeight: 21 }, linkButton: { minHeight: 48, justifyContent: 'center' },
     camera: { flex: 1 }, back: { alignItems: 'center', padding: 18 }, backText: { color: colors.textMuted, fontWeight: '600' },

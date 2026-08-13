@@ -57,8 +57,10 @@ export function ChartLegend({ segments }) {
     <View style={styles.legend}>
       {segments.map((segment) => (
         <View style={styles.legendRow} key={segment.label}>
-          <View style={[styles.legendDot, { backgroundColor: segment.color }]} />
-          <Text style={styles.legendLabel}>{segment.label}</Text>
+          <View style={styles.legendLabelGroup}>
+            <View style={[styles.legendDot, { backgroundColor: segment.color }]} />
+            <Text style={styles.legendLabel}>{segment.label}</Text>
+          </View>
           <Text style={styles.legendValue}>{segment.valueLabel}</Text>
         </View>
       ))}
@@ -71,10 +73,11 @@ function buildStyles(colors) {
     centerWrap: { ...StyleSheet.absoluteFillObject, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12 },
     centerValue: { color: colors.text, fontWeight: '800', fontSize: 18, letterSpacing: -0.3 },
     centerLabel: { color: colors.textMuted, fontSize: 10.5, marginTop: 2, textAlign: 'center' },
-    legend: { gap: 8 },
-    legendRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-    legendDot: { width: 9, height: 9, borderRadius: 5 },
-    legendLabel: { color: colors.textMuted, fontSize: 12.5, flex: 1 },
-    legendValue: { color: colors.text, fontWeight: '700', fontSize: 12.5 },
+    legend: { gap: 10, width: '100%', marginTop: 8 },
+    legendRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+    legendLabelGroup: { flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 },
+    legendDot: { width: 9, height: 9, borderRadius: 5, flexShrink: 0 },
+    legendLabel: { color: colors.textMuted, fontSize: 13, flex: 1 },
+    legendValue: { color: colors.text, fontWeight: '700', fontSize: 13, textAlign: 'right', flexShrink: 0 },
   });
 }

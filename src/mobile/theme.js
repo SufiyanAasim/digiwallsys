@@ -156,6 +156,16 @@ export function buildCommonStyles(colors) {
       paddingHorizontal: 16,
       color: colors.text,
     },
+    picker: {
+      minHeight: 50,
+      backgroundColor: colors.surface,
+      borderColor: colors.glassBorder,
+      borderWidth: 1,
+      borderRadius: radii.md,
+      paddingHorizontal: 12,
+      color: colors.text,
+      justifyContent: 'center',
+    },
     primaryButton: {
       minHeight: 50,
       backgroundColor: colors.primary,

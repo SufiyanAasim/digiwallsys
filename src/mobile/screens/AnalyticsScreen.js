@@ -38,14 +38,15 @@ async function fetchMonthTransactions(from, currency) {
   return items;
 }
 
+
 export default function AnalyticsScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [summary, setSummary] = useState(null);
   const [currencies, setCurrencies] = useState([]);
   const [selectedCurrency, setSelectedCurrency] = useState('');
-  const { colors } = useAppTheme();
-  const styles = useMemo(() => buildStyles(colors), [colors]);
+  const { colors, commonStyles } = useAppTheme();
+  const styles = useMemo(() => buildStyles(colors, commonStyles), [colors, commonStyles]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -221,18 +222,18 @@ export default function AnalyticsScreen({ navigation }) {
   );
 }
 
-function buildStyles(colors) {
+function buildStyles(colors, commonStyles) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: screenBackground(colors) },
     content: { padding: 20, paddingBottom: 40, gap: 14, ...contentColumn(layout.page) },
     title: { fontSize: 26, fontWeight: '800', color: colors.text },
     subtitle: { color: colors.textMuted, marginTop: -8, marginBottom: 4 },
-    currencyPicker: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.sm, overflow: 'hidden' },
-    picker: { color: colors.text, minHeight: 48 },
+    currencyPicker: { ...commonStyles.picker, paddingHorizontal: 0, overflow: 'hidden' },
+    picker: { color: colors.text, minHeight: 48, backgroundColor: 'transparent' },
     meta: { color: colors.textMuted },
     chartCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18 },
     cardTitle: { color: colors.text, fontWeight: '800', fontSize: 15, marginBottom: 14 },
-    chartRow: { flexDirection: 'row', alignItems: 'center', gap: 20, flexWrap: 'wrap' },
+    chartRow: { alignItems: 'center', gap: 16 },
     lockCard: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.glassBorder, borderRadius: radii.lg, padding: 18 },
     lockHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     lockTitle: { color: colors.text, fontWeight: '800', fontSize: 15 },

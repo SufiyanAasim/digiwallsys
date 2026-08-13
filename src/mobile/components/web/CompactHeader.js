@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Ionicons as Icon } from '@expo/vector-icons';
+import HamburgerMenu from '../HamburgerMenu';
 import Logo from '../Logo';
 import TouchableOpacity from '../TouchableOpacity';
 import Wordmark from '../Wordmark';
@@ -34,6 +35,7 @@ export default function CompactHeader({ activeRoute, user, onNavigate }) {
   return (
     <View style={styles.header}>
       <View style={styles.brand}>
+        <HamburgerMenu activeRoute={activeRoute} user={user} onNavigate={onNavigate} />
         <Logo size={30} />
         <View>
           <Wordmark size={15} />

@@ -10,6 +10,7 @@ import ActionTile from '../components/ActionTile';
 import AmbientBackground from '../components/AmbientBackground';
 import AppFooter from '../components/AppFooter';
 import { useLogout } from '../components/ConfirmProvider';
+import HamburgerMenu from '../components/HamburgerMenu';
 import { useToast } from '../components/ToastProvider';
 import Wordmark from '../components/Wordmark';
 import { useAppTheme } from '../ThemeContext';
@@ -110,9 +111,12 @@ export default function HomeScreen({ navigation, route }) {
         ListHeaderComponent={
           <>
             <MotionSection style={styles.header} delay={40}>
-              <View>
-                <Wordmark size={19} />
-                <Text style={styles.welcome}>Hello, {user?.name || 'there'}</Text>
+              <View style={styles.brandGroup}>
+                <HamburgerMenu activeRoute="Home" user={user} onNavigate={(route) => route === LOGOUT_ACTION ? requestLogout() : navigation.navigate(route)} />
+                <View>
+                  <Wordmark size={19} />
+                  <Text style={styles.welcome}>Hello, {user?.name || 'there'}</Text>
+                </View>
               </View>
               <View style={styles.headerActions}>
                 {Platform.OS === 'web' && (
@@ -195,6 +199,7 @@ function buildStyles(colors) {
     safeArea: { flex: 1, backgroundColor: screenBackground(colors) },
     container: { padding: 20, paddingBottom: 36, ...contentColumn(layout.wide) },
     header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+    brandGroup: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     welcome: { color: colors.textMuted, marginTop: 2, fontSize: 12.5 },
     headerActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
     statusChip: {
